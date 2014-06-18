@@ -1001,3 +1001,9 @@ std::string irept::pretty(unsigned indent, unsigned max_indent) const
   return result;
 }
 
+#include <iostream>
+
+const void dump_irept (const irept &i) {
+  std::cout << i.pretty(0,0) << std::endl;
+  return;
+}
