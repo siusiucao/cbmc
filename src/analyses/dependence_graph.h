@@ -53,7 +53,7 @@ public:
     return node_id;
   }
 
-protected:
+  //protected:
   unsigned node_id;
 
   typedef std::set<goto_programt::const_targett> depst;

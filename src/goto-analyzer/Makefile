@@ -1,11 +1,12 @@
 SRC = goto_analyzer_main.cpp goto_analyzer_parse_options.cpp \
       taint_parser.cpp taint_analysis.cpp static_analyzer.cpp \
-      unreachable_instructions.cpp
+      unreachable_instructions.cpp dependence_graph_analysis.cpp
 
 OBJ += ../ansi-c/ansi-c$(LIBEXT) \
       ../linking/linking$(LIBEXT) \
       ../big-int/big-int$(LIBEXT) \
       ../goto-programs/goto-programs$(LIBEXT) \
+      ../pointer-analysis/pointer-analysis$(LIBEXT) \
       ../analyses/analyses$(LIBEXT) \
       ../pointer-analysis/pointer-analysis$(LIBEXT) \
       ../langapi/langapi$(LIBEXT) \

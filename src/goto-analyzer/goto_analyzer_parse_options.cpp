@@ -47,6 +47,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "taint_analysis.h"
 #include "unreachable_instructions.h"
 #include "static_analyzer.h"
+#include "dependence_graph_analysis.h"
 
 /*******************************************************************\
 
@@ -219,6 +220,7 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
   #endif
 }
 
+
 /*******************************************************************\
 
 Function: goto_analyzer_parse_optionst::doit
@@ -352,6 +354,43 @@ int goto_analyzer_parse_optionst::doit()
     return result?10:0;
   }
 
+  if (cmdline.isset("dependence-graph-data") ||
+      cmdline.isset("dependence-graph-control") ||
+      cmdline.isset("dependence-graph"))
+  {
+    dependence_graph_typet dgt;
+    
+    if (cmdline.isset("dependence-graph-data"))
+      dgt = DEPENDENCE_GRAPH_DATA;
+    else if (cmdline.isset("dependence-graph-control"))
+      dgt = DEPENDENCE_GRAPH_CONTROL;
+    else if (cmdline.isset("dependence-graph"))
+      dgt = DEPENDENCE_GRAPH_BOTH;
+    else
+      assert(0);
+    
+    const std::string json_file=cmdline.get_value("json");
+
+    if(json_file.empty())
+      dependence_graph_analysis(goto_functions, ns, dgt, false, std::cout);
+    else if(json_file=="-")
+      dependence_graph_analysis(goto_functions, ns, dgt, true, std::cout);
+    else
+    {
+      std::ofstream ofs(json_file);
+      if(!ofs)
+      {
+        error() << "Failed to open json output `"
+                << json_file << "'" << eom;
+        return 6;
+      }
+
+      dependence_graph_analysis(goto_functions, ns, dgt, true, ofs);
+    }
+
+    return 0;
+  }
+  
   error() << "no analysis option given -- consider reading --help"
           << eom;
   return 6;
@@ -531,6 +570,9 @@ void goto_analyzer_parse_optionst::help()
     " --unreachable-instructions   list dead code\n"
     " --intervals                  interval analysis\n"
     " --non-null                   non-null analysis\n"
+    " --dependence-graph-data      data dependence graph\n"
+    " --dependence-graph-control   control dependence graph\n"
+    " --dependence-graph           combined dependence graph\n"
     "\n"
     "Analysis options:\n"
     " --json file_name             output results in JSON format to given file\n"
