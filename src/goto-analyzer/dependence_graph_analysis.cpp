@@ -30,22 +30,23 @@ Function: data_flow_analysis
 \*******************************************************************/
 
 void dependence_graph_analysis(
-  const goto_functionst &goto_functions,
-  const namespacet &ns,
+  const goto_modelt &goto_model,
   const dependence_graph_typet dgt,
   const bool json,
   std::ostream &os)
 {
+  namespacet ns(goto_model.symbol_table);
+  
   // Perform the analysis
   dependence_grapht dependence_graph(ns);
-  dependence_graph(goto_functions, ns);
+  dependence_graph(goto_model.goto_functions, ns);
 
   // Output
   if (json)
   {
     json_arrayt json_result;
 
-    forall_goto_functions(f_it, goto_functions)
+    forall_goto_functions(f_it, goto_model.goto_functions)
     {
       json_objectt &function_graph=json_result.push_back().make_object();
 
@@ -107,7 +108,7 @@ void dependence_graph_analysis(
   else
   {
     // The old goto-instrument output format
-    forall_goto_functions(f_it, goto_functions)
+    forall_goto_functions(f_it, goto_model.goto_functions)
     {
       if(f_it->second.body_available())
       {

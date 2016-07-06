@@ -372,9 +372,9 @@ int goto_analyzer_parse_optionst::doit()
     const std::string json_file=cmdline.get_value("json");
 
     if(json_file.empty())
-      dependence_graph_analysis(goto_functions, ns, dgt, false, std::cout);
+      dependence_graph_analysis(goto_model, dgt, false, std::cout);
     else if(json_file=="-")
-      dependence_graph_analysis(goto_functions, ns, dgt, true, std::cout);
+      dependence_graph_analysis(goto_model, dgt, true, std::cout);
     else
     {
       std::ofstream ofs(json_file);
@@ -385,7 +385,7 @@ int goto_analyzer_parse_optionst::doit()
         return 6;
       }
 
-      dependence_graph_analysis(goto_functions, ns, dgt, true, ofs);
+      dependence_graph_analysis(goto_model, dgt, true, ofs);
     }
 
     return 0;

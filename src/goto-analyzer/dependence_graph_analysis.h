@@ -13,7 +13,7 @@ Date: March 2016
 
 #include <ostream>
 
-#include <goto-programs/goto_functions.h>
+#include <goto-programs/goto_model.h>
 
 typedef enum {
   DEPENDENCE_GRAPH_DATA,
@@ -22,8 +22,7 @@ typedef enum {
 } dependence_graph_typet;
 
 void dependence_graph_analysis(
-  const goto_functionst &goto_functions,
-  const namespacet &ns,
+  const goto_modelt &goto_model,
   const dependence_graph_typet dgt,
   const bool json,
   std::ostream &os);
