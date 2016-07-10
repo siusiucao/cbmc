@@ -32,6 +32,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <analyses/goto_check.h>
 #include <analyses/local_may_alias.h>
+#include <analyses/variable_dependency.h>
 
 #include <langapi/mode.h>
 
@@ -388,6 +389,17 @@ int goto_analyzer_parse_optionst::doit()
       dependence_graph_analysis(goto_model, dgt, true, ofs);
     }
 
+    return 0;
+  }
+
+  if (cmdline.isset("variable-data-dependency") ||
+      cmdline.isset("variable-information-dependency"))
+  {
+    variable_dependency_ait vda;
+
+    vda(goto_model);
+    vda.output(goto_model, std::cout);
+    
     return 0;
   }
   

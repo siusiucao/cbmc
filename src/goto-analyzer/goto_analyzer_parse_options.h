@@ -37,7 +37,8 @@ class optionst;
   "(unreachable-instructions)" \
   "(intervals)(show-intervals)" \
   "(non-null)(show-non-null)" \
-  "(dependence-graph)(dependence-graph-data)(dependence-graph-control)"
+  "(dependence-graph)(dependence-graph-data)(dependence-graph-control)" \
+  "(variable-data-dependency)(variable-information-dependency)"
 
 class goto_analyzer_parse_optionst:
   public parse_options_baset,
