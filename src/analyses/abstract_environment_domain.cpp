@@ -31,73 +31,191 @@ Function: abstract_enivornmentt::trackable
 
  Outputs: A boolean indicating whether the expression is trackable or not.
 
- Purpose: Identifying expressions who's values can be read / written
+ Purpose: Identifying expressions who's values can be read / written.
 
 \*******************************************************************/
 
-bool abstract_enivornmentt::trackable (const expr &e) {
-  assert(0);
+template<class domainT>
+bool abstract_enivornmentt::trackable (const exprt &e) const {
+  return e.id()==ID_symbol ||
+    e.id()==ID_index ||
+    e.id()==ID_member ||
+    e.id()==ID_dereference;
 }
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::
+Function: abstract_enivornmentt::is_tracked
 
-  Inputs: 
+  Inputs: An expression e that is trackable.
 
- Outputs: 
+ Outputs: A boolean indicating whether the expression is tracked (and
+          thus can be read or written)
 
- Purpose: 
+ Purpose: Working out whether a given expression has a value in the
+          abstract environment.
 
 \*******************************************************************/
+
+template<class domainT>
+bool abstract_environmentt::is_tracked (const exprt &e) const {
+  assert(trackable(e));
+  
+  expression_sett mapped(lookup(e));
+
+  for (expression_sett::const_iterator i = mapped.begin();
+       i != mapped.end();
+       ++i)
+  {
+    if (dom.find(*i) == dom.end())
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::
+Function: abstract_enivornmentt::track
 
-  Inputs: 
+  Inputs: An expression e that is trackable.
 
- Outputs: 
+ Outputs: Nothing.
 
- Purpose: 
+ Purpose: Starts tracking the expression and initialises its value to top.
 
 \*******************************************************************/
+
+template<class domainT>
+void abstract_environmentt::track (const exprt &e) {
+  assert(trackable(e));
+
+  domainT init;
+  init.make_top();
+  
+  expression_sett mapped(lookup(e));
+
+  for (expression_sett::const_iterator i = mapped.begin();
+       i != mapped.end();
+       ++i)
+  {
+    if (dom.find(*i) == dom.end())
+    {
+      dom.insert(*i, init);
+    }
+  }
+
+  return;
+}
+
+
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::
+Function: abstract_enivornmentt::read
 
-  Inputs: 
+  Inputs: An expression e that is currently tracked.
 
- Outputs: 
+ Outputs: An abstract element representing the current value in the
+          abstract domain.
 
- Purpose: 
+ Purpose: One of the fundamental options of an environment, allows the
+          value of a tracked expression to be accessed.
 
 \*******************************************************************/
+
+template<class domainT>
+domainT abstract_environmentt::read (const exprt &e) const {
+  assert(is_tracked(e));
+
+  domainT output;
+  output.make_top();
+  
+  expression_sett mapped(lookup(e));
+
+  for (expression_sett::const_iterator i = mapped.begin();
+       i != mapped.end();
+       ++i)
+  {
+    assert(dom.find(*i) != dom.end());
+    output.join(dom[*i]);
+  }
+
+  return output;
+}
+
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::
+Function: abstract_enivornmentt::write
 
-  Inputs: 
+  Inputs: An expression e that is currently tracked and an abstract
+          value to assign.
 
- Outputs: 
+ Outputs: Nothing.
 
- Purpose: 
+ Purpose: One of the fundamental operations of an environment, allows
+          the value of a tracked expression to be updated.
 
 \*******************************************************************/
+
+template<class domainT>
+void abstract_environmentt::write (const exprt &e, const domainT &d) {
+  assert(is_tracked(e));
+
+  expression_sett mapped(lookup(e));
+
+  for (expression_sett::const_iterator i = mapped.begin();
+       i != mapped.end();
+       ++i)
+  {
+    assert(dom.find(*i) != dom.end());
+    dom[*i] = d;
+  }
+
+  return;
+}
+
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::
+Function: abstract_enivornmentt::lookup
 
-  Inputs: 
+  Inputs: A trackable expression e
 
- Outputs: 
+ Outputs: A set of expressions giving the entries in the domain map that
+          correspond to the input expression.
 
- Purpose: 
+ Purpose: This is the entry point to the second part of the
+          abstraction in the abstract environment, mapping from the
+          expression that is read / written to the expressions that
+          are tracked.  By overloading various of the lookup_* methods
+          it is possible to combine or split values.  For example, all
+          writes to an array can be coallesced to a single stored
+          abstract value or writes to non-constant locations can be
+          expanded to cover all possible values.
 
 \*******************************************************************/
+
+template<class domainT>
+expression_sett abstract_environmentt::lookup (const exprt &e) {
+  assert(trackable(e));
+
+  switch (e.id())
+  {
+  case ID_symbol :
+  case ID_index :
+  case ID_member :
+  case ID_dereference :
+  default :
+  }
+
+  return;
+}
+
+
 
 /*******************************************************************\
 

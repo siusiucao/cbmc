@@ -13,6 +13,8 @@ Description: A generic abstract domain that acts as a conventional
              locations allowing write coallescing / array smashing,
              various approaches to pointers, etc.
 
+             Intended as a generic base for non-relational abstractions.
+
 \*******************************************************************/
 
 #ifndef CPROVER_MAP_DOMAIN_H
@@ -26,15 +28,15 @@ class abstract_environmentt
  public :
   
   // Is this an expression that can be tracked
-  virtual bool trackable(const expr &e) const;
+  virtual bool trackable(const exprt &e) const;
 
   // Is it tracked
-  bool is_tracked(const expr &e) const;
-  void track(const expr &e);
+  virtual bool is_tracked(const exprt &e) const;
+  virtual void track(const exprt &e);
 
   // Access
-  domainT read(const expr &e) const;
-  void write(const expr &e, const domainT & d);
+  domainT read(const exprt &e) const;
+  void write(const exprt &e, const domainT &d);
 
  protected:
   typedef std::map<exprt, domainT> mapt;
@@ -43,13 +45,15 @@ class abstract_environmentt
 
   // Implements the mapping from expression to zero or more entries in
   // the map
-  virtual std::set<exprt> lookup(const exprt &t);
-  virtual std::set<exprt> lookup_symbol(const exprt &t);
-  virtual std::set<exprt> lookup_array(const exprt &t);
-  virtual std::set<exprt> lookup_structure(const exprt &t);
-  virtual std::set<exprt> lookup_union(const exprt &t);
-  virtual std::set<exprt> lookup_dereference(const exprt &t);
-  virtual std::set<exprt> lookup_rest(const exprt &t);
+  typedef std::set<exprt> expression_sett;
+  
+  virtual expression_sett lookup(const exprt &t) const;
+  virtual expression_sett lookup_symbol(const exprt &t) const;
+  virtual expression_sett lookup_array(const exprt &t) const;
+  virtual expression_sett lookup_structure(const exprt &t) const;
+  virtual expression_sett lookup_union(const exprt &t) const;
+  virtual expression_sett lookup_dereference(const exprt &t) const;
+  virtual expression_sett lookup_rest(const exprt &t) const;
 
 };
 
