@@ -21,22 +21,35 @@ Date: April 2016
 */
 #include <util/message.h>
 
-#include "map_domain.h"
+#include "abstract_environment_domain.h"
+
+#ifdef DEBUG
+#define UNREACHABLE(r) std::cerr << r << std::endl; assert(0)
+#define UNSUPPORTED(r) std::cerr << r << std::endl; assert(0)
+#define INTERNAL_INVARIANT(r) std::cerr << r << std::endl; assert(0)
+#define UNIMPLEMENTED(r) std::cerr << r << std::endl; assert(0)
+#else
+#define UNREACHABLE(r) throw "Unreachable"
+#define UNSUPPORTED(r) throw "Unsupported"
+#define INTERNAL_INVARIANT(r) throw "Internal invariant"
+#define UNIMPLEMENTED(r) throw "Unimplemented"
+#endif
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::trackable
+Function: abstract_environmentt::trackable
 
   Inputs: An expression e
 
  Outputs: A boolean indicating whether the expression is trackable or not.
 
  Purpose: Identifying expressions who's values can be read / written.
+          Should fit with what can be assigned in a goto-program.
 
 \*******************************************************************/
 
 template<class domainT>
-bool abstract_enivornmentt::trackable (const exprt &e) const {
+bool abstract_environmentt<domainT>::trackable (const exprt &e) const {
   return e.id()==ID_symbol ||
     e.id()==ID_index ||
     e.id()==ID_member ||
@@ -45,7 +58,7 @@ bool abstract_enivornmentt::trackable (const exprt &e) const {
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::is_tracked
+Function: abstract_environmentt::is_tracked
 
   Inputs: An expression e that is trackable.
 
@@ -54,13 +67,16 @@ Function: abstract_enivornmentt::is_tracked
 
  Purpose: Working out whether a given expression has a value in the
           abstract environment.
+          This is the 'default' behaviour and thus just adds
+          everything as concrete.
 
 \*******************************************************************/
 
 template<class domainT>
-bool abstract_environmentt::is_tracked (const exprt &e) const {
+bool abstract_environmentt<domainT>::is_tracked (const exprt &e) const {
   assert(trackable(e));
-  
+
+  #if 0
   expression_sett mapped(lookup(e));
 
   for (expression_sett::const_iterator i = mapped.begin();
@@ -74,27 +90,36 @@ bool abstract_environmentt::is_tracked (const exprt &e) const {
   }
 
   return true;
+  #endif
+
+  return dom.find(e) != dom.end();
 }
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::track
+Function: abstract_environmentt::track
 
-  Inputs: An expression e that is trackable.
+  Inputs: An expression e that is trackable and a Boolean noting
+          whether it is a concrete location or not.
 
  Outputs: Nothing.
 
- Purpose: Starts tracking the expression and initialises its value to top.
+ Purpose: Starts tracking the expression and initialises its value to
+          top.  Abstract locations are ones that represent multiple
+          memory addresses, thus writes to them are joins rather than
+          normal writes.
+          This is the 'default' behaviour and thus just adds
+          everything as concrete.
 
 \*******************************************************************/
 
 template<class domainT>
-void abstract_environmentt::track (const exprt &e) {
+void abstract_environmentt<domainT>::track (const exprt &e, bool concrete_location) {
   assert(trackable(e));
 
   domainT init;
   init.make_top();
-  
+#if 0  
   expression_sett mapped(lookup(e));
 
   for (expression_sett::const_iterator i = mapped.begin();
@@ -103,8 +128,55 @@ void abstract_environmentt::track (const exprt &e) {
   {
     if (dom.find(*i) == dom.end())
     {
-      dom.insert(*i, init);
+      dom.insert(*i, abstract_cellt(init, concrete_location));
     }
+    
+  }
+#endif
+  if (dom.find(e) == dom.end())
+  {
+    dom.insert(e, abstract_cellt(init, concrete_location));
+  } else {
+    INTERNAL_INVARIANT(std::string("Expression already tracked ") + e.pretty());
+  }
+  
+  return;
+}
+
+/*******************************************************************\
+
+Function: abstract_environmentt::untrack
+
+  Inputs: An expression e that is trackable.
+
+ Outputs: Nothing.
+
+ Purpose: Stops tracking the expression.  References that translate to
+          this element will now fail.
+          This is the 'default' behaviour and thus just adds
+          everything as concrete.
+
+\*******************************************************************/
+
+template<class domainT>
+void abstract_environmentt<domainT>::untrack (const exprt &e) {
+  assert(trackable(e));
+
+#if 0
+  expression_sett mapped(lookup(e));
+
+  for (expression_sett::const_iterator i = mapped.begin();
+       i != mapped.end();
+       ++i)
+  {
+    dom.erase(*i);
+  }
+#endif
+  if (dom.find(e) == dom.end())
+  {
+    INTERNAL_INVARIANT(std::string("Expression not tracked ") + e.pretty());
+  } else {
+    dom.erase(e);
   }
 
   return;
@@ -114,7 +186,7 @@ void abstract_environmentt::track (const exprt &e) {
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::read
+Function: abstract_environmentt::read
 
   Inputs: An expression e that is currently tracked.
 
@@ -127,7 +199,7 @@ Function: abstract_enivornmentt::read
 \*******************************************************************/
 
 template<class domainT>
-domainT abstract_environmentt::read (const exprt &e) const {
+domainT abstract_environmentt<domainT>::read (const exprt &e) const {
   assert(is_tracked(e));
 
   domainT output;
@@ -140,7 +212,7 @@ domainT abstract_environmentt::read (const exprt &e) const {
        ++i)
   {
     assert(dom.find(*i) != dom.end());
-    output.join(dom[*i]);
+    output.join(dom[*i].element);
   }
 
   return output;
@@ -149,7 +221,7 @@ domainT abstract_environmentt::read (const exprt &e) const {
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::write
+Function: abstract_environmentt::write
 
   Inputs: An expression e that is currently tracked and an abstract
           value to assign.
@@ -162,17 +234,22 @@ Function: abstract_enivornmentt::write
 \*******************************************************************/
 
 template<class domainT>
-void abstract_environmentt::write (const exprt &e, const domainT &d) {
+void abstract_environmentt<domainT>::write (const exprt &e, const domainT &d) {
   assert(is_tracked(e));
 
   expression_sett mapped(lookup(e));
-
+  bool single_location_write = (mapped.size() == 1);
+  
   for (expression_sett::const_iterator i = mapped.begin();
        i != mapped.end();
        ++i)
   {
     assert(dom.find(*i) != dom.end());
-    dom[*i] = d;
+
+    if (single_location_write && dom[*i]->concrete_location)
+      dom[*i] = d;
+    else
+      dom[*i].join(d);
   }
 
   return;
@@ -181,7 +258,7 @@ void abstract_environmentt::write (const exprt &e, const domainT &d) {
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::lookup
+Function: abstract_environmentt::lookup
 
   Inputs: A trackable expression e
 
@@ -200,65 +277,204 @@ Function: abstract_enivornmentt::lookup
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt::lookup (const exprt &e) {
+expression_sett abstract_environmentt<domainT>::lookup (const exprt &e) const {
   assert(trackable(e));
 
   switch (e.id())
   {
   case ID_symbol :
+    switch (e.type().id()) {
+    case ID_struct :
+      return lookup_structure(e);
+      break;
+      
+    case ID_union :
+      return lookup_union(e);
+      break;
+      
+    case ID_array :
+      return lookup_array(e);
+      break;
+
+    default :
+      return lookup_symbol(e);
+      break;
+    }
+    UNREACHABLE("case fall-throught");
+    break;
+    
   case ID_index :
+    return lookup_array();
+    break;
+    
   case ID_member :
+    if (e.type().id() == ID_struct) {
+      return lookup_structure(e);
+    } else if (e.type().id() == ID_union) {
+      return lookup_union(e);
+    } else {
+      UNSUPPORTED(std::string("ID_member on unsupported type ") + e.type().pretty());
+    }
+    break;
+    
   case ID_dereference :
+    return lookup_dereference(e);
+    break;
+    
   default :
+    return lookup_rest(e);
+    break;
   }
 
-  return;
+  UNREACHABLE("case fall-through");
 }
 
 
 
 /*******************************************************************\
 
-Function: abstract_enivornmentt::
+Function: abstract_environmentt::lookup_symbol
 
-  Inputs: 
+  Inputs: A trackable expression e
 
- Outputs: 
+ Outputs: A set of expressions giving the entries in the domain map that
+          correspond to the input expression.
 
- Purpose: 
-
-\*******************************************************************/
-
-/*******************************************************************\
-
-Function: abstract_enivornmentt::
-
-  Inputs: 
-
- Outputs: 
-
- Purpose: 
+ Purpose: The default behaviour is to map one-to-one.
 
 \*******************************************************************/
 
+template<class domainT>
+expression_sett abstract_environmentt<domainT>::lookup_symbol (const exprt &e) const {
+  assert(trackable(e));
+
+  expression_sett s;
+  s.insert(e);
+  
+  return s;
+}
+
 /*******************************************************************\
 
-Function: abstract_enivornmentt::
+Function: abstract_environmentt::lookup_array
 
-  Inputs: 
+  Inputs: A trackable expression e
 
- Outputs: 
+ Outputs: A set of expressions giving the entries in the domain map that
+          correspond to the input expression.
 
- Purpose: 
+ Purpose: The default behaviour is to map one-to-one.
 
 \*******************************************************************/
 
+template<class domainT>
+expression_sett abstract_environmentt<domainT>::lookup_array (const exprt &e) const {
+  assert(trackable(e));
+
+  expression_sett s;
+  s.insert(e);
+  
+  return s;
+}
+
+/*******************************************************************\
+
+Function: abstract_environmentt::lookup_structure
+
+  Inputs: A trackable expression e
+
+ Outputs: A set of expressions giving the entries in the domain map that
+          correspond to the input expression.
+
+ Purpose: The default behaviour is to map one-to-one.
+
+\*******************************************************************/
+
+template<class domainT>
+expression_sett abstract_environmentt<domainT>::lookup_structure (const exprt &e) const {
+  assert(trackable(e));
+
+  expression_sett s;
+  s.insert(e);
+  
+  return s;
+}
+
+/*******************************************************************\
+
+Function: abstract_environmentt::lookup_union
+
+  Inputs: A trackable expression e
+
+ Outputs: A set of expressions giving the entries in the domain map that
+          correspond to the input expression.
+
+ Purpose: The default behaviour is to map one-to-one.
+
+\*******************************************************************/
+
+template<class domainT>
+expression_sett abstract_environmentt<domainT>::lookup_union (const exprt &e) const {
+  assert(trackable(e));
+
+  expression_sett s;
+  s.insert(e);
+  
+  return s;
+}
+
+/*******************************************************************\
+
+Function: abstract_environmentt::lookup_dereference
+
+  Inputs: A trackable expression e
+
+ Outputs: A set of expressions giving the entries in the domain map that
+          correspond to the input expression.
+
+ Purpose: The default behaviour is to map one-to-one.
+
+\*******************************************************************/
+
+template<class domainT>
+expression_sett abstract_environmentt<domainT>::lookup_dereference (const exprt &e) const {
+  assert(trackable(e));
+
+  expression_sett s;
+  s.insert(e);
+  
+  return s;
+}
+/*******************************************************************\
+
+Function: abstract_environmentt::lookup_rest
+
+  Inputs: A trackable expression e
+
+ Outputs: A set of expressions giving the entries in the domain map that
+          correspond to the input expression.
+
+ Purpose: The default behaviour is to map one-to-one.
+
+\*******************************************************************/
+
+template<class domainT>
+expression_sett abstract_environmentt<domainT>::lookup_rest (const exprt &e) const {
+  assert(trackable(e));
+
+  expression_sett s;
+  s.insert(e);
+  
+  return s;
+}
+
+
 
 
 
 /*******************************************************************\
 
-Function: abstract_enivornment_domaint::transform
+Function: abstract_environment_domaint::transform
 
   Inputs: The instruction before (from) and after (to) the abstract domain,
           the abstract interpreter (ai) and the namespace (ns).
@@ -268,12 +484,13 @@ Function: abstract_enivornment_domaint::transform
  Purpose: Compute the abstract transformer for a single instruction
 
 \*******************************************************************/
-void abstract_enivornment_domaint::transform(
+template<class domainT>
+void abstract_environment_domaint<domainT>::transform(
     locationt from,
     locationt to,
     ai_baset &ai,
     const namespacet &ns) {
-  std::cerr << "abstract_enivornment_domaint::transform()\n";
+  std::cerr << "abstract_environment_domaint::transform()\n";
 
   #if 0
   const goto_programt::instructiont &instruction=*from;
@@ -328,12 +545,15 @@ void abstract_enivornment_domaint::transform(
     break;
 
   case THROW:
+    UNIMPLEMENTED("Throw unimplemented");
     break;
 
   case CATCH:
+    UNIMPLEMENTED("Catch unimplemented");
     break;
     
   default:;
+    UNIMPLEMENTED("Unrecognised instruction type");
   }
   #endif
   
@@ -342,7 +562,7 @@ void abstract_enivornment_domaint::transform(
 
 /*******************************************************************\
 
-Function: abstract_enivornment_domaint::output
+Function: abstract_environment_domaint::output
 
   Inputs: The output stream (out), the abstract interpreter (ai) and
           the namespace.
@@ -352,11 +572,12 @@ Function: abstract_enivornment_domaint::output
  Purpose: Basic text output of the abstract domain
 
 \*******************************************************************/
-void abstract_enivornment_domaint::output(
+template<class domainT>
+void abstract_environment_domaint<domainT>::output(
     std::ostream &out,
     const ai_baset &ai,
     const namespacet &ns) const {
-  std::cerr << "abstract_enivornment_domaint::output()\n";
+  std::cerr << "abstract_environment_domaint::output()\n";
 
   out << "{\n";
 
@@ -373,7 +594,7 @@ void abstract_enivornment_domaint::output(
   
 /*******************************************************************\
 
-Function: abstract_enivornment_domaint::make_bottom
+Function: abstract_environment_domaint::make_bottom
 
   Inputs: None
 
@@ -382,8 +603,9 @@ Function: abstract_enivornment_domaint::make_bottom
  Purpose: Sets the domain to bottom (no relations).
 
 \*******************************************************************/
-void abstract_enivornment_domaint::make_bottom() {
-  std::cerr << "abstract_enivornment_domaint::make_bottom()\n";
+template<class domainT>
+void abstract_environment_domaint<domainT>::make_bottom() {
+  std::cerr << "abstract_environment_domaint::make_bottom()\n";
 
   dom.clear();
   return;
@@ -391,7 +613,7 @@ void abstract_enivornment_domaint::make_bottom() {
 
 /*******************************************************************\
 
-Function: abstract_enivornment_domaint::make_top
+Function: abstract_environment_domaint::make_top
 
   Inputs: None
 
@@ -400,14 +622,15 @@ Function: abstract_enivornment_domaint::make_top
  Purpose: Sets the domain to top (all relations).
 
 \*******************************************************************/
-void abstract_enivornment_domaint::make_top() {
-  std::cerr << "abstract_enivornment_domaint::make_entry()\n";
+template<class domainT>
+void abstract_environment_domaint<domainT>::make_top() {
+  std::cerr << "abstract_environment_domaint::make_entry()\n";
   assert(0);
 }
   
 /*******************************************************************\
 
-Function: abstract_enivornment_domaint::make_entry
+Function: abstract_environment_domaint::make_entry
 
   Inputs: None
 
@@ -416,14 +639,15 @@ Function: abstract_enivornment_domaint::make_entry
  Purpose: Set up a sane entry state.
 
 \*******************************************************************/
-void abstract_enivornment_domaint::make_entry() {
-  std::cerr << "abstract_enivornment_domaint::make_entry()\n";
+template<class domainT>
+void abstract_environment_domaint<domainT>::make_entry() {
+  std::cerr << "abstract_environment_domaint::make_entry()\n";
   assert(0);
 }
   
 /*******************************************************************\
 
-Function: abstract_enivornment_domaint::merge
+Function: abstract_environment_domaint::merge
 
   Inputs: The other domain (b) and it's preceeding location (from) and
           current location (to).
@@ -433,10 +657,11 @@ Function: abstract_enivornment_domaint::merge
  Purpose: Computes the join between "this" and "b". 
 
 \*******************************************************************/
-bool abstract_enivornment_domaint::merge(const abstract_enivornment_domaint &b,
+template<class domainT>
+bool abstract_environment_domaint<domainT>::merge(const abstract_environment_domaint &b,
 	     locationt from,
 	     locationt to) {
-  std::cerr << "abstract_enivornment_domaint::merge()\n";
+  std::cerr << "abstract_environment_domaint::merge()\n";
   
   bool hasChanged = false;
 
@@ -457,3 +682,5 @@ bool abstract_enivornment_domaint::merge(const abstract_enivornment_domaint &b,
 
   return hasChanged;
 }
+
+
