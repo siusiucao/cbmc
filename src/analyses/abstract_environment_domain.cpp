@@ -548,7 +548,8 @@ void abstract_environment_domaint<domainT>::transform(
     // Conditions on the program, do not alter the data or information
     // flow and thus can be ignored.
     break;
-    
+
+  case SKIP:
   case LOCATION:
     // Can ignore
     break;
@@ -958,7 +959,7 @@ void variable_dependency_domaint::eval_rec (single_variable_dependency_domaint &
   else
   {
     forall_operands(i,e)
-      eval_rec(s,e);
+      eval_rec(s,*i);
   }
 }
 
