@@ -35,9 +35,18 @@ Date: April 2016
 #define UNIMPLEMENTED(r) throw "Unimplemented"
 #endif
 
+#define DEFENSIVE
+
+#ifdef DEFENSIVE
+#define DEFENSIVE_UNHANDLED(X) UNIMPLEMENTED(X)
+#else
+#define DEFENSIVE_UNHANDLED(X) do { } while(0)
+#endif
+
+
 /*******************************************************************\
 
-Function: abstract_environmentt::trackable
+Function: abstract_environment_domaint::trackable
 
   Inputs: An expression e
 
@@ -49,7 +58,7 @@ Function: abstract_environmentt::trackable
 \*******************************************************************/
 
 template<class domainT>
-bool abstract_environmentt<domainT>::trackable (const exprt &e) const {
+bool abstract_environment_domaint<domainT>::trackable (const exprt &e) const {
   return e.id()==ID_symbol ||
     e.id()==ID_index ||
     e.id()==ID_member ||
@@ -58,7 +67,7 @@ bool abstract_environmentt<domainT>::trackable (const exprt &e) const {
 
 /*******************************************************************\
 
-Function: abstract_environmentt::is_tracked
+Function: abstract_environment_domaint::is_tracked
 
   Inputs: An expression e that is trackable.
 
@@ -73,7 +82,7 @@ Function: abstract_environmentt::is_tracked
 \*******************************************************************/
 
 template<class domainT>
-bool abstract_environmentt<domainT>::is_tracked (const exprt &e) const {
+bool abstract_environment_domaint<domainT>::is_tracked (const exprt &e) const {
   assert(trackable(e));
 
   #if 0
@@ -97,7 +106,7 @@ bool abstract_environmentt<domainT>::is_tracked (const exprt &e) const {
 
 /*******************************************************************\
 
-Function: abstract_environmentt::track
+Function: abstract_environment_domaint::track
 
   Inputs: An expression e that is trackable and a Boolean noting
           whether it is a concrete location or not.
@@ -114,7 +123,7 @@ Function: abstract_environmentt::track
 \*******************************************************************/
 
 template<class domainT>
-void abstract_environmentt<domainT>::track (const exprt &e, bool concrete_location) {
+void abstract_environment_domaint<domainT>::track (const exprt &e, bool concrete_location) {
   assert(trackable(e));
 
   domainT init;
@@ -145,7 +154,7 @@ void abstract_environmentt<domainT>::track (const exprt &e, bool concrete_locati
 
 /*******************************************************************\
 
-Function: abstract_environmentt::untrack
+Function: abstract_environment_domaint::untrack
 
   Inputs: An expression e that is trackable.
 
@@ -159,7 +168,7 @@ Function: abstract_environmentt::untrack
 \*******************************************************************/
 
 template<class domainT>
-void abstract_environmentt<domainT>::untrack (const exprt &e) {
+void abstract_environment_domaint<domainT>::untrack (const exprt &e) {
   assert(trackable(e));
 
 #if 0
@@ -186,7 +195,7 @@ void abstract_environmentt<domainT>::untrack (const exprt &e) {
 
 /*******************************************************************\
 
-Function: abstract_environmentt::read
+Function: abstract_environment_domaint::read
 
   Inputs: An expression e that is currently tracked.
 
@@ -199,7 +208,7 @@ Function: abstract_environmentt::read
 \*******************************************************************/
 
 template<class domainT>
-domainT abstract_environmentt<domainT>::read (const exprt &e) const {
+domainT abstract_environment_domaint<domainT>::read (const exprt &e) const {
   assert(is_tracked(e));
 
   domainT output;
@@ -221,7 +230,7 @@ domainT abstract_environmentt<domainT>::read (const exprt &e) const {
 
 /*******************************************************************\
 
-Function: abstract_environmentt::write
+Function: abstract_environment_domaint::write
 
   Inputs: An expression e that is currently tracked and an abstract
           value to assign.
@@ -234,7 +243,7 @@ Function: abstract_environmentt::write
 \*******************************************************************/
 
 template<class domainT>
-void abstract_environmentt<domainT>::write (const exprt &e, const domainT &d) {
+void abstract_environment_domaint<domainT>::write (const exprt &e, const domainT &d) {
   assert(is_tracked(e));
 
   expression_sett mapped(lookup(e));
@@ -258,7 +267,7 @@ void abstract_environmentt<domainT>::write (const exprt &e, const domainT &d) {
 
 /*******************************************************************\
 
-Function: abstract_environmentt::lookup
+Function: abstract_environment_domaint::lookup
 
   Inputs: A trackable expression e
 
@@ -277,7 +286,7 @@ Function: abstract_environmentt::lookup
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt<domainT>::lookup (const exprt &e) const {
+expression_sett abstract_environment_domaint<domainT>::lookup (const exprt &e) const {
   assert(trackable(e));
 
   switch (e.id())
@@ -333,7 +342,7 @@ expression_sett abstract_environmentt<domainT>::lookup (const exprt &e) const {
 
 /*******************************************************************\
 
-Function: abstract_environmentt::lookup_symbol
+Function: abstract_environment_domaint::lookup_symbol
 
   Inputs: A trackable expression e
 
@@ -345,7 +354,7 @@ Function: abstract_environmentt::lookup_symbol
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt<domainT>::lookup_symbol (const exprt &e) const {
+expression_sett abstract_environment_domaint<domainT>::lookup_symbol (const exprt &e) const {
   assert(trackable(e));
 
   expression_sett s;
@@ -356,7 +365,7 @@ expression_sett abstract_environmentt<domainT>::lookup_symbol (const exprt &e) c
 
 /*******************************************************************\
 
-Function: abstract_environmentt::lookup_array
+Function: abstract_environment_domaint::lookup_array
 
   Inputs: A trackable expression e
 
@@ -368,7 +377,7 @@ Function: abstract_environmentt::lookup_array
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt<domainT>::lookup_array (const exprt &e) const {
+expression_sett abstract_environment_domaint<domainT>::lookup_array (const exprt &e) const {
   assert(trackable(e));
 
   expression_sett s;
@@ -379,7 +388,7 @@ expression_sett abstract_environmentt<domainT>::lookup_array (const exprt &e) co
 
 /*******************************************************************\
 
-Function: abstract_environmentt::lookup_structure
+Function: abstract_environment_domaint::lookup_structure
 
   Inputs: A trackable expression e
 
@@ -391,7 +400,7 @@ Function: abstract_environmentt::lookup_structure
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt<domainT>::lookup_structure (const exprt &e) const {
+expression_sett abstract_environment_domaint<domainT>::lookup_structure (const exprt &e) const {
   assert(trackable(e));
 
   expression_sett s;
@@ -402,7 +411,7 @@ expression_sett abstract_environmentt<domainT>::lookup_structure (const exprt &e
 
 /*******************************************************************\
 
-Function: abstract_environmentt::lookup_union
+Function: abstract_environment_domaint::lookup_union
 
   Inputs: A trackable expression e
 
@@ -414,7 +423,7 @@ Function: abstract_environmentt::lookup_union
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt<domainT>::lookup_union (const exprt &e) const {
+expression_sett abstract_environment_domaint<domainT>::lookup_union (const exprt &e) const {
   assert(trackable(e));
 
   expression_sett s;
@@ -425,7 +434,7 @@ expression_sett abstract_environmentt<domainT>::lookup_union (const exprt &e) co
 
 /*******************************************************************\
 
-Function: abstract_environmentt::lookup_dereference
+Function: abstract_environment_domaint::lookup_dereference
 
   Inputs: A trackable expression e
 
@@ -437,7 +446,7 @@ Function: abstract_environmentt::lookup_dereference
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt<domainT>::lookup_dereference (const exprt &e) const {
+expression_sett abstract_environment_domaint<domainT>::lookup_dereference (const exprt &e) const {
   assert(trackable(e));
 
   expression_sett s;
@@ -447,7 +456,7 @@ expression_sett abstract_environmentt<domainT>::lookup_dereference (const exprt 
 }
 /*******************************************************************\
 
-Function: abstract_environmentt::lookup_rest
+Function: abstract_environment_domaint::lookup_rest
 
   Inputs: A trackable expression e
 
@@ -459,7 +468,7 @@ Function: abstract_environmentt::lookup_rest
 \*******************************************************************/
 
 template<class domainT>
-expression_sett abstract_environmentt<domainT>::lookup_rest (const exprt &e) const {
+expression_sett abstract_environment_domaint<domainT>::lookup_rest (const exprt &e) const {
   assert(trackable(e));
 
   expression_sett s;
@@ -489,13 +498,6 @@ Function: abstract_environment_domaint::transform
  Purpose: Compute the abstract transformer for a single instruction
 
 \*******************************************************************/
-#define DEFENSIVE
-
-#ifdef DEFENSIVE
-#define DEFENSIVE_UNHANDLED(X) UNIMPLEMENTED(X)
-#else
-#define DEFENSIVE_UNHANDLED(X) do { } while(0)
-#endif
 
 template<class domainT>
 void abstract_environment_domaint<domainT>::transform(
@@ -505,30 +507,45 @@ void abstract_environment_domaint<domainT>::transform(
     const namespacet &ns) {
   std::cerr << "abstract_environment_domaint::transform()\n";
 
-  #if 0
   const goto_programt::instructiont &instruction=*from;
   switch(instruction.type)
   {
   case DECL:
+    track(to_code_decl(instruction.code).symbol());
     break;
     
   case DEAD:
+    untrack(to_code_dead(instruction.code).symbol());
     break;
 
   case ASSIGN:
+    {
+      const code_assignt &inst = to_code_assign(instruction.code);
+      write(inst.lhs(), eval(inst.rhs()));
+    }
     break;
 
   case GOTO:
-    // TODO : Only use for information flow
+    {
+      locationt next=from;
+      next++;
+      if(next==to)
+        assume(not_exprt(instruction.guard));
+      else
+        assume(instruction.guard);
+    }
     break;
 
   case ASSUME:
+    assume(instruction.guard);
     break;
     
   case FUNCTION_CALL:
+    assert(0);
     break;
 
   case END_FUNCTION:
+    assert(0);
     UNIMPLEMENTED("End_function");
     break;
 
@@ -567,7 +584,6 @@ void abstract_environment_domaint<domainT>::transform(
     DEFENSIVE_UNHANDLED("Unrecognised instruction type");
     break;
   }
-  #endif
   
   return;
 }
@@ -588,21 +604,18 @@ template<class domainT>
 void abstract_environment_domaint<domainT>::output(
     std::ostream &out,
     const ai_baset &ai,
-    const namespacet &ns) {// const {
+    const namespacet &ns) const {
   std::cerr << "abstract_environment_domaint::output()\n";
 
   out << "{\n";
 
-  out << x;
-#if 0  
   for (typename mapt::const_iterator i = dom.begin();
        i != dom.end();
        ++i) {
-    out << i->first << " -> ";
-    i->second.output(out, ai, ns);
-    }
+    out << i->first << " (" << i->second.concrete_location << ") -> ";
+    i->second.element.output(out, ai, ns);
   }
-  #endif
+
   out << "}\n";
 }
   
@@ -621,7 +634,12 @@ template<class domainT>
 void abstract_environment_domaint<domainT>::make_bottom() {
   std::cerr << "abstract_environment_domaint::make_bottom()\n";
 
-  dom.clear();
+  for (typename mapt::iterator i = dom.begin();
+       i != dom.end();
+       ++i) {
+    i->second.element.make_bottom();
+  }
+
   return;
 }
 
@@ -638,9 +656,17 @@ Function: abstract_environment_domaint::make_top
 \*******************************************************************/
 template<class domainT>
 void abstract_environment_domaint<domainT>::make_top() {
-  std::cerr << "abstract_environment_domaint::make_entry()\n";
-  assert(0);
+  std::cerr << "abstract_environment_domaint::make_top()\n";
+
+  for (typename mapt::iterator i = dom.begin();
+       i != dom.end();
+       ++i) {
+    i->second.element.make_top();
+  }
+
+  return;
 }
+
   
 /*******************************************************************\
 
@@ -679,22 +705,49 @@ bool abstract_environment_domaint<domainT>::merge(const abstract_environment_dom
   
   bool hasChanged = false;
 
-  // For each of the incoming dependencies
-  for (dependency_mapt::const_iterator i = b.dom.begin();
-       i != b.dom.end();
+  for (typename mapt::iterator i = dom.begin();
+       i != dom.end();
        ++i) {
+    typename mapt::const_iterator b_elem = b.dom.find(i->first);
 
-    if (0) {
-      // If it is new, add all of it
-      hasChanged = true;
-      
-    } else {
-      // Compute the union of the two dependency sets
-      
+    if (b_elem != dom.end())
+      hasChanged |= i->second.element.merge(b_elem.element, from, to);
+    else
+    {
+      // FIXME : all expressions should be registered
+      // ignore for now
     }
   }
+
+  // FIXME : all expressions should be registered
+  for (typename mapt::iterator i = b.dom.begin();
+       i != b.dom.end();
+       ++i) {
+    if (dom.find(i->first) == dom.end())
+    {
+      dom.insert(i->first, i->second);
+      hasChanged = true;
+    }
+  }
+
 
   return hasChanged;
 }
 
 
+/*******************************************************************\
+
+Function: abstract_environment_domaint::assume
+
+  Inputs: The condition to be assumed.
+
+ Outputs: Nothing.
+
+ Purpose: Reduces the abstract domain by assuming the condition.
+          Default is to ignore; giving path insensitive analysis.
+
+\*******************************************************************/
+template<class domainT>
+void abstract_environment_domaint<domainT>::assume(const exprt &e) {
+  return;
+}

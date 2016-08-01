@@ -24,15 +24,11 @@ Description: A generic abstract domain that acts as a conventional
 
 typedef std::set<exprt> expression_sett;
   
-template <class domainT>
-class base {
-  typedef domainT thing;
-  int x;
-};
 
 template <class domainT>
-class abstract_environmentt //: public base
+class abstract_environment_domaint : public virtual ai_domain_baset
 {
+  /*** Environment part ***/
  public :
   
   // Is this an expression that can be tracked
@@ -47,7 +43,7 @@ class abstract_environmentt //: public base
   domainT read(const exprt &e) const;
   void write(const exprt &e, const domainT &d);
 
-  // protected:
+ protected:
   template <class abs_domainT>
   struct _abstract_cellt {
     abs_domainT element;
@@ -71,15 +67,9 @@ class abstract_environmentt //: public base
   virtual expression_sett lookup_dereference(const exprt &e) const;
   virtual expression_sett lookup_rest(const exprt &e) const;
 
-};
 
-
-template<class domainT>
-class abstract_environment_domaint: public base<domainT>, /*public virtual ai_domain_baset,*/ public virtual abstract_environmentt<domainT>
-{
+  /*** Abstract domain part ***/
  public:
-  typedef int locationt;
-  
 
   // Domain interface
  abstract_environment_domaint() {}
@@ -93,7 +83,7 @@ class abstract_environment_domaint: public base<domainT>, /*public virtual ai_do
   virtual void output(
     std::ostream &out,
     const ai_baset &ai,
-    const namespacet &ns);// const;
+    const namespacet &ns) const;
   
   // no states
   virtual void make_bottom();
@@ -109,9 +99,10 @@ class abstract_environment_domaint: public base<domainT>, /*public virtual ai_do
   virtual bool merge(const abstract_environment_domaint &b,
 		     locationt from,
 		     locationt to);
- 
- protected :
-  typedef typename abstract_environmentt<domainT>::mapt mapt;
+
+ protected:
+  virtual domainT eval (const exprt &e) = 0;
+  virtual void assume (const exprt &e);
   
 };
 
