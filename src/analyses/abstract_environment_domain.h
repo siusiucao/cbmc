@@ -26,7 +26,7 @@ typedef std::set<exprt> expression_sett;
   
 
 template <class domainT>
-class abstract_environment_domaint : public virtual ai_domain_baset
+class abstract_environment_domaint : public ai_domain_baset
 {
   /*** Environment part ***/
  public :
@@ -49,7 +49,8 @@ class abstract_environment_domaint : public virtual ai_domain_baset
     abs_domainT element;
     bool concrete_location;
 
-    _abstract_cellt (const abs_domainT &e, const bool c) : element(e, c) {}
+    _abstract_cellt () {}
+    _abstract_cellt (const abs_domainT &e, const bool c) : element(e), concrete_location(c) {}
     
   };
 
@@ -100,11 +101,67 @@ class abstract_environment_domaint : public virtual ai_domain_baset
 		     locationt from,
 		     locationt to);
 
+
  protected:
   virtual domainT eval (const exprt &e) = 0;
   virtual void assume (const exprt &e);
   
 };
+
+
+class single_variable_dependency_domaint : public ai_domain_baset
+{
+ protected :
+  typedef std::set<exprt> dependency_sett;
+
+  dependency_sett deps;
+  bool is_top;
+
+ public :
+ single_variable_dependency_domaint() : is_top(false) {}
+ single_variable_dependency_domaint(const single_variable_dependency_domaint &old) : deps(old.deps), is_top(old.is_top) {}
+  
+  virtual void transform(
+    locationt from,
+    locationt to,
+    ai_baset &ai,
+    const namespacet &ns);
+  
+  virtual void output(
+    std::ostream &out,
+    const ai_baset &ai,
+    const namespacet &ns) const;
+  
+  // no states
+  virtual void make_bottom();
+
+  // all states
+  virtual void make_top();
+  
+  // a reasonable entry-point state
+  virtual void make_entry();
+  
+  // This computes the join between "this" and "b".
+  // Return true if "this" has changed.
+  virtual bool merge(const single_variable_dependency_domaint &b,
+		     locationt from,
+		     locationt to);
+  virtual bool merge(const single_variable_dependency_domaint &b);
+
+  // Adds an expression to the dependency set
+  virtual void insert(const exprt &e);
+
+  single_variable_dependency_domaint & operator= (const single_variable_dependency_domaint &op);
+};
+
+class variable_dependency_domaint : public abstract_environment_domaint<single_variable_dependency_domaint> {
+ protected:
+  virtual void eval_rec (single_variable_dependency_domaint &s, const exprt &e);
+  virtual single_variable_dependency_domaint eval (const exprt &e);
+
+};
+
+typedef ait<variable_dependency_domaint> variable_dependency_ait;
 
 
 #endif

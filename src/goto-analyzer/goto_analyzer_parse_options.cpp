@@ -32,7 +32,8 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <analyses/goto_check.h>
 #include <analyses/local_may_alias.h>
-#include <analyses/variable_dependency.h>
+//#include <analyses/variable_dependency.h>
+#include <analyses/abstract_environment_domain.h>
 
 #include <langapi/mode.h>
 

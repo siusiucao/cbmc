@@ -144,7 +144,7 @@ void abstract_environment_domaint<domainT>::track (const exprt &e, bool concrete
 #endif
   if (dom.find(e) == dom.end())
   {
-    dom.insert(e, abstract_cellt(init, concrete_location));
+    dom[e] = abstract_cellt(init, concrete_location);
   } else {
     INTERNAL_INVARIANT(std::string("Expression already tracked ") + e.pretty());
   }
@@ -221,7 +221,7 @@ domainT abstract_environment_domaint<domainT>::read (const exprt &e) const {
        ++i)
   {
     assert(dom.find(*i) != dom.end());
-    output.join(dom[*i].element);
+    output.merge(dom.find(*i)->second.element);
   }
 
   return output;
@@ -255,10 +255,10 @@ void abstract_environment_domaint<domainT>::write (const exprt &e, const domainT
   {
     assert(dom.find(*i) != dom.end());
 
-    if (single_location_write && dom[*i]->concrete_location)
-      dom[*i] = d;
+    if (single_location_write && dom[*i].concrete_location)
+      dom[*i].element = d;
     else
-      dom[*i].join(d);
+      dom[*i].element.merge(d);
   }
 
   return;
@@ -289,34 +289,25 @@ template<class domainT>
 expression_sett abstract_environment_domaint<domainT>::lookup (const exprt &e) const {
   assert(trackable(e));
 
-  switch (e.id())
-  {
-  case ID_symbol :
-    switch (e.type().id()) {
-    case ID_struct :
+  if (e.id() == ID_symbol) {
+    if (e.type().id() == ID_struct) {
       return lookup_structure(e);
-      break;
       
-    case ID_union :
+    } else if (e.type().id() == ID_union) {
       return lookup_union(e);
-      break;
       
-    case ID_array :
+    } else if (e.type().id() == ID_array) {
       return lookup_array(e);
-      break;
 
-    default :
+    } else {
       return lookup_symbol(e);
-      break;
     }
-    UNREACHABLE("case fall-throught");
-    break;
+
+
+  } else if (e.id() == ID_index) {
+    return lookup_array(e);
     
-  case ID_index :
-    return lookup_array();
-    break;
-    
-  case ID_member :
+  } else if (e.id() == ID_member) {
     if (e.type().id() == ID_struct) {
       return lookup_structure(e);
     } else if (e.type().id() == ID_union) {
@@ -324,18 +315,15 @@ expression_sett abstract_environment_domaint<domainT>::lookup (const exprt &e) c
     } else {
       UNSUPPORTED(std::string("ID_member on unsupported type ") + e.type().pretty());
     }
-    break;
     
-  case ID_dereference :
+  } else if (e.id() == ID_dereference) {
     return lookup_dereference(e);
-    break;
     
-  default :
+  } else {
     return lookup_rest(e);
-    break;
   }
 
-  UNREACHABLE("case fall-through");
+  UNREACHABLE("lookup");
 }
 
 
@@ -454,7 +442,8 @@ expression_sett abstract_environment_domaint<domainT>::lookup_dereference (const
   
   return s;
 }
-/*******************************************************************\
+
+/*******************************************************************	\
 
 Function: abstract_environment_domaint::lookup_rest
 
@@ -521,6 +510,11 @@ void abstract_environment_domaint<domainT>::transform(
   case ASSIGN:
     {
       const code_assignt &inst = to_code_assign(instruction.code);
+
+      // FIXME : temporary
+      if (!is_tracked(inst.lhs())) {
+	track(inst.lhs());
+      }
       write(inst.lhs(), eval(inst.rhs()));
     }
     break;
@@ -541,12 +535,11 @@ void abstract_environment_domaint<domainT>::transform(
     break;
     
   case FUNCTION_CALL:
-    assert(0);
+    // FIXME : Ignore as not yet interprocedural
     break;
 
   case END_FUNCTION:
-    assert(0);
-    UNIMPLEMENTED("End_function");
+    // FIXME : Ignore as not yet interprocedural
     break;
 
     /***************************************************************/
@@ -692,7 +685,7 @@ Function: abstract_environment_domaint::merge
   Inputs: The other domain (b) and it's preceeding location (from) and
           current location (to).
 
- Outputs: True if something has changed
+ Outputs: True if something has changed.
 
  Purpose: Computes the join between "this" and "b". 
 
@@ -711,7 +704,7 @@ bool abstract_environment_domaint<domainT>::merge(const abstract_environment_dom
     typename mapt::const_iterator b_elem = b.dom.find(i->first);
 
     if (b_elem != dom.end())
-      hasChanged |= i->second.element.merge(b_elem.element, from, to);
+      hasChanged |= i->second.element.merge(b_elem->second.element);
     else
     {
       // FIXME : all expressions should be registered
@@ -720,12 +713,12 @@ bool abstract_environment_domaint<domainT>::merge(const abstract_environment_dom
   }
 
   // FIXME : all expressions should be registered
-  for (typename mapt::iterator i = b.dom.begin();
+  for (typename mapt::const_iterator i = b.dom.begin();
        i != b.dom.end();
        ++i) {
     if (dom.find(i->first) == dom.end())
     {
-      dom.insert(i->first, i->second);
+      dom[i->first] = i->second;
       hasChanged = true;
     }
   }
@@ -751,3 +744,243 @@ template<class domainT>
 void abstract_environment_domaint<domainT>::assume(const exprt &e) {
   return;
 }
+
+
+
+
+
+
+
+
+
+/*******************************************************************\
+
+Function: single_variable_dependency_domaint::transform
+
+  Inputs: The instruction before (from) and after (to) the abstract domain,
+          the abstract interpreter (ai) and the namespace (ns).
+
+ Outputs: None
+
+ Purpose: Should not be used; evaluation is done elsewhere
+
+\*******************************************************************/
+
+void single_variable_dependency_domaint::transform(
+    locationt from,
+    locationt to,
+    ai_baset &ai,
+    const namespacet &ns) {
+  UNIMPLEMENTED("single_variable_dependency_domaint::transform should not be used");
+}
+
+
+/*******************************************************************\
+
+Function: single_variable_dependency_domain::output
+
+  Inputs: The output stream (out), the abstract interpreter (ai) and
+          the namespace.
+
+ Outputs: None.
+
+ Purpose: Basic text output of the abstract domain
+
+\*******************************************************************/
+void single_variable_dependency_domaint::output(
+    std::ostream &out,
+    const ai_baset &ai,
+    const namespacet &ns) const {
+  if (is_top) {
+    out << "{*}";
+  } else {
+    out << "{ ";
+    for (dependency_sett::const_iterator i = deps.begin();
+	 i != deps.end();
+	 ++i)
+    {
+      out << *i << ' ';
+    }
+    out << '}';
+  }
+}
+
+/*******************************************************************\
+
+Function: single_variable_dependency_domain::make_bottom
+
+  Inputs: None
+
+ Outputs: None
+
+ Purpose: Sets the domain to bottom (no relations).
+
+\*******************************************************************/
+void single_variable_dependency_domaint::make_bottom() {
+  is_top = false;
+  deps.clear();
+}
+
+/*******************************************************************\
+
+Function: single_variable_dependency_domain::make_top
+
+  Inputs: None
+
+ Outputs: None
+
+ Purpose: Sets the domain to top (all relations).
+
+\*******************************************************************/
+void single_variable_dependency_domaint::make_top() {
+  is_top = true;
+  deps.clear();
+}
+  
+/*******************************************************************\
+
+Function: single_variable_dependency_domain::make_entry
+
+  Inputs: None
+
+ Outputs: None
+
+ Purpose: Set up a sane entry state.
+
+\*******************************************************************/
+void single_variable_dependency_domaint::make_entry() {
+  UNIMPLEMENTED("single_variable_dependency_domaint::make_entry should not be used");
+}
+  
+/*******************************************************************\
+
+Function: single_variable_dependency_domain::merge
+
+  Inputs: The other domain (b) and it's preceeding location (from) and
+          current location (to).
+
+ Outputs: True if something has changed.
+
+ Purpose: Computes the join between "this" and "b".
+
+\*******************************************************************/
+bool single_variable_dependency_domaint::merge(const single_variable_dependency_domaint &b,
+					locationt from,
+					locationt to) {
+  return merge(b);
+}
+
+/*******************************************************************	\
+
+Function: single_variable_dependency_domain::merge
+
+  Inputs: The other domain (b).
+
+ Outputs: True if something has changed.
+
+ Purpose: Computes the join between "this" and "b".
+
+\*******************************************************************/
+bool single_variable_dependency_domaint::merge(const single_variable_dependency_domaint &b) {
+  dependency_sett::size_type old_size = deps.size();
+  
+  for (dependency_sett::const_iterator i = b.deps.begin();
+       i != b.deps.end();
+       ++i) {
+    deps.insert(*i);
+  }
+
+  return old_size != deps.size();
+}
+
+
+/*******************************************************************\
+
+Function: single_variable_dependency_domain::insert
+
+  Inputs: The expression to add
+
+ Outputs: None
+
+ Purpose: Adds a dependency
+
+\*******************************************************************/
+void single_variable_dependency_domaint::insert(const exprt &e) {
+  if (!is_top) {
+    deps.insert(e);
+  }
+  return;
+}
+
+
+/*******************************************************************\
+
+Function: single_variable_dependency_domain::operator=
+
+  Inputs: The value to assign
+
+ Outputs: *this
+
+ Purpose: Assignment operator
+
+\*******************************************************************/
+
+single_variable_dependency_domaint & single_variable_dependency_domaint::operator= (const single_variable_dependency_domaint &op) {
+  this->is_top = op.is_top;
+  this->deps = op.deps;
+  
+  return *this;
+}
+
+ 
+
+
+/*******************************************************************\
+
+Function: variable_dependency_domaint::eval_rec
+
+  Inputs: The expression to be (abstract) evaluated and the domain to add to.
+
+ Outputs: Nothing
+
+ Purpose: Does the actual evaluation.
+
+\*******************************************************************/
+
+void variable_dependency_domaint::eval_rec (single_variable_dependency_domaint &s, const exprt &e) {
+  if (trackable(e))
+  {
+    if (is_tracked(e))
+      s.merge(read(e));
+    else
+      s.insert(e);   // FIXME : temporary
+  }
+  else
+  {
+    forall_operands(i,e)
+      eval_rec(s,e);
+  }
+}
+
+ 
+
+/*******************************************************************\
+
+Function: variable_dependency_domaint::eval
+
+  Inputs: The expression to be (abstract) evaluated.
+
+ Outputs: The abstract value produced.
+
+ Purpose: Updates the data dependency using the expression.
+
+\*******************************************************************/
+
+single_variable_dependency_domaint variable_dependency_domaint::eval (const exprt &e) {
+  single_variable_dependency_domaint s;
+  s.make_bottom();
+
+  eval_rec(s, e);
+  return s;
+}
+
