@@ -24,9 +24,14 @@ Description: A generic abstract domain that acts as a conventional
 
 typedef std::set<exprt> expression_sett;
   
+template <class domainT>
+class base {
+  typedef domainT thing;
+  int x;
+};
 
 template <class domainT>
-class abstract_environmentt
+class abstract_environmentt //: public base
 {
  public :
   
@@ -42,7 +47,7 @@ class abstract_environmentt
   domainT read(const exprt &e) const;
   void write(const exprt &e, const domainT &d);
 
- protected:
+  // protected:
   template <class abs_domainT>
   struct _abstract_cellt {
     abs_domainT element;
@@ -70,12 +75,14 @@ class abstract_environmentt
 
 
 template<class domainT>
-class abstract_environment_domaint:public ai_domain_baset, abstract_environmentt<domainT>
+class abstract_environment_domaint: public base<domainT>, /*public virtual ai_domain_baset,*/ public virtual abstract_environmentt<domainT>
 {
  public:
+  typedef int locationt;
+  
 
   // Domain interface
-  abstract_environment_domaint() {}
+ abstract_environment_domaint() {}
   
   virtual void transform(
     locationt from,
@@ -86,7 +93,7 @@ class abstract_environment_domaint:public ai_domain_baset, abstract_environmentt
   virtual void output(
     std::ostream &out,
     const ai_baset &ai,
-    const namespacet &ns) const;
+    const namespacet &ns);// const;
   
   // no states
   virtual void make_bottom();

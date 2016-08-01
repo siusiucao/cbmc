@@ -472,6 +472,11 @@ expression_sett abstract_environmentt<domainT>::lookup_rest (const exprt &e) con
 
 
 
+
+
+
+
+
 /*******************************************************************\
 
 Function: abstract_environment_domaint::transform
@@ -484,6 +489,14 @@ Function: abstract_environment_domaint::transform
  Purpose: Compute the abstract transformer for a single instruction
 
 \*******************************************************************/
+#define DEFENSIVE
+
+#ifdef DEFENSIVE
+#define DEFENSIVE_UNHANDLED(X) UNIMPLEMENTED(X)
+#else
+#define DEFENSIVE_UNHANDLED(X) do { } while(0)
+#endif
+
 template<class domainT>
 void abstract_environment_domaint<domainT>::transform(
     locationt from,
@@ -496,64 +509,63 @@ void abstract_environment_domaint<domainT>::transform(
   const goto_programt::instructiont &instruction=*from;
   switch(instruction.type)
   {
-  case GOTO:
-    // TODO : Only use for information flow
-    break;
-
-  case ASSUME:
-  case ASSERT:
-    // Conditions on the program, do not alter the data or information
-    // flow and thus can be ignored.
-    break;
-
-  case OTHER:
-    // Defensive
-    assert(0);
-    break;
-
-  case START_THREAD:
-    break;
-
-  case END_THREAD:
-    break;
-
-  case LOCATION:
-    break;
-
-  case END_FUNCTION:
-    break;
-
-  case ATOMIC_BEGIN:
-    break;
-
-  case ATOMIC_END:
-    break;
-
-  case RETURN:
-    break;
-  
-  case ASSIGN:
-    break;
-
   case DECL:
     break;
     
   case DEAD:
     break;
+
+  case ASSIGN:
+    break;
+
+  case GOTO:
+    // TODO : Only use for information flow
+    break;
+
+  case ASSUME:
+    break;
     
   case FUNCTION_CALL:
     break;
 
-  case THROW:
-    UNIMPLEMENTED("Throw unimplemented");
+  case END_FUNCTION:
+    UNIMPLEMENTED("End_function");
     break;
 
-  case CATCH:
-    UNIMPLEMENTED("Catch unimplemented");
+    /***************************************************************/
+
+  case ASSERT:
+    // Conditions on the program, do not alter the data or information
+    // flow and thus can be ignored.
     break;
     
-  default:;
-    UNIMPLEMENTED("Unrecognised instruction type");
+  case LOCATION:
+    // Can ignore
+    break;
+
+  case RETURN:
+    DEFENSIVE_UNHANDLED("Return instructions are depreciated");
+    break;
+    
+  case START_THREAD:
+  case END_THREAD:
+  case ATOMIC_BEGIN:
+  case ATOMIC_END:
+    DEFENSIVE_UNHANDLED("Threading not supported");
+    break;    
+
+  case THROW:
+  case CATCH:
+    DEFENSIVE_UNHANDLED("Exceptions not handled");
+    break;
+
+  case OTHER:
+    DEFENSIVE_UNHANDLED("Other");
+    break;
+    
+  default:
+    DEFENSIVE_UNHANDLED("Unrecognised instruction type");
+    break;
   }
   #endif
   
@@ -576,19 +588,21 @@ template<class domainT>
 void abstract_environment_domaint<domainT>::output(
     std::ostream &out,
     const ai_baset &ai,
-    const namespacet &ns) const {
+    const namespacet &ns) {// const {
   std::cerr << "abstract_environment_domaint::output()\n";
 
   out << "{\n";
 
-  for (mapt::const_iterator i = dom.begin();
+  out << x;
+#if 0  
+  for (typename mapt::const_iterator i = dom.begin();
        i != dom.end();
        ++i) {
     out << i->first << " -> ";
     i->second.output(out, ai, ns);
     }
   }
-  
+  #endif
   out << "}\n";
 }
   
