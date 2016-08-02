@@ -43,7 +43,7 @@ class abstract_environment_domaint : public ai_domain_baset
   domainT read(const exprt &e) const;
   void write(const exprt &e, const domainT &d);
 
- protected:
+  // protected: // FIXME
   template <class abs_domainT>
   struct _abstract_cellt {
     abs_domainT element;
@@ -111,7 +111,8 @@ class abstract_environment_domaint : public ai_domain_baset
 
 class single_variable_dependency_domaint : public ai_domain_baset
 {
- protected :
+ public :
+  //protected : // FIXME
   typedef std::set<exprt> dependency_sett;
 
   dependency_sett deps;
@@ -161,7 +162,10 @@ class variable_dependency_domaint : public abstract_environment_domaint<single_v
 
 };
 
-typedef ait<variable_dependency_domaint> variable_dependency_ait;
-
+//typedef ait<variable_dependency_domaint> variable_dependency_ait;
+class variable_dependency_ait : public ait<variable_dependency_domaint> {
+ public :
+  void output_json (const goto_modelt &goto_model, std::ostream &out) const;
+};
 
 #endif

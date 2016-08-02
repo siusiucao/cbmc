@@ -985,3 +985,70 @@ single_variable_dependency_domaint variable_dependency_domaint::eval (const expr
   return s;
 }
 
+
+
+#include <util/json.h>
+
+/*******************************************************************\
+
+Function: variable_dependency_ait::output_json
+
+  Inputs: The program analysed and the output stream.
+
+ Outputs: Nothing.
+
+ Purpose: Outputs the abstract domain as JSON.
+
+\*******************************************************************/
+
+void variable_dependency_ait::output_json (const goto_modelt &goto_model, std::ostream &out) const {
+  
+  json_arrayt json_result;
+  
+  forall_goto_functions(f_it, goto_model.goto_functions)
+  {
+    json_objectt &function_graph=json_result.push_back().make_object();
+    
+    function_graph["function"]=json_stringt(id2string(f_it->first));
+    //      function_graph["file name"]=
+    //	json_stringt(id2string(f_it->second.body.instructions.begin().source_location.get_file()));
+    
+    
+    if(f_it->second.body_available())
+    {
+      json_arrayt &insts=function_graph["locations"].make_array();
+
+      forall_goto_program_instructions(i_it, f_it->second.body)
+      {
+	const variable_dependency_domaint &inst_dom = (*this)[i_it];
+
+	json_objectt &dom_output=insts.push_back().make_object();
+
+	for (variable_dependency_domaint::mapt::const_iterator i = inst_dom.dom.begin();
+	     i != inst_dom.dom.end();
+	     ++i)
+	{
+	  json_arrayt &deps = dom_output[as_string(to_symbol_expr(i->first).get_identifier())].make_array();
+
+	  for (single_variable_dependency_domaint::dependency_sett::const_iterator j = i->second.element.deps.begin();
+	       j != i->second.element.deps.end();
+	       ++j)
+	    {
+	      deps.push_back(json_stringt(as_string(to_symbol_expr(*j).get_identifier())));
+	    }
+	    
+	}
+      }
+	
+      function_graph["status"]=json_stringt("analysed");
+    }
+    else
+    {
+      function_graph["status"]=json_stringt("no body provided");
+    }
+  }
+    
+  if(!json_result.array.empty())
+    out << json_result << std::endl;
+}
+

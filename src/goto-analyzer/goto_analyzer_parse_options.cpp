@@ -399,7 +399,26 @@ int goto_analyzer_parse_optionst::doit()
     variable_dependency_ait vda;
 
     vda(goto_model);
-    vda.output(goto_model, std::cout);
+    //  vda.output(goto_model, std::cout);
+    
+    const std::string json_file=cmdline.get_value("json");
+
+    if(json_file.empty() || (json_file=="-"))
+      vda.output_json(goto_model, std::cout);
+    else
+    {
+      std::ofstream ofs(json_file);
+      if(!ofs)
+      {
+        error() << "Failed to open json output `"
+                << json_file << "'" << eom;
+        return 6;
+      }
+
+      vda.output_json(goto_model, ofs);
+      ofs.close();
+    }
+
     
     return 0;
   }
