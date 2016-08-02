@@ -43,6 +43,13 @@ Date: April 2016
 #define DEFENSIVE_UNHANDLED(X) do { } while(0)
 #endif
 
+//#define LOGGING
+#ifdef LOGGING
+#define LOG(X) X
+#else
+#define LOG(X) do { } while(0)
+#endif
+
 
 /*******************************************************************\
 
@@ -494,7 +501,7 @@ void abstract_environment_domaint<domainT>::transform(
     locationt to,
     ai_baset &ai,
     const namespacet &ns) {
-  std::cerr << "abstract_environment_domaint::transform()\n";
+  LOG(std::cerr << "abstract_environment_domaint::transform()\n");
 
   const goto_programt::instructiont &instruction=*from;
   switch(instruction.type)
@@ -599,7 +606,7 @@ void abstract_environment_domaint<domainT>::output(
     std::ostream &out,
     const ai_baset &ai,
     const namespacet &ns) const {
-  std::cerr << "abstract_environment_domaint::output()\n";
+  LOG(std::cerr << "abstract_environment_domaint::output()\n");
 
   out << "{\n";
 
@@ -626,7 +633,7 @@ Function: abstract_environment_domaint::make_bottom
 \*******************************************************************/
 template<class domainT>
 void abstract_environment_domaint<domainT>::make_bottom() {
-  std::cerr << "abstract_environment_domaint::make_bottom()\n";
+  LOG(std::cerr << "abstract_environment_domaint::make_bottom()\n");
 
   for (typename mapt::iterator i = dom.begin();
        i != dom.end();
@@ -650,7 +657,7 @@ Function: abstract_environment_domaint::make_top
 \*******************************************************************/
 template<class domainT>
 void abstract_environment_domaint<domainT>::make_top() {
-  std::cerr << "abstract_environment_domaint::make_top()\n";
+  LOG(std::cerr << "abstract_environment_domaint::make_top()\n");
 
   for (typename mapt::iterator i = dom.begin();
        i != dom.end();
@@ -675,7 +682,7 @@ Function: abstract_environment_domaint::make_entry
 \*******************************************************************/
 template<class domainT>
 void abstract_environment_domaint<domainT>::make_entry() {
-  std::cerr << "abstract_environment_domaint::make_entry()\n";
+  LOG(std::cerr << "abstract_environment_domaint::make_entry()\n");
   assert(0);
 }
   
@@ -695,7 +702,7 @@ template<class domainT>
 bool abstract_environment_domaint<domainT>::merge(const abstract_environment_domaint &b,
 	     locationt from,
 	     locationt to) {
-  std::cerr << "abstract_environment_domaint::merge()\n";
+  LOG(std::cerr << "abstract_environment_domaint::merge()\n");
   
   bool hasChanged = false;
 
