@@ -1,6 +1,6 @@
 CORE
 main.c
-10
+"--unwind 10 --partial-loops"
 ^SIGNAL=0$
 ^VERIFICATION SUCCESSFUL$
 --

@@ -155,7 +155,7 @@ Function:
 #if 0
 int main()
 {
-  assert(strip_string("   x y ")=="xy");
+  assert(strip_string("   x y ")=="x y");
 
   const std::string test=" a,, x , ,";
 
@@ -184,10 +184,11 @@ int main()
   assert(result[1]==" x ");
   assert(result[2]==" ");
 
+  result.clear();
   split_string(test, ',', result, true, true);
   assert(result.size()==2);
   assert(result[0]=="a");
-  assert(result[2]=="x");
+  assert(result[1]=="x");
 
   std::string s1;
   std::string s2;
