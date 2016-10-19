@@ -921,12 +921,35 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     // recalculate numbers, etc.
     goto_functions.update();
   }
-    
+
   // verify and set invariants and pre/post-condition pairs
   if(cmdline.isset("apply-code-contracts"))
   {
     status() << "Applying Code Contracts" << eom;
     code_contracts(symbol_table, goto_functions);
+  }
+
+  if(cmdline.isset("function-inline"))
+  {
+    std::string function=cmdline.get_value("function-inline");
+    assert(!function.empty());
+
+    do_function_pointer_removal();
+
+    status() << "Inlining calls of function `" << function << "'" << eom;
+    goto_function_inline(goto_functions, function, ns, ui_message_handler);
+
+    goto_functions.update();
+    goto_functions.compute_loop_numbers();
+  }
+
+  if(cmdline.isset("partial-inline"))
+  {
+    do_function_pointer_removal();
+    do_partial_inlining();
+
+    goto_functions.update();
+    goto_functions.compute_loop_numbers();
   }
 
   // now do full inlining, if requested
@@ -1358,6 +1381,8 @@ void goto_instrument_parse_optionst::help()
     "Further transformations:\n"
     " --constant-propagator        propagate constants and simplify expressions\n"
     " --inline                     perform full inlining\n"
+    " --partial-inline             perform partial inlining\n"
+    " --function-inline <function> transitively inline all calls <function> makes\n"
     " --add-library                add models of C library functions\n"
     "\n"
     "Other options:\n"
