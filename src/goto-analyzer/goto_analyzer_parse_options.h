@@ -41,7 +41,10 @@ class optionst;
   "(dependence-graph)" \
   "(show)(verify)(simplify):" \
   "(flow-sensitive)(concurrent)" \
-  "(no-simplify-slicing)"
+  "(no-simplify-slicing)" \
+  "(unwind-bounds)" \
+  "(unwind-bounds-threshold):" \
+  "(unwindset)"
 
 class goto_analyzer_parse_optionst:
   public parse_options_baset,

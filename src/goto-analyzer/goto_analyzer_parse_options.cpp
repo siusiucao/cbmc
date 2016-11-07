@@ -20,6 +20,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/remove_function_pointers.h>
 #include <goto-programs/remove_virtual_functions.h>
 #include <goto-programs/remove_returns.h>
+#include <goto-programs/remove_skip.h>
 #include <goto-programs/remove_vector.h>
 #include <goto-programs/remove_complex.h>
 #include <goto-programs/remove_asm.h>
@@ -33,6 +34,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <analyses/is_threaded.h>
 #include <analyses/goto_check.h>
 #include <analyses/local_may_alias.h>
+#include <analyses/unwind_bounds.h>
 
 #include <langapi/mode.h>
 
@@ -467,6 +469,54 @@ int goto_analyzer_parse_optionst::doit()
       }
     }
 
+  if(cmdline.isset("unwind-bounds"))
+  {
+    namespacet ns(goto_model.symbol_table);
+
+    remove_skip(goto_model.goto_functions, true);
+    goto_model.goto_functions.update();
+    goto_model.goto_functions.compute_loop_numbers();
+
+    unwind_boundst *ub;
+
+    if(cmdline.isset("unwind-bounds-threshold"))
+    {
+      unsigned threshold=unsafe_string2unsigned(
+        cmdline.get_value("unwind-bounds-threshold"));
+      ub=new unwind_boundst(goto_model, true, threshold);
+    }
+    else
+    {
+      ub=new unwind_boundst(goto_model);
+    }
+    unwind_boundst &unwind_bounds=*ub;
+
+    unwind_bounds();
+
+    if(!options.get_bool_option("text"))
+    {
+      error() << "Only plain text output supported" << eom;
+      return 6;
+    }
+
+    if(cmdline.isset("unwindset"))
+      unwind_bounds.output_unwindset(*out);
+    else
+      unwind_bounds.output(*out);
+
+    delete ub;
+
+#if 0
+    goto_model.output(std::cout);
+#endif
+
+    return 0;
+  }
+
+  // Run the analysis
+  bool result = true;
+  if (options.get_bool_option("show"))
+    result = static_show_domain(goto_model, options, get_message_handler(), *out);
 
     // Run the analysis
     bool result = true;
@@ -710,6 +760,9 @@ void goto_analyzer_parse_optionst::help()
     " --dot file_name              output results in DOT format to given file\n"
     "\n"
     "Other analyses:\n"
+    " --unwind-bounds              compute unwind bounds\n"
+    " --unwind-bounds-threshold    maximum bound\n"
+    " --unwindset                  output unwind set\n"
     " --taint file_name            perform taint analysis using rules in given file\n"
     " --unreachable-instructions   list dead code\n"
     "\n"
