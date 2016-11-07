@@ -9,6 +9,8 @@ Author: Peter Schrammel
 #ifndef CPROVER_CONSTANT_PROPAGATOR_H
 #define CPROVER_CONSTANT_PROPAGATOR_H
 
+#include <iostream>
+
 #include "ai.h"
 
 #include "replace_symbol_ext.h"
@@ -65,7 +67,7 @@ public:
     inline void set_to_top()
     {
       replace_const.clear();
-      is_bottom = false;
+      is_bottom=false;
     }
 
   };

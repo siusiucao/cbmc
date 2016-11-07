@@ -175,13 +175,14 @@ void constant_propagator_domaint::transform(
   const namespacet &ns)
 {
   #ifdef DEBUG
+  std::cout << "Transform from/to:\n";
   std::cout << from->location_number << " --> "
             << to->location_number << '\n';
   #endif
 
 #ifdef DEBUG
-  std::cout << "before:\n";
-  output(std::cout,ai,ns);
+  std::cout << "Before:\n";
+  output(std::cout, ai, ns);
 #endif
 
   if(from->is_decl())
@@ -205,19 +206,15 @@ void constant_propagator_domaint::transform(
   {
 	exprt g;
     if(from->get_target()==to)
-      g = simplify_expr(from->guard, ns);
+      g=simplify_expr(from->guard, ns);
     else
-      g = simplify_expr(not_exprt(from->guard), ns);
+      g=simplify_expr(not_exprt(from->guard), ns);
 
     if (g.is_false())
      values.set_to_bottom();
     else
     {
-      //TODO: we need to support widening!
-      if (g.is_constant())
-        values.set_to_top();
-      else
-        two_way_propagate_rec(g, ns);
+      two_way_propagate_rec(g, ns);
     }
   }
   else if(from->is_dead())
@@ -241,20 +238,24 @@ void constant_propagator_domaint::transform(
          identifier=="__CPROVER_clear_may" ||
          identifier=="__CPROVER_clear_must")
       {
+        // no effect on constants
       }
       else
+      {
         values.set_to_top();
+      }
     }
     else
+    {
       values.set_to_top();
+    }
   }
 
 #ifdef DEBUG
-  std::cout << "after:\n";
-  output(std::cout,ai,ns);
+  std::cout << "After:\n";
+  output(std::cout, ai, ns);
 #endif
 }
-
 
 /*******************************************************************\
 
@@ -370,13 +371,14 @@ Function: constant_propagator_domaint::is_array_constant
 
 \*******************************************************************/
 
-bool constant_propagator_domaint::valuest::is_array_constant(const exprt &expr) const
+bool constant_propagator_domaint::valuest::is_array_constant(
+  const exprt &expr) const
 {
   exprt new_expr = concatenate_array_id(expr.op0(),
 		  expr.op1(), expr.type());
 
-  if (replace_const.expr_map.find(to_symbol_expr(new_expr).get_identifier()) ==
-         replace_const.expr_map.end())
+  if (replace_const.expr_map.find(to_symbol_expr(new_expr).get_identifier())==
+      replace_const.expr_map.end())
     return false;
 
   return true;
@@ -434,7 +436,8 @@ Function: constant_propagator_domaint::valuest::is_constant_address_of
 
 \*******************************************************************/
 
-bool constant_propagator_domaint::valuest::is_constant_address_of(const exprt &expr) const
+bool constant_propagator_domaint::valuest::is_constant_address_of(
+  const exprt &expr) const
 {
   if(expr.id()==ID_index)
     return is_constant_address_of(to_index_expr(expr).array()) &&
@@ -500,14 +503,26 @@ void constant_propagator_domaint::valuest::output(
   out << "const map:\n";
 
   if(is_bottom)
+  {
     out << "  bottom\n";
+    assert(replace_const.expr_map.empty());
+    return;
+  }
+
+  assert(!is_bottom);
+  if(replace_const.expr_map.empty())
+  {
+    out << "top\n";
+    return;
+  }
 
   for(replace_symbolt::expr_mapt::const_iterator 
-        it=replace_const.expr_map.begin();
+      it=replace_const.expr_map.begin();
       it!=replace_const.expr_map.end();
       ++it)
-    out << ' ' << it->first << "=" <<
-      from_expr(ns, "", it->second) << '\n';
+  {
+    out << ' ' << it->first << "=" << from_expr(ns, "", it->second) << '\n';
+  }
 }
 
 /*******************************************************************\
@@ -542,6 +557,7 @@ Function: constant_propagator_domaint::valuest::merge
 
 \*******************************************************************/
 
+#if 0
 bool constant_propagator_domaint::valuest::merge(const valuest &src)
 {
   //nothing to do 
@@ -581,6 +597,81 @@ bool constant_propagator_domaint::valuest::merge(const valuest &src)
       it++;
     }
   }
+  return changed;
+}
+#endif
+
+bool constant_propagator_domaint::valuest::merge(const valuest &src)
+{
+  // dummy
+  const symbol_tablet symbol_table;
+  const namespacet ns(symbol_table);
+
+  // nothing to do
+  if(src.is_bottom)
+    return false;
+
+  // just copy
+  if(is_bottom)
+  {
+    assert(!src.is_bottom);
+    replace_const=src.replace_const; // copy
+    is_bottom=src.is_bottom;
+    return true;
+  }
+
+  assert(!is_bottom && !src.is_bottom);
+
+  bool changed=false;
+
+  replace_symbol_extt::expr_mapt &expr_map=replace_const.expr_map;
+  const replace_symbol_extt::expr_mapt &src_expr_map=src.replace_const.expr_map;
+
+  // handle top
+  if(src_expr_map.empty())
+  {
+    // change if it was not top
+    changed=!expr_map.empty();
+
+    set_to_top();
+    assert(expr_map.empty());
+    assert(!is_bottom);
+
+    return changed;
+  }
+
+  // remove those that are
+  // - different in src
+  // - do not exist in src
+  for(replace_symbolt::expr_mapt::iterator it=expr_map.begin();
+      it!=expr_map.end();)
+  {
+    const irep_idt id=it->first;
+    const exprt &expr=it->second;
+
+    replace_symbolt::expr_mapt::const_iterator s_it;
+    s_it=src_expr_map.find(id);
+
+    if(s_it!=src_expr_map.end())
+    {
+      // check value
+      const exprt &src_expr=s_it->second;
+
+      if(expr!=src_expr)
+      {
+        it=expr_map.erase(it);
+        changed=true;
+      }
+      else
+        it++;
+    }
+    else
+    {
+      it=expr_map.erase(it);
+      changed=true;
+    }
+  }
+
   return changed;
 }
 
@@ -647,7 +738,31 @@ bool constant_propagator_domaint::merge(
   locationt from,
   locationt to)
 {
-  return values.merge(other.values);
+  const symbol_tablet symbol_table;
+  const namespacet ns(symbol_table);
+
+#if 0
+  if(to->is_skip())
+  {
+    std::cout << "This:\n";
+    values.output(std::cout, ns);
+    std::cout << "Other:\n";
+    other.values.output(std::cout, ns);
+  }
+#endif
+
+  bool b;
+  b=values.merge(other.values);
+
+#if 0
+  if(to->is_skip())
+  {
+    std::cout << "Merge result:\n";
+    values.output(std::cout, ns);
+  }
+#endif
+
+  return b;
 }
 
 /*******************************************************************\
