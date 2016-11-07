@@ -19,6 +19,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/symbol_table.h>
 #include <util/source_location.h>
 #include <util/std_expr.h>
+#include <util/i2string.h>
 
 typedef enum { NO_INSTRUCTION_TYPE=0,
                GOTO=1,          // branch, possibly guarded
