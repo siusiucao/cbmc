@@ -1,4 +1,4 @@
-FUTURE
+CORE
 20160804_unwind_2.c
 --unwind-bounds
 ^reset.0: 4$

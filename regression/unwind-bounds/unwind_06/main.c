@@ -5,8 +5,6 @@ void func(int n)
 {
   int i;
 
-  // The current constant propagator works function-wise, hence we do not get a
-  // bound for this loop as the argument is not handled
   for (i = 0; i < n; i++) {} // func.0: 2
 }
 

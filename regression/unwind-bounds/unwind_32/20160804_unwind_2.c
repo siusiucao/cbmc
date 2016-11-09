@@ -8,3 +8,9 @@ void reset(void)
   for (i=0; i < g_a_SZ; i++)    //  4 times
     g_a[i] = 0;
 }
+
+int main()
+{
+  reset();
+}
+

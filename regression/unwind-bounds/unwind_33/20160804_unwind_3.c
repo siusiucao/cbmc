@@ -15,3 +15,9 @@ void reset_all(void)
       g_ram[i].data[j] = 0;
 }
 
+int main()
+{
+  reset_all();
+  return 0;
+}
+
