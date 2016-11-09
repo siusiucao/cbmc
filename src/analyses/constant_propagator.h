@@ -18,10 +18,36 @@ Author: Peter Schrammel
 class constant_propagator_domaint:public ai_domain_baset
 {
 public:
-  virtual void transform(locationt, locationt, ai_baset &, const namespacet &);
-  virtual void output(std::ostream &, const ai_baset &, const namespacet &) const;
-  bool merge(const constant_propagator_domaint &, locationt, locationt);
-  virtual exprt domain_simplify (const exprt &condition, const namespacet &ns, const bool lhs = false) const;
+  virtual void transform(
+    locationt,
+    locationt,
+    ai_baset &ai_base,
+    const namespacet &ns);
+
+  virtual void output(
+    std::ostream &out,
+    const ai_baset &ai_base,
+    const namespacet &ns) const;
+
+  bool merge(
+    const constant_propagator_domaint &other,
+    locationt from,
+    locationt to);
+
+  virtual void make_bottom()
+  {
+    values.set_to_bottom();
+  }
+
+  virtual void make_top()
+  {
+    values.set_to_top();
+  }
+
+  virtual void make_entry()
+  {
+    make_top();
+  }
 
   struct valuest
   {
@@ -32,36 +58,15 @@ public:
     replace_symbol_extt replace_const;
     bool is_bottom;
     
-    void output(std::ostream &, const namespacet &) const;
-    
     bool merge(const valuest &src);
     bool meet(const valuest &src);
     
+    // set whole state
+
     inline void set_to_bottom()
     {
       replace_const.clear();
-      is_bottom = true;
-    }
-    
-    inline void set_to(const irep_idt &lhs_id, const exprt &rhs_val)
-    {
-      replace_const.expr_map[lhs_id] = rhs_val;
-      is_bottom = false;
-    }
-
-    inline void set_to(const symbol_exprt &lhs, const exprt &rhs_val)
-    {
-      set_to(lhs.get_identifier(), rhs_val);
-    }
-
-    bool is_constant(const exprt &expr) const;
-    bool is_array_constant(const exprt &expr) const;
-    bool is_constant_address_of(const exprt &expr) const;
-    bool set_to_top(const irep_idt &id);
-
-    inline bool set_to_top(const symbol_exprt &expr)
-    {
-      return set_to_top(expr.get_identifier());
+      is_bottom=true;
     }
     
     inline void set_to_top()
@@ -70,6 +75,37 @@ public:
       is_bottom=false;
     }
 
+    // set single identifier
+
+    inline void set_to(const irep_idt &lhs_id, const exprt &rhs_val)
+    {
+      replace_const.expr_map[lhs_id]=rhs_val;
+      is_bottom=false;
+    }
+
+    inline void set_to(const symbol_exprt &lhs, const exprt &rhs_val)
+    {
+      set_to(lhs.get_identifier(), rhs_val);
+    }
+
+    inline bool set_to_top(const symbol_exprt &expr)
+    {
+      return set_to_top(expr.get_identifier());
+    }
+
+    bool set_to_top(const irep_idt &id);
+
+    bool is_constant(const exprt &expr) const;
+    bool is_array_constant(const exprt &expr) const;
+    bool is_constant_address_of(const exprt &expr) const;
+
+    bool is_empty() const
+    {
+      assert(replace_const.type_map.empty());
+      return replace_const.expr_map.empty();
+    }
+
+    void output(std::ostream &out, const namespacet &ns) const;
   };
 
   valuest values;
@@ -81,12 +117,14 @@ protected:
     exprt rhs,
     const namespacet &ns) const;
 
-  void assign_rec(valuest &values,
-                  const exprt &lhs, const exprt &rhs,
-                  const namespacet &ns);
+  void assign_rec(
+    valuest &values,
+    const exprt &lhs, const exprt &rhs,
+    const namespacet &ns);
 
-  bool two_way_propagate_rec(const exprt &expr,
-                             const namespacet &ns);
+  bool two_way_propagate_rec(
+    const exprt &expr,
+    const namespacet &ns);
 };
 
 class constant_propagator_ait:public ait<constant_propagator_domaint>

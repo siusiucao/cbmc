@@ -242,7 +242,7 @@ void constant_propagator_domaint::transform(
       }
       else
       {
-        values.set_to_top();
+        //values.set_to_top();
       }
     }
     else
@@ -463,22 +463,22 @@ Function: constant_propagator_domaint::valuest::set_to_top
 
  Outputs:
 
- Purpose: Do not call this when iterating over replace_const.expr_map!
+ Purpose: Do not call when iterating over replace_const.expr_map!
 
 \*******************************************************************/
 
 bool constant_propagator_domaint::valuest::set_to_top(const irep_idt &id)
 {
-  bool result = false;
+  bool result=false;
 
-  replace_symbolt::expr_mapt::iterator r_it =
-    replace_const.expr_map.find(id);
+  replace_symbolt::expr_mapt::iterator r_it
+    =replace_const.expr_map.find(id);
 
-  if(r_it != replace_const.expr_map.end())
+  if(r_it!=replace_const.expr_map.end())
   {
     assert(!is_bottom);
     replace_const.expr_map.erase(r_it);
-    result = true;
+    result=true;
   }
 
   return result;
@@ -616,7 +616,7 @@ bool constant_propagator_domaint::valuest::merge(const valuest &src)
   {
     assert(!src.is_bottom);
     replace_const=src.replace_const; // copy
-    is_bottom=src.is_bottom;
+    is_bottom=false;
     return true;
   }
 
