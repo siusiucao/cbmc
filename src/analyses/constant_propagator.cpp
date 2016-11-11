@@ -224,30 +224,84 @@ void constant_propagator_domaint::transform(
   }
   else if(from->is_function_call())
   {
-    const exprt &function=to_code_function_call(from->code).function();
+    const code_function_callt &function_call=to_code_function_call(from->code);
+    const exprt &function=function_call.function();
     
+    locationt next=from;
+    next++;
+
     if(function.id()==ID_symbol)
     {
-      const irep_idt &identifier=to_symbol_expr(function).get_identifier();
+      // called function identifier
+      const symbol_exprt &symbol_expr=to_symbol_expr(function);
+      const irep_idt id=symbol_expr.get_identifier();
 
-      if(identifier=="__CPROVER_set_must" ||
-         identifier=="__CPROVER_get_must" ||
-         identifier=="__CPROVER_set_may" ||
-         identifier=="__CPROVER_get_may" ||
-         identifier=="__CPROVER_cleanup" ||
-         identifier=="__CPROVER_clear_may" ||
-         identifier=="__CPROVER_clear_must")
+      if(to==next)
       {
-        // no effect on constants
+        if(id=="__CPROVER_set_must" ||
+           id=="__CPROVER_get_must" ||
+           id=="__CPROVER_set_may" ||
+           id=="__CPROVER_get_may" ||
+           id=="__CPROVER_cleanup" ||
+           id=="__CPROVER_clear_may" ||
+           id=="__CPROVER_clear_must")
+        {
+          // no effect on constants
+        }
+        else
+        {
+          values.set_to_top();
+        }
       }
       else
       {
-        //values.set_to_top();
+        // we have an actual call
+
+        // parameters of called function
+        const symbolt &symbol=ns.lookup(id);
+        const code_typet &code_type=to_code_type(symbol.type);
+        const code_typet::parameterst &parameters=code_type.parameters();
+
+        const code_function_callt::argumentst &arguments
+          =function_call.arguments();
+
+        unsigned n=std::min(arguments.size(), parameters.size());
+
+        for(unsigned i=0; i<n; i++)
+        {
+          const symbol_exprt &parameter_expr
+            =symbol_exprt(parameters[i].get_identifier(), arguments[i].type());
+
+          assign_rec(values, parameter_expr, arguments[i], ns);
+        }
       }
     }
     else
     {
+      assert(to==next);
       values.set_to_top();
+    }
+  }
+  else if(from->is_end_function())
+  {
+    // erase parameters
+
+    const irep_idt id=from->function;
+    const symbolt &symbol=ns.lookup(id);
+
+    const code_typet &type=to_code_type(symbol.type);
+
+    typedef code_typet::parameterst parameterst;
+    const parameterst &parameters=type.parameters();
+
+    for(parameterst::const_iterator it=parameters.begin();
+        it!=parameters.end(); it++)
+    {
+      // normal parameter
+      const irep_idt par=it->get_identifier();
+
+      // this erases the parameter from the map
+      values.set_to_top(par);
     }
   }
 
