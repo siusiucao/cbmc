@@ -19,10 +19,12 @@ public:
   goto_inlinet(
     goto_functionst &goto_functions,
     const namespacet &ns,
-    message_handlert &message_handler):
+    message_handlert &message_handler,
+    bool adjust_function):
     messaget(message_handler),
     goto_functions(goto_functions),
-    ns(ns)
+    ns(ns),
+    adjust_function(adjust_function)
   {
   }
 
@@ -74,6 +76,8 @@ protected:
   goto_functionst &goto_functions;
   const namespacet &ns;
   
+  const bool adjust_function;
+
   void goto_inline_nontransitive(
     const irep_idt identifier,
     goto_functiont &goto_function,
@@ -129,14 +133,14 @@ protected:
     const exprt &constrain);
     
   void parameter_assignments(
-    const source_locationt &source_location,
+      const goto_programt::targett target,
     const irep_idt &function_name,
     const code_typet &code_type,
     const exprt::operandst &arguments,
     goto_programt &dest);
 
   void parameter_destruction(
-    const source_locationt &source_location,
+    const goto_programt::targett target,
     const irep_idt &function_name,
     const code_typet &code_type,
     goto_programt &dest);

@@ -33,12 +33,14 @@ Function: goto_inlinet::parameter_assignments
 \*******************************************************************/
 
 void goto_inlinet::parameter_assignments(
-  const source_locationt &source_location, // call source location
+  const goto_programt::targett target,
   const irep_idt &function_name, // name of called function
   const code_typet &code_type, // type of called function
   const exprt::operandst &arguments, // arguments of call
   goto_programt &dest)
 {
+  const source_locationt &source_location=target->source_location;
+
   // iterates over the operands
   exprt::operandst::const_iterator it1=arguments.begin();
 
@@ -73,7 +75,7 @@ void goto_inlinet::parameter_assignments(
       decl->code=code_declt(symbol.symbol_expr());
       decl->code.add_source_location()=source_location;
       decl->source_location=source_location;
-      decl->function=function_name; 
+      decl->function=adjust_function?target->function:function_name;
     }
 
     // this is the actual parameter
@@ -145,7 +147,8 @@ void goto_inlinet::parameter_assignments(
       dest.add_instruction(ASSIGN);
       dest.instructions.back().source_location=source_location;
       dest.instructions.back().code.swap(assignment);
-      dest.instructions.back().function=function_name;      
+      dest.instructions.back().function
+        =adjust_function?target->function:function_name;
     }
 
     if(it1!=arguments.end())
@@ -171,11 +174,13 @@ Function: goto_inlinet::parameter_destruction
 \*******************************************************************/
 
 void goto_inlinet::parameter_destruction(
-  const source_locationt &source_location, // call source location
+  const goto_programt::targett target,
   const irep_idt &function_name, // name of called function
   const code_typet &code_type, // type of called function
   goto_programt &dest)
 {
+  const source_locationt &source_location=target->source_location;
+
   const code_typet::parameterst &parameter_types=
     code_type.parameters();
   
@@ -204,7 +209,7 @@ void goto_inlinet::parameter_destruction(
       dead->code=code_deadt(symbol.symbol_expr());
       dead->code.add_source_location()=source_location;
       dead->source_location=source_location;
-      dead->function=function_name; 
+      dead->function=adjust_function?target->function:function_name;
     }
   }
 }
@@ -417,14 +422,20 @@ void goto_inlinet::insert_function_body(
   assert(tmp2.instructions.back().is_end_function());
   tmp2.instructions.back().type=LOCATION;
 
+  if(adjust_function)
+  {
+    Forall_goto_program_instructions(i_it, tmp2)
+    {
+      i_it->function=target->function;
+    }
+  }
+
   replace_return(tmp2, lhs, constrain);
 
   goto_programt tmp;
-  parameter_assignments(target->source_location, identifier, goto_function.type,
-    arguments, tmp);
+  parameter_assignments(target, identifier, goto_function.type, arguments, tmp);
   tmp.destructive_append(tmp2);
-  parameter_destruction(target->source_location, identifier, goto_function.type,
-    tmp);
+  parameter_destruction(target, identifier, goto_function.type, tmp);
 
   if(goto_function.is_hidden())
   {
@@ -1074,7 +1085,8 @@ Function: goto_inline
 
 void goto_inline(
   goto_modelt &goto_model,
-  message_handlert &message_handler)
+  message_handlert &message_handler,
+  bool adjust_function)
 {
   const namespacet ns(goto_model.symbol_table);
   goto_inline(goto_model.goto_functions, ns, message_handler);
@@ -1095,9 +1107,15 @@ Function: goto_inline
 void goto_inline(
   goto_functionst &goto_functions,
   const namespacet &ns,
-  message_handlert &message_handler)
+  message_handlert &message_handler,
+  bool adjust_function)
 {
-  goto_inlinet goto_inline(goto_functions, ns, message_handler);
+  goto_inlinet goto_inline(
+    goto_functions,
+    ns,
+    message_handler,
+    adjust_function);
+
   typedef goto_functionst::goto_functiont goto_functiont;
   
   try
@@ -1187,7 +1205,8 @@ Function: goto_partial_inline
 void goto_partial_inline(
   goto_modelt &goto_model,
   message_handlert &message_handler,
-  unsigned smallfunc_limit)
+  unsigned smallfunc_limit,
+  bool adjust_function)
 {
   const namespacet ns(goto_model.symbol_table);
   goto_partial_inline(goto_model.goto_functions, ns, message_handler,
@@ -1210,12 +1229,14 @@ void goto_partial_inline(
   goto_functionst &goto_functions,
   const namespacet &ns,
   message_handlert &message_handler,
-  unsigned smallfunc_limit)
+  unsigned smallfunc_limit,
+  bool adjust_function)
 {
   goto_inlinet goto_inline(
     goto_functions,
     ns,
-    message_handler);
+    message_handler,
+    adjust_function);
   
   typedef goto_functionst::goto_functiont goto_functiont;
 
@@ -1310,7 +1331,8 @@ Function: goto_function_inline
 void goto_function_inline(
   goto_modelt &goto_model,
   const irep_idt function,
-  message_handlert &message_handler)
+  message_handlert &message_handler,
+  bool adjust_function)
 {
   const namespacet ns(goto_model.symbol_table);
   goto_function_inline(goto_model.goto_functions, function, ns,
@@ -1333,12 +1355,14 @@ void goto_function_inline(
   goto_functionst &goto_functions,
   const irep_idt function,
   const namespacet &ns,
-  message_handlert &message_handler)
+  message_handlert &message_handler,
+  bool adjust_function)
 {
   goto_inlinet goto_inline(
     goto_functions,
     ns,
-    message_handler);
+    message_handler,
+    adjust_function);
 
   goto_functionst::function_mapt::iterator f_it
     =goto_functions.function_map.find(function);
