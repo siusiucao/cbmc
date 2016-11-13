@@ -937,7 +937,12 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     do_function_pointer_removal();
 
     status() << "Inlining calls of function `" << function << "'" << eom;
-    goto_function_inline(goto_functions, function, ns, ui_message_handler);
+    goto_function_inline(
+      goto_functions,
+      function,
+      ns,
+      ui_message_handler,
+      true);
 
     goto_functions.update();
     goto_functions.compute_loop_numbers();
@@ -946,7 +951,9 @@ void goto_instrument_parse_optionst::instrument_goto_program()
   if(cmdline.isset("partial-inline"))
   {
     do_function_pointer_removal();
-    do_partial_inlining();
+
+    status() << "Partial inlining" << eom;
+    goto_partial_inline(goto_functions, ns, ui_message_handler, true);
 
     goto_functions.update();
     goto_functions.compute_loop_numbers();
@@ -968,7 +975,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     }
 
     status() << "Performing full inlining" << eom;
-    goto_inline(goto_functions, ns, ui_message_handler);
+    goto_inline(goto_functions, ns, ui_message_handler, true);
   }
 
   if(cmdline.isset("constant-propagator"))
