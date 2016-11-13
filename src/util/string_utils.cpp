@@ -7,7 +7,6 @@ Author: Daniel Poetzl
 \*******************************************************************/
 
 #include <cassert>
-#include <stdexcept>
 
 #include "string_utils.h"
 
@@ -133,7 +132,7 @@ void split_string(
 
   split_string(s, delim, result, strip);
   if(result.size()!=2)
-    throw std::invalid_argument("number of parts != 2");
+    throw "split string did not generate exactly 2 parts";
 
   left=result[0];
   right=result[1];

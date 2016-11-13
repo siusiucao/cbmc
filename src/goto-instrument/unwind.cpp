@@ -7,12 +7,9 @@ Author: Daniel Kroening, kroening@kroening.com
 
 \*******************************************************************/
 
-#include <stdexcept>
-#include <iostream>
-
 #include <util/std_expr.h>
-#include <goto-programs/goto_functions.h>
 #include <util/string_utils.h>
+#include <goto-programs/goto_functions.h>
 
 #include "unwind.h"
 #include "loop_utils.h"
@@ -54,7 +51,7 @@ void parse_unwindset(const std::string &us, unwind_sett &unwind_set)
     int loop_bound=std::stoi(bound);
 
     if(loop_bound<-1)
-      throw std::invalid_argument("given unwind bound < -1");
+      throw "given unwind bound < -1";
 
     unwind_set[func][loop_id]=loop_bound;
   }
@@ -144,8 +141,6 @@ void goto_unwindt::unwind(
   const unsigned k,
   const unwind_strategyt unwind_strategy) const
 {
-  assert(k>=0);
-
   std::vector<goto_programt::targett> iteration_points;
   unwind(goto_program, loop_head, loop_exit, k, unwind_strategy,
          iteration_points);
@@ -171,13 +166,11 @@ void goto_unwindt::unwind(
   const unwind_strategyt unwind_strategy,
   std::vector<goto_programt::targett> &iteration_points) const
 {
-  assert(k>=0);
   assert(iteration_points.empty());
   assert(loop_head->location_number<loop_exit->location_number);
 
   // rest program after unwound part
   goto_programt rest_program;
-  assert(rest_program.instructions.empty());
 
   if(unwind_strategy==PARTIAL)
   {
@@ -286,8 +279,6 @@ void goto_unwindt::unwind(
   }
   else
   {
-    assert(k==0);
-
     // insert skip for loop body
 
     goto_programt::targett t_skip=goto_program.insert_before(loop_head);
@@ -379,18 +370,18 @@ void goto_unwindt::unwind(
 {
   assert(k>=-1);
 
-  const irep_idt func=goto_program.instructions.begin()->function;
-  assert(!func.empty());
-
   for(goto_programt::const_targett i_it=goto_program.instructions.begin();
       i_it!=goto_program.instructions.end(); i_it++)
   {
     if(!i_it->is_backwards_goto())
       continue;
 
-    unsigned loop_id=i_it->loop_number;
+    const irep_idt func=i_it->function;
+    assert(!func.empty());
 
-    int final_k=get_k(func, loop_id, k, unwind_set);
+    unsigned loop_number=i_it->loop_number;
+
+    int final_k=get_k(func, loop_number, k, unwind_set);
 
     if(final_k==-1)
       continue;

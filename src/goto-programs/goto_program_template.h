@@ -307,7 +307,6 @@ public:
     return instructions.insert(target, instructiont());
   }
 
-
   //! Insertion after the given target
   //! \return newly inserted location
   inline targett insert_after(targett target)
