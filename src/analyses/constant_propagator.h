@@ -19,8 +19,8 @@ class constant_propagator_domaint:public ai_domain_baset
 {
 public:
   virtual void transform(
-    locationt,
-    locationt,
+    locationt from,
+    locationt to,
     ai_baset &ai_base,
     const namespacet &ns);
 
@@ -52,7 +52,7 @@ public:
   struct valuest
   {
   public:
-    valuest():is_bottom(true) { }
+    valuest():is_bottom(true) {}
     
     // maps variables to constants
     replace_symbol_extt replace_const;
@@ -77,15 +77,15 @@ public:
 
     // set single identifier
 
-    inline void set_to(const irep_idt &lhs_id, const exprt &rhs_val)
+    inline void set_to(const irep_idt &lhs, const exprt &rhs)
     {
-      replace_const.expr_map[lhs_id]=rhs_val;
+      replace_const.expr_map[lhs]=rhs;
       is_bottom=false;
     }
 
-    inline void set_to(const symbol_exprt &lhs, const exprt &rhs_val)
+    inline void set_to(const symbol_exprt &lhs, const exprt &rhs)
     {
-      set_to(lhs.get_identifier(), rhs_val);
+      set_to(lhs.get_identifier(), rhs);
     }
 
     inline bool set_to_top(const symbol_exprt &expr)
@@ -109,14 +109,8 @@ public:
   };
 
   valuest values;
-  
-protected:
-  void assign(
-    valuest &dest,
-    const symbol_exprt &lhs,
-    exprt rhs,
-    const namespacet &ns) const;
 
+protected:
   void assign_rec(
     valuest &values,
     const exprt &lhs, const exprt &rhs,

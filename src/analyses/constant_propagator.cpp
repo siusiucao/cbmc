@@ -87,73 +87,23 @@ Function: constant_propagator_domaint::assign_rec
 
 void constant_propagator_domaint::assign_rec(
   valuest &values,
-  const exprt &lhs, const exprt &rhs,
+  const exprt &lhs,
+  const exprt &rhs,
   const namespacet &ns)
 {
-  const typet & lhs_type = ns.follow(lhs.type());
-  const typet & rhs_type = ns.follow(rhs.type());
+  if(lhs.id()!=ID_symbol)
+    return;
 
-#ifdef DEBUG
-  std::cout << "assign: " << from_expr(ns, "", lhs)
-            << " := " << from_type(ns, "", rhs_type) << std::endl;
-#endif
+  const symbol_exprt &s=to_symbol_expr(lhs);
 
-  if(lhs.id()==ID_symbol && rhs.id()==ID_if)
-  {
-	exprt cond=rhs.op0();
-	assert(cond.operands().size()==2);
-	if(values.is_constant(cond.op0())
-			&& values.is_constant(cond.op1()))
-	{
-      if(cond.op0().id()==ID_index)
-      {
-    	exprt index=cond.op0();
-        exprt new_expr=concatenate_array_id(index.op0(), index.op1(), index.type());
-        values.replace_const(new_expr);
-        cond.op0()=new_expr;
-        cond = simplify_expr(cond,ns);
-      }
-      else
-        assert(0);
+  exprt tmp=rhs;
+  values.replace_const(tmp);
+  tmp=simplify_expr(tmp, ns);
 
-      assign(values, to_symbol_expr(lhs), cond, ns);
-	}
-  }
-  else if(lhs.id()==ID_symbol && rhs_type.id()!=ID_array
-                         && rhs_type.id()!=ID_struct
-                         && rhs_type.id()!=ID_union)
-  {
-    if(values.is_constant(rhs))
-      assign(values, to_symbol_expr(lhs), rhs, ns);
-    else
-      values.set_to_top(to_symbol_expr(lhs));
-  }
-  else if(lhs.id()==ID_symbol && lhs_type.id()==ID_array
-		                       && rhs_type.id()==ID_array)
-  {
-	exprt new_expr;
-	mp_integer idx=0;
-    forall_operands(it, rhs)
-	{
-  	  new_expr=concatenate_array_id(lhs, idx, it->type());
-  	  assign(values, to_symbol_expr(new_expr), *it, ns);
-  	  idx = idx +1;
-	}
-  }
-  else if (lhs.id()==ID_index)
-  {
-	if (values.is_constant(lhs.op1())
-	 && values.is_constant(rhs))
-	{
-	  exprt new_expr=concatenate_array_id(lhs.op0(), lhs.op1(), rhs.type());
-      assign(values, to_symbol_expr(new_expr), rhs, ns);
-	}
-  }
-#if 0
-  else //TODO: could make field or array element-sensitive
-  {
-  }
-#endif
+  if(tmp.is_constant())
+    values.set_to(s, tmp);
+  else
+    values.set_to_top(s);
 }
 
 /*******************************************************************\
@@ -174,11 +124,11 @@ void constant_propagator_domaint::transform(
   ai_baset &ai,
   const namespacet &ns)
 {
-  #ifdef DEBUG
+#ifdef DEBUG
   std::cout << "Transform from/to:\n";
   std::cout << from->location_number << " --> "
             << to->location_number << '\n';
-  #endif
+#endif
 
 #ifdef DEBUG
   std::cout << "Before:\n";
@@ -194,8 +144,8 @@ void constant_propagator_domaint::transform(
   else if(from->is_assign())
   {
     const code_assignt &assignment=to_code_assign(from->code);
-    const exprt &lhs = assignment.lhs();
-    const exprt &rhs = assignment.rhs();
+    const exprt &lhs=assignment.lhs();
+    const exprt &rhs=assignment.rhs();
     assign_rec(values, lhs, rhs, ns);
   }
   else if(from->is_assume())
@@ -205,6 +155,7 @@ void constant_propagator_domaint::transform(
   else if(from->is_goto())
   {
 	exprt g;
+
     if(from->get_target()==to)
       g=simplify_expr(from->guard, ns);
     else
@@ -278,6 +229,8 @@ void constant_propagator_domaint::transform(
     }
     else
     {
+      // unresolved call
+
       assert(to==next);
       values.set_to_top();
     }
@@ -330,8 +283,9 @@ bool constant_propagator_domaint::two_way_propagate_rec(
 #ifdef DEBUG
   std::cout << "two_way_propagate_rec: " << from_expr(ns,"",expr) << '\n';
 #endif
-  bool change = false;
   
+  bool change=false;
+
   if(expr.id()==ID_and)
   {
     // need a fixed point here to get the most out of it
@@ -361,30 +315,8 @@ bool constant_propagator_domaint::two_way_propagate_rec(
 #ifdef DEBUG
   std::cout << "two_way_propagate_rec: " << change << '\n';
 #endif
+
   return change;
-}
-
-/*******************************************************************\
-
-Function: constant_propagator_domaint::assign
-
-  Inputs:
-
- Outputs:
-
- Purpose:
-
-\*******************************************************************/
-
-void constant_propagator_domaint::assign(
-  valuest &dest,
-  const symbol_exprt &lhs,
-  exprt rhs,
-  const namespacet &ns) const
-{
-  values.replace_const(rhs);
-  rhs = simplify_expr(rhs, ns);
-  dest.set_to(lhs, rhs);
 }
 
 /*******************************************************************\
@@ -523,8 +455,6 @@ Function: constant_propagator_domaint::valuest::set_to_top
 
 bool constant_propagator_domaint::valuest::set_to_top(const irep_idt &id)
 {
-  bool result=false;
-
   replace_symbolt::expr_mapt::iterator r_it
     =replace_const.expr_map.find(id);
 
@@ -532,10 +462,10 @@ bool constant_propagator_domaint::valuest::set_to_top(const irep_idt &id)
   {
     assert(!is_bottom);
     replace_const.expr_map.erase(r_it);
-    result=true;
+    return true;
   }
 
-  return result;
+  return false;
 }
 
 /*******************************************************************\
@@ -951,4 +881,3 @@ void constant_propagator_ait::replace_types_rec(
   Forall_operands(it, expr)
     replace_types_rec(replace_const, *it);
 }
-
