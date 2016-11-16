@@ -1501,6 +1501,8 @@ void goto_function_inline_and_log(
   try
   {
     goto_inline.goto_inline(function, goto_function, inline_map, true);
+    goto_functions.update();
+    goto_functions.compute_loop_numbers();
     goto_inline.show_inline_log(out);
   }
   catch(int)
