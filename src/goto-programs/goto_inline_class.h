@@ -63,6 +63,13 @@ public:
     std::ostream &out,
     const inline_mapt &inline_map);
 
+  // call after goto_functions.update()!
+  void show_inline_log(std::ostream &out)
+  {
+    inline_log.cleanup(cache);
+    inline_log.show_inline_log(out);
+  }
+
   // is bp call
   static bool is_bp_call(goto_programt::const_targett target);
   // is normal or bp call
@@ -88,6 +95,27 @@ public:
       irep_idt function; // function from which segment was inlined
       goto_programt::const_targett end; // segment end
     };
+
+    // remove segment that refer to the given goto program
+    void cleanup(const goto_programt &goto_program)
+    {
+      forall_goto_program_instructions(it, goto_program)
+        log_map.erase(it);
+    }
+
+    void cleanup(const goto_functionst::function_mapt &function_map)
+    {
+      for(goto_functionst::function_mapt::const_iterator it
+            =function_map.begin(); it!=function_map.end(); it++)
+      {
+        const goto_functiont &goto_function=it->second;
+
+        if(!goto_function.body_available())
+          continue;
+
+        cleanup(goto_function.body);
+      }
+    }
 
     void add_segment(
       const goto_programt &goto_program,
@@ -161,6 +189,8 @@ public:
         json_new.push_back()=json_numbert(i2string(start->location_number));
         json_new.push_back()=json_numbert(i2string(end->location_number));
       }
+
+      out << json_result;
     }
 
     // map from segment start to inline info
@@ -246,7 +276,7 @@ protected:
     goto_programt &dest);
 
   // goto functions that were already inlined transitively
-  typedef std::map<irep_idt, goto_functiont> cachet;
+  typedef goto_functionst::function_mapt cachet;
   cachet cache;
 
   typedef hash_set_cont<irep_idt, irep_id_hash> finished_sett;
