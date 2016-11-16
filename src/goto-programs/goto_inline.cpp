@@ -6,8 +6,10 @@ Author: Daniel Kroening, kroening@kroening.com
 
 \*******************************************************************/
 
-#include <cassert>
+//#define DEBUG
+
 #include <iostream>
+#include <cassert>
 
 #include <util/prefix.h>
 #include <util/cprover_prefix.h>
@@ -599,7 +601,7 @@ void goto_inlinet::expand_function_call(
   assert(!dest.empty());
   assert(!transitive || inline_map.empty());
 
-#if 0
+#ifdef DEBUG
   std::cout << "Expanding call:" << std::endl;
   dest.output_instruction(ns, "", std::cout, target);
 #endif
@@ -911,6 +913,7 @@ const goto_inlinet::goto_functiont &goto_inlinet::goto_inline_transitive(
   }
 
   goto_functiont &cached=cache[identifier];
+  assert(cached.body.empty());
   cached.copy_from(goto_function); // location numbers not changed
   inline_log.copy_from(goto_function.body, cached.body);
 

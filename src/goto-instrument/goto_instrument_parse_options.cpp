@@ -145,6 +145,12 @@ int goto_instrument_parse_optionst::doit()
     register_languages();
 
     get_goto_program();
+
+    // update as goto program produced by goto-cc does not have
+    // unique location numbers
+    goto_functions.update();
+    goto_functions.compute_loop_numbers();
+
     instrument_goto_program();
 
     if(cmdline.isset("unwind"))
@@ -936,6 +942,10 @@ void goto_instrument_parse_optionst::instrument_goto_program()
 
     do_function_pointer_removal();
 
+#if 0
+    goto_functions.output(ns, std::cout);
+#endif
+
     status() << "Inlining calls of function `" << function << "'" << eom;
 
     if(!cmdline.isset("log"))
@@ -964,11 +974,6 @@ void goto_instrument_parse_optionst::instrument_goto_program()
 
       std::ostream &out=have_file?of:std::cout;
 
-      // print output
-
-      if(have_file)
-        of.close();
-
       goto_function_inline_and_log(
         goto_functions,
         function,
@@ -976,6 +981,9 @@ void goto_instrument_parse_optionst::instrument_goto_program()
         ui_message_handler,
         out,
         true);
+
+      if(have_file)
+        of.close();
     }
 
     goto_functions.update();

@@ -18,6 +18,7 @@ flag=$1
 
 $goto_cc -o $name.o $name.c
 #$goto_instrument --show-goto-functions $name.o
+#$cbmc --show-goto-functions $name.o
 $goto_instrument $flag $name.o $name-new.o
 $goto_instrument --show-goto-functions $name-new.o
 $cbmc $name-new.o
