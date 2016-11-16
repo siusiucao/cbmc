@@ -17,6 +17,7 @@ name=$(echo $2 | cut -d. -f1)
 flag=$1
 
 $goto_cc -o $name.o $name.c
+#$goto_instrument --show-goto-functions $name.o
 $goto_instrument $flag $name.o $name-new.o
 $goto_instrument --show-goto-functions $name-new.o
 $cbmc $name-new.o

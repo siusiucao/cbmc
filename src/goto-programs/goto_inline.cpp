@@ -459,6 +459,7 @@ void goto_inlinet::insert_function_body(
   t_it=goto_function.body.instructions.begin();
   unsigned begin_location_number=t_it->location_number;
   t_it=--goto_function.body.instructions.end();
+  assert(t_it->is_end_function());
   unsigned end_location_number=t_it->location_number;
 
   unsigned call_location_number=target->location_number;
@@ -470,6 +471,7 @@ void goto_inlinet::insert_function_body(
     call_location_number,
     identifier);
 
+#if 0
   if(goto_function.is_hidden())
   {
     source_locationt new_source_location=
@@ -499,6 +501,7 @@ void goto_inlinet::insert_function_body(
       }
     }
   }
+#endif
 
   // kill call
   target->type=LOCATION;
@@ -873,7 +876,7 @@ void goto_inlinet::goto_inline_nontransitive(
 
   recursion_set.erase(identifier);
 
-  remove_skip(goto_program);
+  //remove_skip(goto_program);
   //goto_program.update(); // does not change loop ids
 
   finished_set.insert(identifier);
@@ -909,6 +912,8 @@ const goto_inlinet::goto_functiont &goto_inlinet::goto_inline_transitive(
 
   goto_functiont &cached=cache[identifier];
   cached.copy_from(goto_function); // location numbers not changed
+  inline_log.copy_from(goto_function.body, cached.body);
+
   goto_programt &goto_program=cached.body;
 
   goto_programt::targetst call_list;
@@ -938,7 +943,7 @@ const goto_inlinet::goto_functiont &goto_inlinet::goto_inline_transitive(
 
   recursion_set.erase(identifier);
 
-  remove_skip(goto_program);
+  //remove_skip(goto_program);
   //goto_program.update(); // does not change loop ids
 
   return cached;

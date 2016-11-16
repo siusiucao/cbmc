@@ -126,6 +126,7 @@ public:
     {
       assert(!goto_program.empty());
       assert(!function.empty());
+      assert(end_location_number>=begin_location_number);
 
       goto_programt::const_targett start=goto_program.instructions.begin();
       assert(log_map.find(start)==log_map.end());
@@ -145,18 +146,36 @@ public:
 
     void copy_from(const goto_programt &from, const goto_programt &to)
     {
+      assert(from.instructions.size()==to.instructions.size());
+
       goto_programt::const_targett it1=from.instructions.begin();
       goto_programt::const_targett it2=to.instructions.begin();
 
       for(;it1!=from.instructions.end(); it1++, it2++)
       {
         assert(it2!=to.instructions.end());
+        assert(it1->location_number==it2->location_number);
 
         log_mapt::const_iterator l_it=log_map.find(it1);
         if(l_it!=log_map.end())
         {
           assert(log_map.find(it2)==log_map.end());
-          log_map[it2]=l_it->second;
+
+          goto_inline_log_infot info=l_it->second;
+          goto_programt::const_targett end=info.end;
+
+          // find end of new
+          goto_programt::const_targett tmp_it=it1;
+          goto_programt::const_targett new_end=it2;
+          while(tmp_it!=end)
+          {
+            new_end++;
+            tmp_it++;
+          }
+
+          info.end=new_end;
+
+          log_map[it2]=info;
         }
       }
     }
@@ -176,6 +195,8 @@ public:
         const goto_inline_log_infot &info=it->second;
         goto_programt::const_targett end=info.end;
 
+        assert(start->location_number<=end->location_number);
+
         object["call"]=json_numbert(i2string(info.call_location_number));
         object["function"]=json_stringt(info.function.c_str());
 
@@ -191,6 +212,7 @@ public:
       }
 
       out << json_result;
+      out << "\n";
     }
 
     // map from segment start to inline info
