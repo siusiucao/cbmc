@@ -10,6 +10,9 @@ Author: Daniel Kroening, kroening@kroening.com
 #define CPROVER_GOTO_PROGRAMS_GOTO_INLINE_CLASS
 
 #include <util/message.h>
+#include <util/json.h>
+#include <util/json_expr.h>
+#include <util/i2string.h>
 
 #include "goto_functions.h"
 
@@ -72,11 +75,108 @@ public:
     exprt::operandst &arguments,
     exprt &constrain);
 
+  class goto_inline_logt
+  {
+  public:
+    class goto_inline_log_infot
+    {
+    public:
+      // original segment location numbers
+      unsigned begin_location_number;
+      unsigned end_location_number;
+      unsigned call_location_number; // original call location number
+      irep_idt function; // function from which segment was inlined
+      goto_programt::const_targett end; // segment end
+    };
+
+    void add_segment(
+      const goto_programt &goto_program,
+      const unsigned begin_location_number,
+      const unsigned end_location_number,
+      const unsigned call_location_number,
+      const irep_idt function)
+    {
+      assert(!goto_program.empty());
+      assert(!function.empty());
+
+      goto_programt::const_targett start=goto_program.instructions.begin();
+      assert(log_map.find(start)==log_map.end());
+
+      goto_programt::const_targett end=goto_program.instructions.end();
+      end--;
+
+      goto_inline_log_infot info;
+      info.begin_location_number=begin_location_number;
+      info.end_location_number=end_location_number;
+      info.call_location_number=call_location_number;
+      info.function=function;
+      info.end=end;
+
+      log_map[start]=info;
+    }
+
+    void copy_from(const goto_programt &from, const goto_programt &to)
+    {
+      goto_programt::const_targett it1=from.instructions.begin();
+      goto_programt::const_targett it2=to.instructions.begin();
+
+      for(;it1!=from.instructions.end(); it1++, it2++)
+      {
+        assert(it2!=to.instructions.end());
+
+        log_mapt::const_iterator l_it=log_map.find(it1);
+        if(l_it!=log_map.end())
+        {
+          assert(log_map.find(it2)==log_map.end());
+          log_map[it2]=l_it->second;
+        }
+      }
+    }
+
+    // call after goto_functions.update()!
+    void show_inline_log(std::ostream &out) const
+    {
+      json_objectt json_result;
+      json_arrayt &json_inlined=json_result["inlined"].make_array();
+
+      for(log_mapt::const_iterator it=log_map.begin();
+          it!=log_map.end(); it++)
+      {
+        json_objectt &object=json_inlined.push_back().make_object();
+
+        goto_programt::const_targett start=it->first;
+        const goto_inline_log_infot &info=it->second;
+        goto_programt::const_targett end=info.end;
+
+        object["call"]=json_numbert(i2string(info.call_location_number));
+        object["function"]=json_stringt(info.function.c_str());
+
+        json_arrayt &json_orig=object["original_segment"].make_array();
+        json_orig.push_back()=json_numbert(i2string(
+          info.begin_location_number));
+        json_orig.push_back()=json_numbert(i2string(
+          info.end_location_number));
+
+        json_arrayt &json_new=object["inlined_segment"].make_array();
+        json_new.push_back()=json_numbert(i2string(start->location_number));
+        json_new.push_back()=json_numbert(i2string(end->location_number));
+      }
+    }
+
+    // map from segment start to inline info
+    typedef std::map<
+      goto_programt::const_targett,
+      goto_inline_log_infot> log_mapt;
+
+    log_mapt log_map;
+  };
+
 protected:
   goto_functionst &goto_functions;
   const namespacet &ns;
   
   const bool adjust_function;
+  goto_inline_logt inline_log;
 
   void goto_inline_nontransitive(
     const irep_idt identifier,
@@ -133,7 +233,7 @@ protected:
     const exprt &constrain);
     
   void parameter_assignments(
-      const goto_programt::targett target,
+    const goto_programt::targett target,
     const irep_idt &function_name,
     const code_typet &code_type,
     const exprt::operandst &arguments,

@@ -39,6 +39,9 @@ void goto_inlinet::parameter_assignments(
   const exprt::operandst &arguments, // arguments of call
   goto_programt &dest)
 {
+  assert(is_call(target));
+  assert(dest.empty());
+
   const source_locationt &source_location=target->source_location;
 
   // iterates over the operands
@@ -179,6 +182,9 @@ void goto_inlinet::parameter_destruction(
   const code_typet &code_type, // type of called function
   goto_programt &dest)
 {
+  assert(is_call(target));
+  assert(dest.empty());
+
   const source_locationt &source_location=target->source_location;
 
   const code_typet::parameterst &parameter_types=
@@ -413,29 +419,56 @@ void goto_inlinet::insert_function_body(
   const exprt::operandst &arguments,
   const exprt &constrain)
 {
-  // look it up
+  assert(is_call(target));
+  assert(!dest.empty());
+  assert(goto_function.body_available());
+
   const irep_idt identifier=function.get_identifier();
 
-  goto_programt tmp2;
-  tmp2.copy_from(goto_function.body);
+  goto_programt body;
+  body.copy_from(goto_function.body);
+  inline_log.copy_from(goto_function.body, body);
 
-  assert(tmp2.instructions.back().is_end_function());
-  tmp2.instructions.back().type=LOCATION;
+  goto_programt::instructiont &end=body.instructions.back();
+  assert(end.is_end_function());
+  end.type=LOCATION;
 
   if(adjust_function)
-  {
-    Forall_goto_program_instructions(i_it, tmp2)
-    {
+    Forall_goto_program_instructions(i_it, body)
       i_it->function=target->function;
-    }
-  }
 
-  replace_return(tmp2, lhs, constrain);
+  replace_return(body, lhs, constrain);
+
+  goto_programt tmp1;
+  parameter_assignments(
+    target,
+    identifier,
+    goto_function.type,
+    arguments,
+    tmp1);
+
+  goto_programt tmp2;
+  parameter_destruction(target, identifier, goto_function.type, tmp2);
 
   goto_programt tmp;
-  parameter_assignments(target, identifier, goto_function.type, arguments, tmp);
-  tmp.destructive_append(tmp2);
-  parameter_destruction(target, identifier, goto_function.type, tmp);
+  tmp.destructive_append(tmp1); // par assignment
+  tmp.destructive_append(body); // body
+  tmp.destructive_append(tmp2); // par destruction
+
+  goto_programt::const_targett t_it;
+  t_it=goto_function.body.instructions.begin();
+  unsigned begin_location_number=t_it->location_number;
+  t_it=--goto_function.body.instructions.end();
+  unsigned end_location_number=t_it->location_number;
+
+  unsigned call_location_number=target->location_number;
+
+  inline_log.add_segment(
+    tmp,
+    begin_location_number,
+    end_location_number,
+    call_location_number,
+    identifier);
 
   if(goto_function.is_hidden())
   {
@@ -472,7 +505,7 @@ void goto_inlinet::insert_function_body(
   target->code.clear();
   target++;
 
-  dest.instructions.splice(target, tmp.instructions);
+  dest.destructive_insert(target, tmp);
 }
 
 /*******************************************************************\
@@ -494,7 +527,9 @@ void goto_inlinet::insert_function_nobody(
   const symbol_exprt &function,
   const exprt::operandst &arguments)
 {
-  // look it up
+  assert(is_call(target));
+  assert(!dest.empty());
+
   const irep_idt identifier=function.get_identifier();
 
   if(no_body_set.insert(identifier).second) // newly inserted
@@ -535,8 +570,7 @@ void goto_inlinet::insert_function_nobody(
   target->code.clear();
   target++;
 
-  // insert tmp
-  dest.instructions.splice(target, tmp.instructions);
+  dest.destructive_insert(target, tmp);
 }
 
 /*******************************************************************\
@@ -559,6 +593,7 @@ void goto_inlinet::expand_function_call(
   goto_programt::targett target)
 {
   assert(is_call(target));
+  assert(!dest.empty());
   assert(!transitive || inline_map.empty());
 
 #if 0
@@ -578,7 +613,6 @@ void goto_inlinet::expand_function_call(
 
   const symbol_exprt &function=to_symbol_expr(function_expr);
 
-  // look it up
   const irep_idt identifier=function.get_identifier();
   
   if(is_ignored(identifier))
@@ -840,7 +874,7 @@ void goto_inlinet::goto_inline_nontransitive(
   recursion_set.erase(identifier);
 
   remove_skip(goto_program);
-  goto_program.update(); // does not change loop ids
+  //goto_program.update(); // does not change loop ids
 
   finished_set.insert(identifier);
 }
@@ -874,7 +908,7 @@ const goto_inlinet::goto_functiont &goto_inlinet::goto_inline_transitive(
   }
 
   goto_functiont &cached=cache[identifier];
-  cached.copy_from(goto_function);
+  cached.copy_from(goto_function); // location numbers not changed
   goto_programt &goto_program=cached.body;
 
   goto_programt::targetst call_list;
@@ -905,7 +939,7 @@ const goto_inlinet::goto_functiont &goto_inlinet::goto_inline_transitive(
   recursion_set.erase(identifier);
 
   remove_skip(goto_program);
-  goto_program.update(); // does not change loop ids
+  //goto_program.update(); // does not change loop ids
 
   return cached;
 }
@@ -978,6 +1012,7 @@ bool goto_inlinet::check_inline_map(
       return false;
 #endif
 
+    // location numbers increasing
     if((int)target->location_number<=ln)
       return false;
 
