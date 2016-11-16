@@ -57,4 +57,12 @@ void goto_function_inline(
   message_handlert &message_handler,
   bool adjust_function=false);
 
+void goto_function_inline_and_log(
+    goto_functionst &goto_functions,
+    const irep_idt function,
+    const namespacet &ns,
+    message_handlert &message_handler,
+    std::ostream &out,
+    bool adjust_function=false);
+
 #endif

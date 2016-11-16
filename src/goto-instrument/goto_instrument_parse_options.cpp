@@ -937,12 +937,46 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     do_function_pointer_removal();
 
     status() << "Inlining calls of function `" << function << "'" << eom;
-    goto_function_inline(
-      goto_functions,
-      function,
-      ns,
-      ui_message_handler,
-      true);
+
+    if(!cmdline.isset("log"))
+    {
+      goto_function_inline(
+        goto_functions,
+        function,
+        ns,
+        ui_message_handler,
+        true);
+    }
+    else
+    {
+      std::string filename=cmdline.get_value("log");
+
+      bool have_file=!filename.empty() && filename!="-";
+
+      std::ofstream of;
+
+      if(have_file)
+      {
+        of.open(filename);
+        if(!of)
+          throw "failed to open file "+filename;
+      }
+
+      std::ostream &out=have_file?of:std::cout;
+
+      // print output
+
+      if(have_file)
+        of.close();
+
+      goto_function_inline_and_log(
+        goto_functions,
+        function,
+        ns,
+        ui_message_handler,
+        out,
+        true);
+    }
 
     goto_functions.update();
     goto_functions.compute_loop_numbers();

@@ -1445,3 +1445,77 @@ void goto_function_inline(
     throw 0;
   }
 }
+
+/*******************************************************************\
+
+Function: goto_function_inline_and_log
+
+  Inputs:
+
+ Outputs:
+
+ Purpose:
+
+\*******************************************************************/
+
+void goto_function_inline_and_log(
+  goto_functionst &goto_functions,
+  const irep_idt function,
+  const namespacet &ns,
+  message_handlert &message_handler,
+  std::ostream &out,
+  bool adjust_function)
+{
+  goto_inlinet goto_inline(
+    goto_functions,
+    ns,
+    message_handler,
+    adjust_function);
+
+  goto_functionst::function_mapt::iterator f_it
+    =goto_functions.function_map.find(function);
+
+  if(f_it==goto_functions.function_map.end())
+    return;
+
+  goto_functionst::goto_functiont &goto_function=f_it->second;
+
+  if(!goto_function.body_available())
+    return;
+
+  // gather all calls
+  goto_inlinet::inline_mapt inline_map;
+
+  goto_inlinet::call_listt &call_list=inline_map[f_it->first];
+
+  goto_programt &goto_program=goto_function.body;
+
+  Forall_goto_program_instructions(i_it, goto_program)
+  {
+    if(!goto_inlinet::is_call(i_it))
+      continue;
+
+    call_list.push_back(goto_inlinet::callt(i_it, true));
+  }
+
+  try
+  {
+    goto_inline.goto_inline(function, goto_function, inline_map, true);
+    goto_inline.show_inline_log(out);
+  }
+  catch(int)
+  {
+    goto_inline.error();
+    throw 0;
+  }
+  catch(const char *e)
+  {
+    goto_inline.error() << e << messaget::eom;
+    throw 0;
+  }
+  catch(const std::string &e)
+  {
+    goto_inline.error() << e << messaget::eom;
+    throw 0;
+  }
+}
