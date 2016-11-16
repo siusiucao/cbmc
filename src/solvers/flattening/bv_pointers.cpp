@@ -120,8 +120,8 @@ bv_pointerst::bv_pointerst(
   boolbvt(_ns, _prop),
   pointer_logic(_ns)
 {
-  object_bits=BV_ADDR_BITS;
-  offset_bits=config.ansi_c.pointer_width-object_bits;
+  object_bits=config.ansi_c.object_bits;
+  offset_bits=config.ansi_c.offset_bits;
   bits=config.ansi_c.pointer_width;
 }
 

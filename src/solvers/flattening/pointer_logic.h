@@ -14,6 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/expr.h>
 #include <util/numbering.h>
 
+// Still used in the SMT-LIB back end.  Fix and remove before committing.
 #define BV_ADDR_BITS 8
 
 class pointer_logict

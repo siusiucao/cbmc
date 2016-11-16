@@ -37,7 +37,11 @@ public:
     unsigned double_width;
     unsigned long_double_width;
     unsigned wchar_t_width;
-    
+
+    // back end options
+    unsigned object_bits;
+    unsigned offset_bits;
+
     // various language options
     bool char_is_unsigned, wchar_t_is_unsigned;
     bool use_fixed_for_float;

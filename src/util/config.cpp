@@ -104,6 +104,8 @@ void configt::ansi_ct::set_LP64()
   wchar_t_width=4*8;
   alignment=1;
   memory_operand_size=int_width/8;
+  object_bits=8;
+  offset_bits=pointer_width - object_bits;
 }
 
 /*******************************************************************\
@@ -139,6 +141,8 @@ void configt::ansi_ct::set_ILP64()
   wchar_t_width=4*8;
   alignment=1;
   memory_operand_size=int_width/8;
+  object_bits=8;
+  offset_bits=pointer_width - object_bits;
 }
 
 /*******************************************************************\
@@ -170,6 +174,8 @@ void configt::ansi_ct::set_LLP64()
   wchar_t_width=4*8;
   alignment=1;
   memory_operand_size=int_width/8;
+  object_bits=8;
+  offset_bits=pointer_width - object_bits;
 }
 
 /*******************************************************************\
@@ -201,6 +207,8 @@ void configt::ansi_ct::set_ILP32()
   wchar_t_width=4*8;
   alignment=1;
   memory_operand_size=int_width/8;
+  object_bits=8;
+  offset_bits=pointer_width - object_bits;
 }
 
 /*******************************************************************\
@@ -232,6 +240,8 @@ void configt::ansi_ct::set_LP32()
   wchar_t_width=4*8;
   alignment=1;
   memory_operand_size=int_width/8;
+  object_bits=8;
+  offset_bits=pointer_width - object_bits;
 }
 
 /*******************************************************************\
