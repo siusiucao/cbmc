@@ -94,6 +94,8 @@ bool java_bytecode_languaget::parse(
   std::istream &instream,
   const std::string &path)
 {
+  config.ansi_c.object_bits = 16;  // I'm in the wrong place, LOL.
+  config.ansi_c.offset_bits = 32;  // Should be where-ever the JVM sets architecture
   java_class_loader.set_message_handler(get_message_handler());
 
   // look at extension
