@@ -51,6 +51,7 @@ Author: Daniel Kroening, kroening@kroening.com
   "(show-uninitialized)(show-locations)" \
   "(full-slice)(reachability-slice)" \
   "(inline)(partial-inline)(function-inline):(log):" \
+  "(remove-function-pointers)" \
   "(show-claims)(show-properties)(property):" \
   "(show-symbol-table)(show-points-to)(show-rw-set)" \
   "(cav11)" \
