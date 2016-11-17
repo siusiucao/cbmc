@@ -55,6 +55,41 @@ void rw_set_baset::output(std::ostream &out) const
 
 /*******************************************************************\
 
+Function: rw_set_baset::output_json
+
+  Inputs: The output stream
+
+ Outputs: Nothing
+
+ Purpose: Outputs the set in JSON format.
+
+\*******************************************************************/
+
+void rw_set_baset::output_json(std::ostream &out) const
+{
+  out << "READ:" << std::endl;
+  for(entriest::const_iterator it=r_entries.begin();
+      it!=r_entries.end();
+      it++)
+  {
+    out << it->second.object << " if "
+        << from_expr(ns, "", it->second.guard) << std::endl;
+  }
+  
+  out << std::endl;
+
+  out << "WRITE:" << std::endl;
+  for(entriest::const_iterator it=w_entries.begin();
+      it!=w_entries.end();
+      it++)
+  {
+    out << it->second.object << " if "
+        << from_expr(ns, "", it->second.guard) << std::endl;
+  }
+}
+
+/*******************************************************************\
+
 Function: rw_set_loct::compute
 
   Inputs:

@@ -83,6 +83,7 @@ public:
   }
   
   void output(std::ostream &out) const;
+  void output_json(std::ostream &out) const;
   
 protected:
   virtual void track_deref(const entryt& entry, bool read) {}

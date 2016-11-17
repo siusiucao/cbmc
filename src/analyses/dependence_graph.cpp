@@ -380,6 +380,24 @@ jsont dep_graph_domaint::output_json(
     link["location_number"] = json_numbert(std::to_string((*cdi)->location_number));
     link["source_location"] = json_stringt((*cdi)->source_location.as_string());
     link["type"]=json_stringt("control");
+
+    const dependence_grapht &dg = dynamic_cast<const dependence_grapht&>(ai);
+    
+    // For customer, also print if the branch was taken or not
+    if ((*cdi)->is_goto()) {
+      
+      dep_graph_domaint::depst::const_iterator next = cdi;
+      --next;
+      if (&(dg[*next]) == this)
+	link["reason"] = json_stringt("goto not followed");
+      else
+	link["reason"] = json_stringt("goto followed");
+      
+    } else if ((*cdi)->is_assume()) {
+      link["reason"] = json_stringt("assume");
+    } else {
+      link["reason"] = json_stringt("other");
+    }
   }
 
   for(dep_graph_domaint::depst::const_iterator ddi=data_deps.begin();
