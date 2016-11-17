@@ -469,63 +469,56 @@ int goto_analyzer_parse_optionst::doit()
       }
     }
 
-  if(cmdline.isset("unwind-bounds"))
-  {
-    namespacet ns(goto_model.symbol_table);
-
-    remove_skip(goto_model.goto_functions, true);
-    goto_model.goto_functions.update();
-    goto_model.goto_functions.compute_loop_numbers();
-
-    unwind_boundst *ub;
-
-    if(cmdline.isset("unwind-bounds-threshold"))
+    if(cmdline.isset("unwind-bounds"))
     {
-      unsigned threshold=unsafe_string2unsigned(
-        cmdline.get_value("unwind-bounds-threshold"));
-      ub=new unwind_boundst(goto_model, true, threshold);
+      namespacet ns(goto_model.symbol_table);
+
+      remove_skip(goto_model.goto_functions, true);
+      goto_model.goto_functions.update();
+      goto_model.goto_functions.compute_loop_numbers();
+
+      unwind_boundst *ub;
+
+      if(cmdline.isset("unwind-bounds-threshold"))
+      {
+        unsigned threshold=unsafe_string2unsigned(
+          cmdline.get_value("unwind-bounds-threshold"));
+        ub=new unwind_boundst(goto_model, true, threshold);
+      }
+      else
+      {
+        ub=new unwind_boundst(goto_model);
+      }
+      unwind_boundst &unwind_bounds=*ub;
+
+      unwind_bounds();
+
+      if(!options.get_bool_option("text"))
+      {
+        error() << "Only plain text output supported" << eom;
+        return 6;
+      }
+
+      if(cmdline.isset("unwindset"))
+        unwind_bounds.output_unwindset(*out);
+      else
+        unwind_bounds.output(*out);
+
+      delete ub;
+
+  #if 0
+      goto_model.output(std::cout);
+  #endif
+
+      return 0;
     }
-    else
-    {
-      ub=new unwind_boundst(goto_model);
-    }
-    unwind_boundst &unwind_bounds=*ub;
-
-    unwind_bounds();
-
-    if(!options.get_bool_option("text"))
-    {
-      error() << "Only plain text output supported" << eom;
-      return 6;
-    }
-
-    if(cmdline.isset("unwindset"))
-      unwind_bounds.output_unwindset(*out);
-    else
-      unwind_bounds.output(*out);
-
-    delete ub;
-
-#if 0
-    goto_model.output(std::cout);
-#endif
-
-    return 0;
-  }
-
-  // Run the analysis
-  bool result = true;
-  if (options.get_bool_option("show"))
-    result = static_show_domain(goto_model, options, get_message_handler(), *out);
 
     // Run the analysis
     bool result = true;
     if (options.get_bool_option("show"))
       result = static_show_domain(goto_model, options, get_message_handler(), *out);
-    
     else if (options.get_bool_option("verify"))
       result =    static_analyzer(goto_model, options, get_message_handler(), *out);
-    
     else if (options.get_bool_option("simplify"))
       result =  static_simplifier(goto_model, options, get_message_handler(), *out);
     else
@@ -533,16 +526,16 @@ int goto_analyzer_parse_optionst::doit()
       error() << "No task given" << eom;
       return 6;
     }
-  
+
     if (out != &std::cout)
       delete out;
-  
-  return result?10:0;
-  
-  // Final defensive error case
-  error() << "no analysis option given -- consider reading --help"
-          << eom;
-  return 6;
+
+    return result?10:0;
+
+    // Final defensive error case
+    error() << "no analysis option given -- consider reading --help"
+            << eom;
+    return 6;
   
   }
   catch(const char *e)
@@ -567,7 +560,6 @@ int goto_analyzer_parse_optionst::doit()
     error() << "Out of memory" << eom;
     return 6;
   }
-
 }
 
 /*******************************************************************\

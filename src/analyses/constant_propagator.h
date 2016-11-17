@@ -34,6 +34,11 @@ public:
     locationt from,
     locationt to);
 
+  virtual exprt domain_simplify(
+    const exprt &condition,
+    const namespacet &ns,
+    const bool lhs=false) const;
+
   virtual void make_bottom()
   {
     values.set_to_bottom();
