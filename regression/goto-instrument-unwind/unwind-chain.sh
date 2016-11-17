@@ -18,6 +18,7 @@ fi
 name=$(echo $2 | cut -d. -f1)
 
 $goto_cc -o $name.gb $name.c
+$goto_instrument --show-goto-functions $name.gb
 $goto_instrument $1 $name.gb ${name}-unwound.gb
 $goto_instrument --show-goto-functions ${name}-unwound.gb
 $cbmc ${name}-unwound.gb
