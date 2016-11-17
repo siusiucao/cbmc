@@ -191,6 +191,28 @@ int goto_instrument_parse_optionst::doit()
 
         goto_functions.update();
         goto_functions.compute_loop_numbers();
+
+        if(cmdline.isset("log"))
+        {
+          std::string filename=cmdline.get_value("log");
+
+          bool have_file=!filename.empty() && filename!="-";
+
+          std::ofstream of;
+
+          if(have_file)
+          {
+            of.open(filename);
+            if(!of)
+              throw "failed to open file "+filename;
+            goto_unwind.show_log_json(of);
+            of.close();
+          }
+          else
+          {
+            goto_unwind.show_log_json(std::cout);
+          }
+        }
       }
     }
 

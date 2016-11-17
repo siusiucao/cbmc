@@ -72,10 +72,10 @@ Function: copy_segment
 void goto_unwindt::copy_segment(
   const goto_programt::const_targett start,
   const goto_programt::const_targett end, // exclusive
-  goto_programt &goto_program) const // result
+  goto_programt &goto_program) // result
 {
   assert(start->location_number<end->location_number);
-  assert(goto_program.instructions.empty());
+  assert(goto_program.empty());
 
   // build map for branch targets inside the loop
   typedef std::map<goto_programt::const_targett, unsigned> target_mapt;
@@ -95,6 +95,7 @@ void goto_unwindt::copy_segment(
   {
     goto_programt::targett t_new=goto_program.add_instruction();
     *t_new=*t;
+    unwind_log.insert(t_new, t->location_number);
     target_vector.push_back(t_new); // store copied instruction
   }
 
@@ -139,7 +140,7 @@ void goto_unwindt::unwind(
   const goto_programt::const_targett loop_head,
   const goto_programt::const_targett loop_exit,
   const unsigned k,
-  const unwind_strategyt unwind_strategy) const
+  const unwind_strategyt unwind_strategy)
 {
   std::vector<goto_programt::targett> iteration_points;
   unwind(goto_program, loop_head, loop_exit, k, unwind_strategy,
@@ -164,7 +165,7 @@ void goto_unwindt::unwind(
   const goto_programt::const_targett loop_exit,
   const unsigned k,
   const unwind_strategyt unwind_strategy,
-  std::vector<goto_programt::targett> &iteration_points) const
+  std::vector<goto_programt::targett> &iteration_points)
 {
   assert(iteration_points.empty());
   assert(loop_head->location_number<loop_exit->location_number);
@@ -178,6 +179,7 @@ void goto_unwindt::unwind(
     t->make_skip();
     t->source_location=loop_head->source_location;
     t->function=loop_head->function;
+    unwind_log.insert(t, loop_head->location_number);
   }
   else if(unwind_strategy==REST)
   {
@@ -214,9 +216,10 @@ void goto_unwindt::unwind(
 
     new_t->source_location=loop_head->source_location;
     new_t->function=loop_head->function;
+    unwind_log.insert(new_t, loop_head->location_number);
   }
 
-  assert(!rest_program.instructions.empty());
+  assert(!rest_program.empty());
 
   // to be filled with copies of the loop body
   goto_programt copies;
@@ -233,6 +236,7 @@ void goto_unwindt::unwind(
     if(!t_before->is_goto() || !t_before->guard.is_true())
     {
       goto_programt::targett t_goto=goto_program.insert_before(loop_exit);
+      unwind_log.insert(t_goto, loop_exit->location_number);
 
       t_goto->make_goto(get_mutable(goto_program, loop_exit));
       t_goto->source_location=loop_exit->source_location;
@@ -243,6 +247,8 @@ void goto_unwindt::unwind(
     // add a skip before the loop exit
 
     goto_programt::targett t_skip=goto_program.insert_before(loop_exit);
+    unwind_log.insert(t_skip, loop_exit->location_number);
+
     t_skip->make_skip();
     t_skip->source_location=loop_head->source_location;
     t_skip->function=loop_head->function;
@@ -282,6 +288,8 @@ void goto_unwindt::unwind(
     // insert skip for loop body
 
     goto_programt::targett t_skip=goto_program.insert_before(loop_head);
+    unwind_log.insert(t_skip, loop_head->location_number);
+
     t_skip->make_skip();
     t_skip->source_location=loop_head->source_location;
     t_skip->function=loop_head->function;
@@ -310,9 +318,6 @@ void goto_unwindt::unwind(
   
   // now insert copies before loop_exit
   goto_program.destructive_insert(loop_exit, copies);
-
-  // update it all (except loop numbers)
-  goto_program.update();
 }
 
 /*******************************************************************\
@@ -366,7 +371,7 @@ void goto_unwindt::unwind(
   goto_programt &goto_program,
   const unwind_sett &unwind_set,
   const int k,
-  const unwind_strategyt unwind_strategy) const
+  const unwind_strategyt unwind_strategy)
 {
   assert(k>=-1);
 
@@ -415,7 +420,7 @@ void goto_unwindt::operator()(
   goto_functionst &goto_functions,
   const unwind_sett &unwind_set,
   const int k,
-  const unwind_strategyt unwind_strategy) const
+  const unwind_strategyt unwind_strategy)
 {
   assert(k>=-1);
 
@@ -433,4 +438,41 @@ void goto_unwindt::operator()(
     // finally recompute the loop numbers
     goto_program.compute_loop_numbers();
   }
+}
+
+/*******************************************************************\
+
+Function: show_log_json
+
+  Inputs:
+
+ Outputs:
+
+ Purpose:
+
+\*******************************************************************/
+
+// call after calling goto_functions.update()!
+void goto_unwindt::unwind_logt::show_log_json(std::ostream &out) const
+{
+  json_objectt json_result;
+  json_arrayt &json_unwound=json_result["unwound"].make_array();
+
+  for(location_mapt::const_iterator it=location_map.begin();
+      it!=location_map.end(); it++)
+  {
+    json_objectt &object=json_unwound.push_back().make_object();
+
+    goto_programt::const_targett target=it->first;
+    unsigned location_number=it->second;
+
+
+    object["original_location_number"]=json_numbert(i2string(
+      location_number));
+    object["new_location_number"]=json_numbert(i2string(
+      target->location_number));
+  }
+
+  out << json_result;
+  out << "\n";
 }

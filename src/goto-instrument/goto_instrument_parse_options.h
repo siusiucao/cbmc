@@ -33,6 +33,7 @@ Author: Daniel Kroening, kroening@kroening.com
   "(minimum-interference)" \
   "(mm):(my-events)" \
   "(unwind):(unwindset):(unwinding-assertions)(partial-loops)(rest-loops)" \
+  "(log):" \
   "(max-var):(max-po-trans):(ignore-arrays)" \
   "(cfg-kill)(no-dependencies)(force-loop-duplication)" \
   "(call-graph)" \
