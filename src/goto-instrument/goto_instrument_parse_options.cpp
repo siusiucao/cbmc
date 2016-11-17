@@ -146,11 +146,6 @@ int goto_instrument_parse_optionst::doit()
 
     get_goto_program();
 
-    // update as goto program produced by goto-cc does not have
-    // unique location numbers
-    goto_functions.update();
-    goto_functions.compute_loop_numbers();
-
     instrument_goto_program();
 
     if(cmdline.isset("unwind"))
