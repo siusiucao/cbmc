@@ -145,6 +145,7 @@ int goto_instrument_parse_optionst::doit()
     register_languages();
 
     get_goto_program();
+
     instrument_goto_program();
 
     if(cmdline.isset("unwind"))
@@ -921,12 +922,78 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     // recalculate numbers, etc.
     goto_functions.update();
   }
-    
+
   // verify and set invariants and pre/post-condition pairs
   if(cmdline.isset("apply-code-contracts"))
   {
     status() << "Applying Code Contracts" << eom;
     code_contracts(symbol_table, goto_functions);
+  }
+
+  if(cmdline.isset("function-inline"))
+  {
+    std::string function=cmdline.get_value("function-inline");
+    assert(!function.empty());
+
+    do_function_pointer_removal();
+
+#if 0
+    goto_functions.output(ns, std::cout);
+#endif
+
+    status() << "Inlining calls of function `" << function << "'" << eom;
+
+    if(!cmdline.isset("log"))
+    {
+      goto_function_inline(
+        goto_functions,
+        function,
+        ns,
+        ui_message_handler,
+        true);
+    }
+    else
+    {
+      std::string filename=cmdline.get_value("log");
+
+      bool have_file=!filename.empty() && filename!="-";
+
+      std::ofstream of;
+
+      if(have_file)
+      {
+        of.open(filename);
+        if(!of)
+          throw "failed to open file "+filename;
+      }
+
+      std::ostream &out=have_file?of:std::cout;
+
+      goto_function_inline_and_log(
+        goto_functions,
+        function,
+        ns,
+        ui_message_handler,
+        out,
+        true);
+
+      if(have_file)
+        of.close();
+    }
+
+    goto_functions.update();
+    goto_functions.compute_loop_numbers();
+  }
+
+  if(cmdline.isset("partial-inline"))
+  {
+    do_function_pointer_removal();
+
+    status() << "Partial inlining" << eom;
+    goto_partial_inline(goto_functions, ns, ui_message_handler, true);
+
+    goto_functions.update();
+    goto_functions.compute_loop_numbers();
   }
 
   // now do full inlining, if requested
@@ -945,7 +1012,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     }
 
     status() << "Performing full inlining" << eom;
-    goto_inline(goto_functions, ns, ui_message_handler);
+    goto_inline(goto_functions, ns, ui_message_handler, true);
   }
 
   if(cmdline.isset("constant-propagator"))
@@ -1358,6 +1425,8 @@ void goto_instrument_parse_optionst::help()
     "Further transformations:\n"
     " --constant-propagator        propagate constants and simplify expressions\n"
     " --inline                     perform full inlining\n"
+    " --partial-inline             perform partial inlining\n"
+    " --function-inline <function> transitively inline all calls <function> makes\n"
     " --add-library                add models of C library functions\n"
     "\n"
     "Other options:\n"
