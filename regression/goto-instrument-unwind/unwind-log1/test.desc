@@ -1,6 +1,6 @@
 CORE
 main.c
-"--unwind 100 --partial-loops"
+"--unwind 10 --unwinding-assertions --log -"
 ^SIGNAL=0$
 ^VERIFICATION SUCCESSFUL$
 --

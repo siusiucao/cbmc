@@ -148,15 +148,73 @@ int goto_instrument_parse_optionst::doit()
 
     instrument_goto_program();
 
-    if(cmdline.isset("unwind"))
     {
+      bool unwind=cmdline.isset("unwind");
+      bool unwindset=cmdline.isset("unwindset");
 
-      int k = stoi(cmdline.get_value("unwind"));
+      if(unwind || unwindset)
+      {
+        int k=-1;
 
-      goto_unwind(goto_functions, k);
+        if(unwind)
+          k=stoi(cmdline.get_value("unwind"));
 
-      goto_functions.update();
-      goto_functions.compute_loop_numbers();
+        unwind_sett unwind_set;
+
+        if(unwindset)
+          parse_unwindset(cmdline.get_value("unwindset"), unwind_set);
+
+        bool unwinding_assertions=cmdline.isset("unwinding-assertions");
+        bool partial_loops=cmdline.isset("partial-loops");
+        bool rest_loops=cmdline.isset("rest-loops");
+
+        if(unwinding_assertions+partial_loops+rest_loops>1)
+          throw "more than one of --unwinding-assertions,--partial-loops,"
+                "--rest-loops selected";
+
+        goto_unwindt::unwind_strategyt unwind_strategy=goto_unwindt::ASSUME;
+
+        if(unwinding_assertions)
+        {
+          unwind_strategy=goto_unwindt::ASSERT;
+        }
+        else if(partial_loops)
+        {
+          unwind_strategy=goto_unwindt::PARTIAL;
+        }
+        else if(rest_loops)
+        {
+          unwind_strategy=goto_unwindt::REST;
+        }
+
+        goto_unwindt goto_unwind;
+        goto_unwind(goto_functions, unwind_set, k, unwind_strategy);
+
+        goto_functions.update();
+        goto_functions.compute_loop_numbers();
+
+        if(cmdline.isset("log"))
+        {
+          std::string filename=cmdline.get_value("log");
+
+          bool have_file=!filename.empty() && filename!="-";
+
+          std::ofstream of;
+
+          if(have_file)
+          {
+            of.open(filename);
+            if(!of)
+              throw "failed to open file "+filename;
+            goto_unwind.show_log_json(of);
+            of.close();
+          }
+          else
+          {
+            goto_unwind.show_log_json(std::cout);
+          }
+        }
+      }
     }
 
     if(cmdline.isset("show-value-sets"))
@@ -1391,6 +1449,10 @@ void goto_instrument_parse_optionst::help()
     "Semantic transformations:\n"
     " --nondet-volatile            makes reads from volatile variables non-deterministic\n"
     " --unwind <n>                 unwinds the loops <n> times\n"
+    " --unwindset L:B,...          unwind loop L with a bound of B\n"
+    " --partial-loops              permit paths with partial loops\n"
+    " --unwinding-assertions       generate unwinding assertions\n"
+    " --rest-loops                 add loop for remaining iterations after unwound part\n"
     " --isr <function>             instruments an interrupt service routine\n"
     " --mmio                       instruments memory-mapped I/O\n"
     " --nondet-static              add nondeterministic initialization of variables with static lifetime\n"
