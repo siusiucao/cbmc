@@ -510,6 +510,9 @@ int goto_analyzer_parse_optionst::doit()
       goto_model.output(std::cout);
   #endif
 
+      if (out!=&std::cout)
+        delete out;
+
       return 0;
     }
 
