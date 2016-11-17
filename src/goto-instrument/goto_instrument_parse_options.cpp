@@ -415,8 +415,13 @@ int goto_instrument_parse_optionst::doit()
       
       const symbolt &symbol=ns.lookup(ID_main);
       symbol_exprt main(symbol.name, symbol.type);
+
+      rw_set_functiont rw_set(value_set_analysis, ns, goto_functions, main);
       
-      std::cout << rw_set_functiont(value_set_analysis, ns, goto_functions, main);
+      if (cmdline.isset("json-ui"))
+	rw_set.output_json(std::cout);
+      else
+	std::cout << rw_set;
       return 0;
     }
 
