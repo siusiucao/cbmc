@@ -24,7 +24,7 @@ inline float __builtin_fabsf(float f) { return __CPROVER_fabsf(f); }
 
 /* FUNCTION: __builtin_isgreater */
 
-int __builtin_isgreater(float f, float g) { return f > g; }
+int __builtin_isgreater(double f, double g) { return f > g; }
 
 /* FUNCTION: __builtin_isgreaterequal */
 
@@ -40,7 +40,7 @@ int __builtin_islessequal(float f, float g) { return f <= g; }
 
 /* FUNCTION: __builtin_islessgreater */
 
-int __builtin_islessgreater(float f, float g) { return (f < g) || (g > f); }
+int __builtin_islessgreater(float f, float g) { return (f < g) || (f > g); }
 
 /* FUNCTION: __builtin_isunordered */
 
