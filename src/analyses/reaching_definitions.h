@@ -24,9 +24,12 @@ Author: Michael Tautschnig
 #include "ai.h"
 #include "goto_rw.h"
 
-class value_setst;
-class is_threadedt;
-class dirtyt;
+// It would be nice to pre-declare these but it doesn't work with
+// the C++ default constructors
+#include "is_threaded.h"
+#include "dirty.h"
+#include <pointer-analysis/value_set_analysis_fi.h>
+
 class reaching_definitions_analysist;
 
 // requirement: V has a member "identifier" of type irep_idt
@@ -257,7 +260,17 @@ class reaching_definitions_analysist:
 {
 public:
   // constructor
-  explicit reaching_definitions_analysist(const namespacet &_ns);
+  explicit reaching_definitions_analysist(
+    const namespacet &_ns,
+    const goto_functionst &goto_functions):
+      concurrency_aware_ait<rd_range_domaint>(),
+      ns(_ns),
+      goto_functions(goto_functions),
+      value_sets(nullptr),
+      is_threaded(nullptr),
+      is_dirty(nullptr)
+  {
+  }
 
   virtual ~reaching_definitions_analysist();
 
@@ -297,8 +310,15 @@ public:
     return *is_dirty;
   }
 
+  const goto_functionst &get_goto_functions() const
+  {
+    return goto_functions;
+  }
+
 protected:
   const namespacet &ns;
+  const goto_functionst &goto_functions;
+
   std::unique_ptr<value_setst> value_sets;
   std::unique_ptr<is_threadedt> is_threaded;
   std::unique_ptr<dirtyt> is_dirty;

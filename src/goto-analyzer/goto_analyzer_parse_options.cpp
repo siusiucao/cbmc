@@ -353,7 +353,7 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(
     }
     else if(options.get_bool_option("dependence-graph"))
     {
-      domain=new dependence_grapht(ns);
+      domain=new dependence_grapht(goto_model.goto_functions, ns);
     }
     else if(options.get_bool_option("intervals"))
     {
@@ -377,7 +377,7 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(
     }
     else if(options.get_bool_option("dependence-graph"))
     {
-      domain=new dependence_grapht(ns);
+      domain=new dependence_grapht(goto_model.goto_functions, ns);
     }
     else if(options.get_bool_option("intervals"))
     {
