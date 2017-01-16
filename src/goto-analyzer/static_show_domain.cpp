@@ -26,11 +26,11 @@ bool static_show_domain(
 {
   if(options.get_bool_option("json"))
   {
-    out << ai.output_json(goto_model);
+    out << ai.output_json(goto_model) << "\n";
   }
   else if(options.get_bool_option("xml"))
   {
-    out << ai.output_xml(goto_model);
+    out << ai.output_xml(goto_model) << "\n";
   }
   else if(options.get_bool_option("dot") &&
           options.get_bool_option("dependence-graph"))
