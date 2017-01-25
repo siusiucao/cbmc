@@ -1,6 +1,6 @@
 /*******************************************************************\
 
-Module: Goto-Analyser Command Line Option Processing
+Module: Goto-Analyzer Command Line Option Processing
 
 Author: Daniel Kroening, kroening@kroening.com
 
@@ -141,7 +141,7 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
     exit(1);
   }
 
-  #if 0
+#if 0
   if(cmdline.isset("c89"))
     config.ansi_c.set_c89();
 
@@ -159,9 +159,9 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
 
   if(cmdline.isset("cpp11"))
     config.cpp.set_cpp11();
-  #endif
+#endif
 
-  #if 0
+#if 0
   // check assertions
   if(cmdline.isset("no-assertions"))
     options.set_option("assertions", false);
@@ -177,8 +177,7 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
   // magic error label
   if(cmdline.isset("error-label"))
     options.set_option("error-label", cmdline.get_values("error-label"));
-  #endif
-
+#endif
 
   // Output format choice
   options.set_option("text", false);
@@ -212,15 +211,14 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
     options.set_option("text", true);
   }
 
-
   // Task options
-  options.set_option(    "show", false);
-  options.set_option(  "verify", false);
+  options.set_option("show", false);
+  options.set_option("verify", false);
   options.set_option("simplify", false);
 
   if(cmdline.isset("show") ||
-      cmdline.isset("show-intervals") ||
-      cmdline.isset("show-non-null"))
+     cmdline.isset("show-intervals") ||
+     cmdline.isset("show-non-null"))
     options.set_option("show", true);
   else if(cmdline.isset("verify"))
     options.set_option("verify", true);
@@ -230,16 +228,18 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
     options.set_option("outfile", cmdline.get_value("simplify"));
   }
 
-  if(!(options.get_bool_option("show")  ||
-    options.get_bool_option("verify")  ||
-    options.get_bool_option("simplify")))
+  if(!(options.get_bool_option("show") ||
+     options.get_bool_option("verify") ||
+     options.get_bool_option("simplify")))
   {
     status() << "Task defaults to --show" << eom;
     options.set_option("show", true);
   }
 
   // For development allow slicing to be disabled in the simplify task
-  options.set_option("simplify-slicing", !(cmdline.isset("no-simplify-slicing")));
+  options.set_option(
+    "simplify-slicing",
+    !(cmdline.isset("no-simplify-slicing")));
 
   // Abstract interpreter choice
   options.set_option("flow-sensitive", false);
@@ -250,14 +250,7 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
   else if(cmdline.isset("concurrent"))
     options.set_option("concurrent", true);
   else
-  {
-    is_threadedt is_threaded(goto_model.goto_functions);
-    bool contains_concurrent_code=is_threaded();
-
-    options.set_option("flow-sensitive", !contains_concurrent_code);
-    options.set_option("concurrent",  contains_concurrent_code);
-  }
-
+    options.set_option("flow-sensitive", true);
 
   // Domain choice
   options.set_option("constants", false);
@@ -276,10 +269,10 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
   else if (cmdline.isset("dependence-graph"))
     options.set_option("dependence-graph", true);
     
-  if (!(options.get_bool_option("constants")  ||
-        options.get_bool_option("intervals")  ||
-        options.get_bool_option("non-null") ||
-        options.get_bool_option("dependence-graph")))
+  if (!(options.get_bool_option("constants") ||
+      options.get_bool_option("intervals") ||
+      options.get_bool_option("non-null") ||
+      options.get_bool_option("dependence-graph")))
   {
     status() << "Domain defaults to --constants" << eom;
     options.set_option("constants", true);
@@ -311,7 +304,6 @@ int goto_analyzer_parse_optionst::doit()
     //
     // command line options
     //
-    
     optionst options;
     get_command_line_options(options);
     eval_verbosity();
@@ -319,10 +311,10 @@ int goto_analyzer_parse_optionst::doit()
     //
     // Print a banner
     //
-    status() << "GOTO-ANALYSER version " CBMC_VERSION " "
-	     << sizeof(void *)*8 << "-bit "
-	     << config.this_architecture() << " "
-	     << config.this_operating_system() << eom;
+    status() << "GOTO-ANALYZER version " CBMC_VERSION " "
+       << sizeof(void *)*8 << "-bit "
+       << config.this_architecture() << " "
+       << config.this_operating_system() << eom;
 
     register_languages();
 
@@ -357,11 +349,11 @@ int goto_analyzer_parse_optionst::doit()
       {
         std::string json_file=cmdline.get_value("json");
         bool result=taint_analysis(
-            goto_model,
-            taint_file,
-            get_message_handler(),
-            false,
-            json_file);
+          goto_model,
+          taint_file,
+          get_message_handler(),
+          false,
+          json_file);
         return result?10:0;
       }
     }
@@ -371,9 +363,9 @@ int goto_analyzer_parse_optionst::doit()
       const std::string json_file=cmdline.get_value("json");
 
       if(json_file.empty())
-      unreachable_instructions(goto_model, false, std::cout);
+        unreachable_instructions(goto_model, false, std::cout);
       else if(json_file=="-")
-      unreachable_instructions(goto_model, true, std::cout);
+        unreachable_instructions(goto_model, true, std::cout);
       else
       {
         std::ofstream ofs(json_file);
@@ -409,7 +401,7 @@ int goto_analyzer_parse_optionst::doit()
 
     label_properties(goto_model);
 
-    if (cmdline.isset("show-properties"))
+    if(cmdline.isset("show-properties"))
     {
       show_properties(goto_model, get_ui());
       return 0;
@@ -420,9 +412,9 @@ int goto_analyzer_parse_optionst::doit()
 
     // Output file factory
     std::ostream *out;
-    const std::string outfile = options.get_option("outfile");
-    if (outfile == "-")
-      out = &std::cout;
+    const std::string outfile=options.get_option("outfile");
+    if(outfile=="-")
+      out=&std::cout;
     else
     {
       if(options.get_bool_option("simplify"))
@@ -430,7 +422,7 @@ int goto_analyzer_parse_optionst::doit()
       else
         out=new std::ofstream(outfile);
 
-      if (!*out)
+      if(!*out)
       {
         error() << "Failed to open output file `" << outfile << "'" << eom;
         return 6;
@@ -438,33 +430,31 @@ int goto_analyzer_parse_optionst::doit()
     }
 
     // Run the analysis
-    bool result = true;
-    if (options.get_bool_option("show"))
-      result = static_show_domain(goto_model, options, get_message_handler(),
-          *out);
-    else if (options.get_bool_option("verify"))
-      result = static_analyzer(goto_model, options, get_message_handler(),
-          *out);
-    else if (options.get_bool_option("simplify"))
-      result = static_simplifier(goto_model, options, get_message_handler(),
-          *out);
+    bool result=true;
+    if(options.get_bool_option("show"))
+      result=static_show_domain(
+        goto_model,
+        options,
+        get_message_handler(),
+        *out);
+    else if(options.get_bool_option("verify"))
+      result=static_analyzer(goto_model, options, get_message_handler(), *out);
+    else if(options.get_bool_option("simplify"))
+      result=static_simplifier(
+        goto_model,
+        options,
+        get_message_handler(),
+        *out);
     else
     {
-      error() << "No task given" << eom;
+      error()<<"No task given"<<eom;
       return 6;
     }
 
-    if (out != &std::cout)
+    if (out!=&std::cout)
       delete out;
 
-    return result ? 10 : 0;
-  
-#if 0
-    // Final defensive error case
-    error() << "no analysis option given -- consider reading --help" << eom;
-    return 6;
-#endif
-
+    return result?10:0;
   }
   catch (const char *e)
   {
@@ -506,19 +496,16 @@ bool goto_analyzer_parse_optionst::set_properties()
     if(cmdline.isset("property"))
       ::set_properties(goto_model, cmdline.get_values("property"));
   }
-
   catch(const char *e)
   {
     error() << e << eom;
     return true;
   }
-
   catch(const std::string e)
   {
     error() << e << eom;
     return true;
   }
-
   catch(int)
   {
     return true;
@@ -598,24 +585,20 @@ bool goto_analyzer_parse_optionst::process_goto_program(
       return true;
     }
   }
-
   catch(const char *e)
   {
     error() << e << eom;
     return true;
   }
-
   catch(const std::string e)
   {
     error() << e << eom;
     return true;
   }
-
   catch(int)
   {
     return true;
   }
-
   catch(std::bad_alloc)
   {
     error() << "Out of memory" << eom;
@@ -641,7 +624,7 @@ void goto_analyzer_parse_optionst::help()
 {
   std::cout <<
     "\n"
-    "* * GOTO-ANALYSER " CBMC_VERSION " - Copyright (C) 2016 ";
+    "* * GOTO-ANALYZER " CBMC_VERSION " - Copyright (C) 2016 ";
 
   std::cout << "(" << (sizeof(void *)*8) << "-bit version)";
 
@@ -668,10 +651,10 @@ void goto_analyzer_parse_optionst::help()
     " --concurrent                 use concurrent abstract interpreter\n"
     "\n"
     "Domain options:\n"
-    " --constants                  constant abstraction\n"
-    " --intervals                  interval abstraction\n"
-    " --non-null                   non-null abstraction\n"
-    " --dependence-graph           dependency relation between instructions\n"
+    " --constants                  constant domain\n"
+    " --intervals                  interval domain\n"
+    " --non-null                   non-null domain\n"
+    " --dependence-graph           data and control dependencies between instructions\n" // NOLINT(*)
     "\n"
     "Output options:\n"
     " --text file_name             output results in plain text to given file\n"
