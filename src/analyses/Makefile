@@ -26,6 +26,7 @@ SRC = ai.cpp \
       static_analysis.cpp \
       uncaught_exceptions_analysis.cpp \
       uninitialized_domain.cpp \
+      unwind_bounds.cpp \
       # Empty last line
 
 INCLUDES= -I ..
