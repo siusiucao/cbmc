@@ -144,6 +144,11 @@ class optionst;
   "(location-sensitive)(concurrent)" \
   "(no-simplify-slicing)" \
   "(ignore-unresolved-calls)" \
+  "(unwind-bounds)" \
+  "(unwind-bounds-threshold):" \
+  "(unwindset)" \
+  "(functions-ignore)" \
+  "(functions-full)" \
   JAVA_BYTECODE_LANGUAGE_OPTIONS
 
 class goto_analyzer_parse_optionst:
