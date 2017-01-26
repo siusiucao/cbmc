@@ -31,6 +31,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/remove_vector.h>
 #include <goto-programs/remove_complex.h>
 #include <goto-programs/remove_asm.h>
+#include <goto-programs/remove_skip.h>
 #include <goto-programs/goto_convert_functions.h>
 #include <goto-programs/show_properties.h>
 #include <goto-programs/show_symbol_table.h>
@@ -41,6 +42,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <analyses/is_threaded.h>
 #include <analyses/goto_check.h>
 #include <analyses/local_may_alias.h>
+#include <analyses/unwind_bounds.h>
 #include <analyses/constant_propagator.h>
 #include <analyses/dependence_graph.h>
 #include <analyses/interval_domain.h>
@@ -146,6 +148,27 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
     options.set_option("taint", true);
     options.set_option("specific-analysis", true);
   }
+  if(cmdline.isset("unwind-bounds"))
+  {
+    options.set_option("unwind-bounds", true);
+    options.set_option("specific-analysis", true);
+
+    bool ignore;
+    bool full;
+
+    ignore=cmdline.isset("--functions-ignore");
+    full=cmdline.isset("--functions-full");
+
+    if(ignore && full)
+      throw "only one of --functions-ignore and --functions-full supported "
+            "at a time";
+
+    options.set_option("functions-ignore", ignore);
+    options.set_option("functions-full", full);
+
+    options.set_option("unwindset", cmdline.isset("--unwindset"));
+  }
+
   // For backwards compatibility,
   // these are first recognised as specific analyses
   bool reachability_task = false;
@@ -497,6 +520,72 @@ int goto_analyzer_parse_optionst::perform_analysis(const optionst &options)
           goto_model, taint_file, get_message_handler(), false, json_file);
       return result ? CPROVER_EXIT_VERIFICATION_UNSAFE : CPROVER_EXIT_SUCCESS;
     }
+  }
+
+  if(cmdline.isset("unwind-bounds"))
+  {
+    goto_functionst::function_mapt::const_iterator f_it=
+      goto_model.goto_functions.function_map.find(
+        goto_functionst::entry_point());
+
+    if(f_it==goto_model.goto_functions.function_map.end())
+    {
+      error() << "Entry point not found" << eom;
+      return CPROVER_EXIT_INTERNAL_ERROR;
+    }
+
+    namespacet ns(goto_model.symbol_table);
+
+    remove_skip(goto_model.goto_functions, true);
+    goto_model.goto_functions.update();
+    goto_model.goto_functions.compute_loop_numbers();
+
+    // default arguments
+    bool dependent_loops=true;
+    unsigned threshold=100;
+    unsigned threshold_loop=100000;
+    unwind_boundst::function_call_handlingt function_call_handling=
+      unwind_boundst::NO_BODY;
+
+    if(cmdline.isset("unwind-bounds-threshold"))
+    {
+      threshold=unsafe_string2unsigned(
+        cmdline.get_value("unwind-bounds-threshold"));
+    }
+
+    if(options.get_bool_option("functions-ignore"))
+      function_call_handling=unwind_boundst::UNDER;
+    else if(options.get_bool_option("functions-full"))
+      function_call_handling=unwind_boundst::FULL;
+
+    unwind_boundst unwind_bounds(
+      goto_model,
+      dependent_loops,
+      threshold,
+      threshold_loop,
+      function_call_handling);
+
+    unwind_bounds();
+
+    if(!options.get_bool_option("text"))
+    {
+      error() << "Only plain text output supported" << eom;
+      return CPROVER_EXIT_INCORRECT_TASK;
+    }
+
+    const std::string outfile=options.get_option("outfile");
+    std::ofstream output_stream;
+    if(!(outfile=="-"))
+      output_stream.open(outfile);
+
+    std::ostream &out((outfile=="-") ? std::cout : output_stream);
+
+    if(options.get_bool_option("unwindset"))
+      unwind_bounds.output_unwindset(out);
+    else
+      unwind_bounds.output(out);
+
+    return CPROVER_EXIT_SUCCESS;
   }
 
   // If no domain is given, this lightweight version of the analysis is used.
@@ -861,6 +950,11 @@ void goto_analyzer_parse_optionst::help()
     "Specific analyses:\n"
     // NOLINTNEXTLINE(whitespace/line_length)
     " --taint file_name            perform taint analysis using rules in given file\n"
+    " --unwind-bounds              compute unwind bounds\n"
+    " --unwind-bounds-threshold    maximum bound\n"
+    " --unwindset                  output unwind set\n"
+    " --functions-ignore           ignore function calls in loop bodies\n"
+    " --functions-full             recurse into functions in loop bodies\n"
     "\n"
     "C/C++ frontend options:\n"
     " -I path                      set include path (C/C++)\n"
