@@ -19,7 +19,7 @@ Description: An environment which stores abstract objects.  For use in
 
 abstract_objectt abstract_environmentt::eval(const exprt &e) const {
   switch(e.id()) {
-  case ID_symobol : 
+  case ID_symbol : 
     return (map.is_def(e)) ? env(e) : abstract_object_factory(e.type(), true);
     break;
     
@@ -81,33 +81,72 @@ abstract_objectt *abstract_environment::eval_rest(const exprt &e) const {
 
 
 
-bool abstract_environment::assign(const exprt &e, const abstract_objectt &d) {
-  switch(e.id()) {
-  case SYMBOL :
-    if (env.is_def(e)) {
-      assert(d.type() == env(e).type());
-
-      if (d.is_top())
-	env.erase(e);
-      else
-	env(e) = d;
-      
-    } else {
-      env.insert(e,d);
+bool abstract_environment::assign(const exprt &e, const abstract_objectt *d) {
+  exprt s = e;
+  std::stack<exprt> stactions;    // I'm not a continuation, honest guv'
+  
+  while (s.id() != ID_symbol)
+  {
+    if (s.id() == ID_index || s.id() == ID_member || s.id() == ID_derefence)
+    {
+      stactions.push(s);
+      s = s.op();
     }
-    
-  case ID_index :
-    get_object(e.array())
-    return eval_array(to_index_exprt(e)); break;
-    // ...
-
-  case ADDRESS_OF : // Needs special handling
-    return pointer_factory(e); break;
-    
-    // All of the domain specific stuff
-  default : return eval_rest(e); break;
+    else if (s.id() == ID_dereference)
+    {
+      // LOL, nope!
+    }
+    else
+    {
+      // Attempting to assign to something unreasonable
+      // Your goto-program is broken
+      die_horribly();
+    }
   }
 
+
+  abstract_objectt *write_value = d;
+
+  if (!stactions.empty())
+  {
+    // Delegate the continuation^W writing
+    switch (s.type().id())
+    {
+    case ID_struct :
+    {
+      abstract_structt *str = NULL;
+      if (map.is_def(s))
+	str = map.find();
+      else
+	str = abstract_object_factory(s.type(), true);
+
+      d = str.write_member(*this, staction, write_value, false);
+    }
+
+    case ID_array :
+    {
+      abstract_arrayt *str = NULL;
+      if (map.is_def(s))
+	str = map.find();
+      else
+	str = abstract_object_factory(s.type(), true);
+
+      d = str.write_index(*this, staction, write_value, false);
+    }
+
+    // ... and so on ...
+    }
+  }
+
+  if (d->is_top())
+  {
+    env.erase(s);
+    destroy(d); // well, decrement reference count and thus ...
+  }
+  else
+  {
+    env.update(s, d);
+  }
 }
 
 
@@ -136,3 +175,4 @@ bool abstract_environment::assume (const exprt &e)
    // This should give a significant performance boost
    // We can strip down to just the things that are in both
  }
+

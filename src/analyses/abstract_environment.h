@@ -45,7 +45,7 @@ class abstract_environmentt {
 
   // These three are really the heart of the method
   virtual abstract_objectt *eval(const exprt &e) const;
-  virtual bool assign(const exprt &e, const abstract_objectt &d);
+  virtual bool assign(const exprt &e, const abstract_objectt *d);
   virtual bool assume (const exprt &e) {  /* eval, if false then bottom */}
 
   

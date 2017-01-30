@@ -183,8 +183,11 @@ class abstract_arrayt : public abstract_objectt {
     return env.abstract_object_factory(at.subtype(), is_top()); 
   }
   
-  virtual abstract_object * write_index(abstract_environment &env, const exprt index, abstract_objectt &value, bool merging_write)
+  virtual abstract_object * write_index(abstract_environment &env, const std::stack<exprt> access_path, const abstract_objectt *value, bool merging_write)
   {
+    assert(!access_path.empty());
+    assert(access_path.top().id() == ID_index);
+    
     if ((is_top() && (value.is_top())) ||
 	(is_bottom() && (value.is_bottom())))
       return this;
@@ -203,7 +206,7 @@ class abstract_structt : public abstract_objectt
     // As above, return top or bottom of component type
   }
 
-  virtual abstract_object * write_member(abstract_environment &env, const irep_idt component_name, const exprt index, abstract_objectt &value, bool merged_write)
+  virtual abstract_object * write_member(abstract_environment &env, const std::stack<exprt> access_path, const abstract_objectt *value, bool merged_write)
   {
     // As above
   }
@@ -219,7 +222,7 @@ class abstract_uniont : public abstract_objectt
     // As above, return top or bottom of component type
   }
 
-  virtual abstract_object * write_member(abstract_environment &env, const irep_idt component_name, const exprt index, abstract_objectt &value, bool merged_write)
+  virtual abstract_object * write_member(abstract_environment &env, const std::stack<exprt> access_path, const abstract_objectt *value, bool merged_write)
   {
     // As above
   }
@@ -234,7 +237,7 @@ class abstract_pointert : public abstract_objectt {
     // Return top/bottom of the appropriate type.
   }
 
-  virtual abstract_objectt * write_dereference(const abstract_environemnt &env, abstract_objectt &value, bool merged_write) const
+  virtual abstract_objectt * write_dereference(const abstract_environemnt &env, const std::stack<exprt> access_path, const abstract_objectt *value, bool merged_write) const
   {
     env.havoc("Write to base abstract_pointert");
     // Pointers are now sound, just overapproximate...
