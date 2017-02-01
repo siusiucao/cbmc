@@ -14,6 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <iosfwd>
 #include <map>
+#include <unordered_set>
 
 #include <goto-programs/goto_model.h>
 #include <util/graph.h>
@@ -57,7 +58,6 @@ private:
     bool collect_callsites);
 
 public:
-
   void output_dot(std::ostream &out) const;
   void output(std::ostream &out) const;
   void output_xml(std::ostream &out) const;
@@ -136,6 +136,10 @@ public:
   };
 
   directed_grapht get_directed_graph() const;
+
+  void compute_reachable(
+    const irep_idt entry_point,
+    std::unordered_set<irep_idt, irep_id_hash> &reachable_functions);
 
 protected:
   void add(const irep_idt &function,
