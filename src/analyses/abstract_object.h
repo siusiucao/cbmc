@@ -18,123 +18,112 @@ Description: Abstractions of single variables.  The key feature is
 \*******************************************************************/
 
 #include <assert.h>
+#include <memory>
 
-#include "type.h"
-#include "std_expr.h"
-#include "std_types.h"
+#include <util/type.h>
+#include <util/std_expr.h>
+#include <util/std_types.h>
+
+#include "abstract_environment.h"
+
 
 #ifndef CPROVER_ABSTRACT_OBJECT_H
 #define CPROVER_ABSTRACT_OBJECT_H
 
-// As we want dynamic dispatch we can't use irepts.
-// So we have to do our own reference counting.
-// I have no particular preferences over solutions
-// Is there an STL (not Boost) C++ reference counted pointer in C++11?
-// I'm on a plane so can look it up.
-// Anyway, this shoud at least convey the intent
-
-class reference_counted_objectt
-{
- private:
-  uint64_t counter;
- public :
-  reference_counted_objectt() : counter(0) {}
-  reference_counted_objectt(const reference_counted_objectt &old) : counter(0) {}
-
-  uint64_t get(void) const { return counter; }
-  uint64_t inc(void) { assert(counter != UINT64_T_MAX); return ++counter; }
-  uint64_t dec(void) { assert(counter != 0); return --counter; }
-};
-
-template<class T>
-class reference_counted_pointer
-{
- private:
-  T * ptr;
-  
-  void claim (T *p)
-  {
-    reference_counted_objectt *v = dynamic_cast<reference_counted_object *>(ptr);
-    assert(v != NULL);
-    v->inc();
-    return;
-  }
-
-  void release (T *p)
-  {
-    reference_counted_objectt *v = dynamic_cast<reference_counted_object *>(ptr);
-    assert(v != NULL);
-    if (v->dec() == 0)
-      delete p;
-    return;
-  }
-  
- public :
- reference_counted_pointer(T *p) : ptr(p) { claim(p); }
-  
- reference_counted_pointer(const reference_counted_pointer &old) : ptr(old.ptr)
- {
-   claim(p);
- }
-
- reference_counted_pointer & operator= (const reference_counted_pointer &op)
- {
-   claim(op.ptr);   // Order matters!
-   release(this->ptr);
-   this->ptr = op.ptr;
-
-   return (*this);
- }
-   
- virtual ~reference_counted_pointer () { release(this->ptr); }
-
- T * operator T* (void) { return this->ptr; }
- const T * operator T* (void) const { return this->ptr; }
-}
 
 
 
-// Now we need abstract objects to represent the possible values that
-// the environment stores.
+// We need abstract objects to represent the possible values that
+// the environment stores, i.e. abstractions of single variables.
+
+// The type heirarchy here is intended to capture the range of possible
+// abstractions, with a subclass representing a more precise / refined
+// abstraction (although the converse is not necessarily true, just because
+// intervals are more precise than constants does not mean they have to
+// inherit) from them.  Some of the objects are only suitable for certain
+// types of variables (i.e. it would be strange to use an array abstraction
+// to track a single float variable).
+// *. The type() field tracks the type of variable / expression that is being
+//    abstracted.
+// *. The run-time type of the object used is the kind of abstraction used.
+
 
 // The top of the heirarchy is something that can only be top or bottom
-// but can represent any type of object.
+// but can represent any type of variable.
 // The interface is deliberately similar to ai_base but it does not
 // inherit from it as this is an abstraction of one object rather than
 // the full state of the program at an instruction.
-// Also note that these objects are intended to be immutable, hence the
-// slight difference in interface;
+// Also note that these objects are intended to be immutable to improve sharing,
+// hence the slight difference in interface;
 
 // I think there is a pattern for this but for now this will do
-#define CLONE(T) virtual abstract_objectt * clone () const { return new T(*this); }
+#define CLONE virtual abstract_objectt * clone() const { return new typeof(*this)(*this); }
+
+// Merge constructs an object of the most specific parent type of two objects.
+// Thus we can merge different abstractions of the same object.
+// This allows fine grain choice of abstractions without forcing all variables
+// of one type to use the same abstraction, or even the same variable in
+// different places can use different abstractions.
+#define MERGE(parent_typet) virtual abstract_objectt * merge(const abstract_object *op) const \
+  {								\
+    assert(this->type==op->type);				\
+    typedef current_type typeof(*this);                         \
+    current_type(this) n = dynamic_cast<current_type>(op);      \
+    if (n != NULL)                               		\
+    {								\
+      m = new current_type(this->type);                         \
+      m->merge_state(this, op);                                 \
+    }                                                           \
+    else                                                        \
+    {                                                           \
+      return parent_typet::merge(*op);                          \
+    }                                                           \
+}
 
 
-class abstract_objectt : public reference_counted_objectt
+class abstract_objectt
 {
  protected :
   typet type;
   bool top;
   bool bottom;
 
+  // Sets the state of this object
+  virtual void merge_state (abstract_objectt *op1, abstract_objectt *op2) const
+  {
+    top=op1->top||op2->top;
+    bottom=op1->bottom && op2->bottom;
+    assert(!(top && bottom));
+    return;
+  }
   
  public :
-  abstract_objectt (typet t) : type(t), is_top(true), is_bottom(false) {}
+  abstract_objectt (typet t) : type(t), top(true), bottom(false) {}
   abstract_objectt (typet t, bool tp, bool bttm) : type(t), top(tp), bttm(bttm) { assert(!(top && bottom)); }
   abstract_objectt (const abstract_object &old) : type(old.type), top(old.top), bottom(old.bottom) {}
-
-  CLONE(abstract_objectt)
+  abstract_objectt (const constant_exprt e) : type(e.type()), top(true), bottom(false) {}
+  
+  CLONE
   
   typet type(void) const {return type;};
-  abstract_object * merge(const abstract_object &op)
+
+  // This is both the interface and the base case of the recursion
+  // It uses merge state to 
+  virtual abstract_object * merge(const abstract_object *op) const
   {
-    // Double dynamic dispatch deleriously desired!
+    assert(this->type==op->type);
+    abstract_objectt *m=new current_type(*this);
+    m->merge_state(this, op);
+    return m;
   }
   virtual bool is_top() { return top; }
   virtual bool is_bottom() { return bottom; }
 
-  // if abstract element represents a single value, then that value, otherwise nil
-  // E.G. if it is an interval then this will return true if it is [x,x]
-  virtual exprt to_constant (void) const { return false; }
+  // If abstract element represents a single value, then that value, otherwise nil
+  // E.G. if it is an interval then this will x if it is [x,x]
+  // This is the (sort of) dual to the constant_exprt constructor that allows an object
+  // to be built from a value.
+  virtual exprt to_constant (void) const { return nil_expr(); }
 };
 
 
@@ -142,7 +131,7 @@ class abstract_objectt : public reference_counted_objectt
 class abstract_environmentt;
 
 
-// We have classes for each predefined type (types.h).
+// We have classes for each CPROVER type (types.h).
 // These add functionality to the interface but are still top/bottom
 // I.E. full insensitivity
 // We inherit from these to add sensitivity.
@@ -151,31 +140,39 @@ class abstract_environmentt;
 
 class abstract_valuet : public abstract_objectt
 {
-  // All the usual stuff
-  CLONE(abstract_valuet);
+ public :
+  abstract_valuet(typet t) : abstract_objectt(t) {}
+  abstract_valuet(typet t, bool tp, bool bttm) : abstract_objectt(t, tp, bttm) {}
+  abstract_valuet(const abstract_valuet &old) : abstract_objectt(old) {}
+  abstract_valuet(const constant_exprt e) : type(e.type()), top(true), bottom(false) {}
+
+  CLONE
+  MERGE(abstract_objectt)
 }
   
-class abstract_booleant : public abstract_valuet
-{
-  // All the usual stuff
-  CLONE(abstract_booleant);
-}
-
-class abstract_integert : public abstract_objectt
-{
-  // All the usual stuff
-  CLONE(abstract_integert);
-}
-
-class abstract_floatt : public abstract_objectt
-{
-  // All the usual stuff
-  CLONE(abstract_floatt);
-}
 
 class abstract_arrayt : public abstract_objectt {
-  // All the usual stuff
-  CLONE(abstract_arrayt);
+ public :
+  abstract_arrayt(typet t) : abstract_objectt(t)
+  {
+    assert(t.id() == ID_array);  // Only a meaningful abstraction for arrays
+  }
+  abstract_arrayt(typet t, bool tp, bool bttm) : abstract_objectt(t, tp, bttm)
+  {
+    assert(t.id() == ID_array); 
+  }
+  abstract_arrayt(const abstract_arrayt &old) : abstract_objectt(old)
+  {
+    assert(t.id() == ID_array); 
+  }
+  abstract_arrayt(const constant_exprt e) : type(e.type()), top(true), bottom(false)
+  {
+    assert(t.id() == ID_array); 
+  }
+
+
+  CLONE
+  MERGE(abstract_objectt)
   
   virtual abstract_objectt * read_index(const abstract_environment &env, const exprt index) const
   {
@@ -255,11 +252,48 @@ class abstract_pointert : public abstract_objectt {
 
 // to_constant methods are useful for these as they help increase the precision
 
-class full_abstract_booleant : public abstract_booleant
+
+
+// This is a constant abstraction for values.  It could be used for structures,
+// arrays. etc. but it's a better bet to use a precise abstraction for these but
+// use constant abstractions for the contents
+class constant_abstractiont : public abstract_valuet
 {
-  // Track true and false as well as top
-  // to_constant matters for Boolean operations
+ protected :
+  constant_expr value;
+
+    // As this object adds state, it needs a merge state
+  virtual void merge_state (constant_abstractiont *op1, constant_abstractiont *op2) const
+  {
+    abstract_objectt::merge_state(op1, op2);
+    if (!top && !bottom)
+    {
+      if (op1->value==op2->value)
+	this->value=op1->value;
+      else
+      {
+	this->top=true;
+	assert(this->bottom==false);
+	this->value=get_nil_irep();
+      }
+    }
+    return;
+  }
+
+  
+ public :
+ constant_abstractiont(typet t) : abstract_objectt(t), value(get_nil_irep()) {}
+ constant_abstractiont(typet t, bool tp, bool bttm) : abstract_objectt(t, tp, bttm), value(get_nil_irep()) {}
+ constant_abstractiont(const constant_abstractiont &old) : abstract_objectt(old), value(old.value) {}
+ constant_abstractiont(const constant_exprt e) : type(e.type()), top(false), bottom(false), value(e) {}
+
+  CLONE
+  MERGE(abstract_objectt)
+
+  virtual constant_exprt to_constant (void) const { return this->value; }
+  
 }
+
 
 
 class smash_arrayt : public abstract_array

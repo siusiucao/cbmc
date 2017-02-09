@@ -15,10 +15,12 @@ Description: An environment which stores abstract objects.  For use in
 
 #include <assert.h>
 
-#include "abstract_object.h"
 
 #ifndef CPROVER_ABSTRACT_ENVIRONMENT_H
 #define CPROVER_ABSTRACT_ENVIRONMENT_H
+
+// Forwards defintion
+class abstract_objectt;
 
 // These are mutable, unlike abstract_objects
 class abstract_environmentt {
@@ -41,7 +43,7 @@ class abstract_environmentt {
   // For converting constants in the program
   // Maybe these two should be compacted to one call...
   virtual abstract_objectt *abstract_object_factory (const typet t, const constant_exprt e);
-
+  
 
   // These three are really the heart of the method
   virtual abstract_objectt *eval(const exprt &e) const;

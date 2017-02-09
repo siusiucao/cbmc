@@ -43,7 +43,7 @@ class abstract_environment_domaint : public ai_domain_baset, abstract_environmen
     locationt to,
     ai_baset &ai,
     const namespacet &ns);
-
+  
   virtual void output(
     std::ostream &out,
     const ai_baset &ai,

@@ -13,7 +13,9 @@ Description: An environment which stores abstract objects.  For use in
 
 \*******************************************************************/
 
-#include "abstract_environment.cpp"
+#include "abstract_environment.h"
+
+#include "abstract_object.h"
 
 
 
@@ -104,7 +106,7 @@ bool abstract_environment::assign(const exprt &e, const abstract_objectt *d) {
     }
   }
 
-
+  
   abstract_objectt *write_value = d;
 
   if (!stactions.empty())
