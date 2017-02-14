@@ -126,7 +126,8 @@ class optionst;
   "(intervals)" \
   "(non-null)" \
   "(constants)" \
-  "(dependence-graph)"
+  "(dependence-graph)" \
+  "(variable)(variable-sensitivity)"
 
 #define GOTO_ANALYSER_OPTIONS_STORAGE \
   "(one-domain-per-history)" \
