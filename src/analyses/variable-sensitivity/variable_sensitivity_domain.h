@@ -14,10 +14,10 @@
 #include <analyses/ai.h>
 #include <analyses/variable-sensitivity/abstract_enviroment.h>
 
-class variable_sensitivity_domaint : public ai_domain_baset
+class variable_sensitivity_domaint : public ai_domain_baset, public messaget
 {
 public:
-  variable_sensitivity_domaint();
+  variable_sensitivity_domaint(message_handlert &message_handler);
 
   virtual void transform(
     locationt from,
@@ -35,8 +35,18 @@ public:
   // a reasonable entry-point state
   virtual void make_entry() override;
 
+  virtual void output(
+    std::ostream &out,
+    const ai_baset &ai,
+    const namespacet &ns) const override;
+
+  virtual bool merge(
+    const variable_sensitivity_domaint &b,
+    locationt from,
+    locationt to);
+
 private:
-  abstract_enviromentt abstract_state;
+  abstract_environmentt abstract_state;
 };
 
 #endif // CPROVER_GOTO_ANALYZER_VARIABLE_SENSITIVITY_VARIABLE_SENSITIVITY_DOMAIN_H // NOLINT(*)
