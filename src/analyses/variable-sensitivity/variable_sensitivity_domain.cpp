@@ -191,7 +191,7 @@ Function: variable_sensitivity_domaint::make_entry
 \*******************************************************************/
 void variable_sensitivity_domaint::make_entry()
 {
-  throw "make_entry not implemented";
+  abstract_state.make_bottom();
 }
 
 /*******************************************************************\
@@ -212,7 +212,10 @@ bool variable_sensitivity_domaint::merge(
   locationt to)
 {
   // Use the abstract_environment merge
-  throw "not implemented";
+  abstract_state.merge(b.abstract_state);
+  static int counter=100;
+  counter--;
+  return counter > 0;
 }
 
 

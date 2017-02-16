@@ -33,6 +33,8 @@ public:
   abstract_objectt(const abstract_objectt &old);
   abstract_objectt(const constant_exprt &expr);
 
+  virtual ~abstract_objectt();
+
   const typet &get_type() const;
   virtual bool is_top() const;
   virtual bool is_bottom() const;

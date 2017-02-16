@@ -105,12 +105,13 @@ bool abstract_environmentt::assign(
   {
     throw "not yet implemented";
   }
-
+#if 0
   if (value->is_top())
   {
     map.erase(symbol_expr);
   }
   else
+#endif
   {
     map[symbol_expr]=value;
   }
@@ -216,9 +217,30 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
   // Use the sharing_map's "iterative over all differences" functionality
   // This should give a significant performance boost
   // We can strip down to just the things that are in both
-  std::string not_implemented_string=__func__;
-  not_implemented_string.append(" not implemented");
-  throw not_implemented_string;
+
+  // for each entry in the incoming environment we need to either add it
+  // if it is new, or merge with the existing key if it is not present
+
+  bool modified=false;
+  for(const auto &entry:env.map)
+  {
+    if(map.find(entry.first)==map.end())
+    {
+      map[entry.first] = entry.second;
+    }
+    else
+    {
+      abstract_object_pointert new_object=map[entry.first]->merge(entry.second);
+      map[entry.first]=new_object;
+    }
+
+    /*if(map[entry.first]->is_top())
+    {
+      map.erase(entry.first);
+    }*/
+    modified=true;
+  }
+  return modified;
 }
 
 /*******************************************************************\
@@ -302,6 +324,7 @@ void abstract_environmentt::output(
     out << entry.first.get_identifier()
         << " (" << ") -> ";
     entry.second->output(out, ai, ns);
+    out << "\n";
   }
   out << "}\n";
 }

@@ -81,8 +81,13 @@ Function: abstract_objectt::abstract_objectt
 \*******************************************************************/
 
 abstract_objectt::abstract_objectt(const constant_exprt &expr):
-  type(expr.type()), top(true), bottom(false)
+type(expr.type()), top(true), bottom(false)
 {}
+
+abstract_objectt::~abstract_objectt()
+{
+
+}
 
 const typet &abstract_objectt::get_type() const
 {
@@ -132,7 +137,7 @@ abstract_object_pointert abstract_objectt::merge(
 {
   assert(this->type==op->type);
   abstract_object_pointert m=abstract_object_pointert(new abstract_objectt(*this));
-  m->merge_state(abstract_object_pointert(this), op);
+  m->merge_state(abstract_object_pointert(new abstract_objectt(*this)), op);
   return m;
 }
 
