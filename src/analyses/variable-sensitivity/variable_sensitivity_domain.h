@@ -14,11 +14,9 @@
 #include <analyses/ai.h>
 #include <analyses/variable-sensitivity/abstract_enviroment.h>
 
-class variable_sensitivity_domaint : public ai_domain_baset, public messaget
+class variable_sensitivity_domaint : public ai_domain_baset
 {
 public:
-  variable_sensitivity_domaint(message_handlert &message_handler);
-
   virtual void transform(
     locationt from,
     locationt to,

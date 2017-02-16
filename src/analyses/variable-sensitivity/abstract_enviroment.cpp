@@ -12,22 +12,6 @@
 #include <analyses/ai.h>
 
 
-/*******************************************************************\
-
-Function: abstract_environmentt::abstract_environmentt
-
-  Inputs:
-   message_handler - the message_handler
-
- Outputs:
-
- Purpose: Stores the state of the abstract_environment for each symbol
-
-\*******************************************************************/
-
-abstract_environmentt::abstract_environmentt(message_handlert &message_handler):
-  messaget(message_handler)
-{}
 
 /*******************************************************************\
 
@@ -235,7 +219,6 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
   std::string not_implemented_string=__func__;
   not_implemented_string.append(" not implemented");
   throw not_implemented_string;
-  return false;
 }
 
 /*******************************************************************\
@@ -253,7 +236,7 @@ Function: abstract_environmentt::havoc
 
 void abstract_environmentt::havoc(const std::string &havoc_string)
 {
-  error() << "havoc: " << havoc_string << eom;
+  // TODO(tkiley): error reporting
   make_top();
 }
 
@@ -321,4 +304,15 @@ void abstract_environmentt::output(
     entry.second->output(out, ai, ns);
   }
   out << "}\n";
+}
+
+abstract_object_pointert abstract_environmentt::eval_logical(
+  const exprt &e) const
+{
+  throw "not implemented";
+}
+
+abstract_object_pointert abstract_environmentt::eval_rest(const exprt &e) const
+{
+  return abstract_object_factory(e.type());
 }
