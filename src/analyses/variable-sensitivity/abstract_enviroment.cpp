@@ -120,13 +120,11 @@ bool abstract_environmentt::assign(
   {
     throw "not yet implemented";
   }
-#if 0
   if (value->is_top())
   {
     map.erase(symbol_expr);
   }
   else
-#endif
   {
     map[symbol_expr]=value;
   }
@@ -265,10 +263,10 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
       map[entry.first]=new_object;
     }
 
-    /*if(map[entry.first]->is_top())
+    if(map[entry.first]->is_top())
     {
       map.erase(entry.first);
-    }*/
+    }
     modified=true;
   }
   return modified;
