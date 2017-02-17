@@ -9,6 +9,7 @@
 #include <functional>
 #include <stack>
 #include <analyses/variable-sensitivity/abstract_object.h>
+#include <analyses/variable-sensitivity/constant_abstract_value.h>
 #include <analyses/ai.h>
 
 
@@ -46,9 +47,23 @@ abstract_object_pointert abstract_environmentt::eval(
           return symbol_entry->second;
         }
       }
+    },
+    {
+      ID_constant,[&](const exprt &expr)
+      {
+        return abstract_object_factory(
+          expr.type(), to_constant_expr(expr));
+      }
     }
   };
-
+  #if 0
+  [&](const exprt &expr)
+        {
+          return abstract_object_factory(
+            expr.type(), to_constant_expr(expr));
+        }
+      }
+#endif
   const auto &handler=handlers.find(expr.id());
   if(handler==handlers.cend())
   {
@@ -174,7 +189,15 @@ abstract_object_pointert abstract_environmentt::abstract_object_factory(
   const typet type, bool top) const
 {
   // TODO (tkiley): Here we should look at some config file
-  return abstract_object_pointert(new abstract_objectt(type, top, false));
+  if(type.id()==ID_signedbv)
+  {
+    return abstract_object_pointert(
+      new constant_abstract_valuet(type, top, false));
+  }
+  else
+  {
+    return abstract_object_pointert(new abstract_objectt(type, top, false));
+  }
 }
 
 /*******************************************************************\
@@ -192,11 +215,19 @@ Function: abstract_environmentt::abstract_object_factory
 
 \*******************************************************************/
 
-abstract_objectt *abstract_environmentt::abstract_object_factory(
-  const typet t, const constant_exprt e) const
+abstract_object_pointert abstract_environmentt::abstract_object_factory(
+  const typet type, const constant_exprt e) const
 {
-  assert(t==e.type());
-  return new abstract_objectt(e);
+  assert(type==e.type());
+  if(type.id()==ID_signedbv)
+  {
+    return abstract_object_pointert(
+      new constant_abstract_valuet(e));
+  }
+  else
+  {
+    return abstract_object_pointert(new abstract_objectt(e));
+  }
 }
 
 /*******************************************************************\

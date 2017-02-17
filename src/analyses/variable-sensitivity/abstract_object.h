@@ -23,7 +23,36 @@ class constant_exprt;
     return new current_typet(*this); \
   } \
 
-typedef std::shared_ptr<class abstract_objectt> abstract_object_pointert;
+#define MERGE(parent_typet) \
+  virtual abstract_object_pointert merge(const abstract_object_pointert op) \
+  {\
+    assert(this->type==op->type); \
+    typedef std::remove_const<std::remove_reference<decltype(*this)>::type \
+      >::type current_typet; \
+    \
+    /*Check the supplied parent type is indeed a parent*/ \
+    static_assert(std::is_base_of<parent_typet, current_typet>::value, \
+      "parent_typet in MERGE must be parent class of the current type"); \
+    \
+    typedef sharing_ptrt<current_typet> current_type_ptrt; \
+    /*Cast the supplied type to the current type to facilitate double dispatch*/ \
+    current_type_ptrt n=std::dynamic_pointer_cast<current_typet>(op); \
+    current_type_ptrt m=current_type_ptrt(new current_typet(*this)); \
+    if (n!= NULL) \
+    { \
+      m->merge_state(current_type_ptrt(new current_typet(*this)), n); \
+      return m; \
+    } \
+    else \
+    { \
+      return parent_typet::merge(abstract_object_pointert(op)); \
+    } \
+  } \
+
+template<class T>
+using sharing_ptrt=std::shared_ptr<T>;
+
+typedef sharing_ptrt<class abstract_objectt> abstract_object_pointert;
 
 class abstract_objectt
 {
@@ -40,7 +69,7 @@ public:
   virtual bool is_bottom() const;
 
   // Sets the state of this object
-  virtual void merge_state(
+  void merge_state(
     const abstract_object_pointert op1, const abstract_object_pointert op2);
 
   // This is both the interface and the base case of the recursion
@@ -48,14 +77,14 @@ public:
   virtual abstract_object_pointert merge(
     const abstract_object_pointert op);
 
-  virtual exprt to_constant (void) const;
+  virtual exprt to_constant(void) const;
 
   virtual void output(
     std::ostream &out, const class ai_baset &ai, const class namespacet &ns);
 
   CLONE
 
-protected :
+  //protoected
   typet type;
   bool top;
   bool bottom;
