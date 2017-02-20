@@ -266,6 +266,7 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
     if(map[entry.first]->is_top())
     {
       map.erase(entry.first);
+      is_bottom=false;
     }
     modified=true;
   }
@@ -306,7 +307,9 @@ Function: abstract_environmentt::make_top
 void abstract_environmentt::make_top()
 {
   // since we assume anything is not in the map is top this is sufficient
+  // TODO: need a flag for bottom
   map.clear();
+  is_bottom=false;
 }
 
 /*******************************************************************\
@@ -324,6 +327,24 @@ Function: abstract_environmentt::make_bottom
 void abstract_environmentt::make_bottom()
 {
   map.clear();
+  is_bottom=true;
+}
+
+/*******************************************************************\
+
+Function: abstract_environmentt::get_is_bottom
+
+  Inputs:
+
+ Outputs:
+
+ Purpose: Gets whether the domain is bottom
+
+\*******************************************************************/
+
+bool abstract_environmentt::get_is_bottom() const
+{
+  return map.empty() && is_bottom;
 }
 
 /*******************************************************************\

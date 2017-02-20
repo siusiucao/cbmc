@@ -45,6 +45,7 @@ public:
 
 private:
   abstract_environmentt abstract_state;
+  bool is_bottom;
 };
 
 #endif // CPROVER_GOTO_ANALYZER_VARIABLE_SENSITIVITY_VARIABLE_SENSITIVITY_DOMAIN_H // NOLINT(*)

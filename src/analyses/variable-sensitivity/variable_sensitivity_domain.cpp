@@ -192,6 +192,7 @@ Function: variable_sensitivity_domaint::make_entry
 void variable_sensitivity_domaint::make_entry()
 {
   abstract_state.make_bottom();
+  is_bottom=false;
 }
 
 /*******************************************************************\
@@ -212,10 +213,16 @@ bool variable_sensitivity_domaint::merge(
   locationt to)
 {
   // Use the abstract_environment merge
-  abstract_state.merge(b.abstract_state);
-  static int counter=100;
-  counter--;
-  return counter > 0;
+  bool any_changes=abstract_state.merge(b.abstract_state);
+  if(abstract_state.get_is_bottom() && !is_bottom)
+  {
+    is_bottom=true;
+    return true;
+  }
+  else
+  {
+    return any_changes;
+  }
 }
 
 
