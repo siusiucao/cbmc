@@ -116,7 +116,8 @@ void variable_sensitivity_domaint::transform(
     throw "exceptions not handled";
 
   case OTHER:
-    throw "other";
+//    throw "other";
+      break;
 
   default:
     throw "unrecognised instruction type";
