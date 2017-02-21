@@ -40,6 +40,15 @@ exprt constant_abstract_valuet::to_constant() const
   }
 }
 
+bool constant_abstract_valuet::operator==(const abstract_objectt &other) const
+{
+  // We can cast since should only be using == on same abstract object
+  const constant_abstract_valuet &other_consant_value=
+    dynamic_cast<const constant_abstract_valuet&>(other);
+
+  return abstract_valuet::operator==(other) && value==other_consant_value.value;
+}
+
 void constant_abstract_valuet::output(
   std::ostream &out, const ai_baset &ai, const namespacet &ns)
 {

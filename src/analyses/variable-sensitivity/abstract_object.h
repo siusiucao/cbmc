@@ -24,7 +24,9 @@ class constant_exprt;
   } \
 
 #define MERGE(parent_typet) \
-  virtual abstract_object_pointert merge(const abstract_object_pointert op) \
+  virtual abstract_object_pointert merge( \
+    const abstract_object_pointert op, \
+    bool &out_any_modifications) \
   {\
     assert(this->type==op->type); \
     typedef std::remove_const<std::remove_reference<decltype(*this)>::type \
@@ -41,11 +43,13 @@ class constant_exprt;
     if (n!= NULL) \
     { \
       m->merge_state(current_type_ptrt(new current_typet(*this)), n); \
+      out_any_modifications=!(*this==*m); \
       return m; \
     } \
     else \
     { \
-      return parent_typet::merge(abstract_object_pointert(op)); \
+      return parent_typet::merge( \
+        abstract_object_pointert(op), out_any_modifications); \
     } \
   } \
 
@@ -75,7 +79,7 @@ public:
   // This is both the interface and the base case of the recursion
   // It uses merge state to
   virtual abstract_object_pointert merge(
-    const abstract_object_pointert op);
+    const abstract_object_pointert op, bool &out_any_modifications);
 
   virtual exprt to_constant(void) const;
 
@@ -84,7 +88,9 @@ public:
 
   CLONE
 
-  //protoected
+  virtual bool operator==(const abstract_objectt &other) const;
+
+  //protected
   typet type;
   bool top;
   bool bottom;

@@ -255,20 +255,46 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
   {
     if(map.find(entry.first)==map.end())
     {
-      map[entry.first] = entry.second;
+      // We only add new stuff if we are bottom
+      if(is_bottom)
+      {
+        map[entry.first] = entry.second;
+        modified=true;
+      }
     }
     else
     {
-      abstract_object_pointert new_object=map[entry.first]->merge(entry.second);
+      bool object_modified=false;
+      abstract_object_pointert new_object=map[entry.first]->merge(
+        entry.second, object_modified);
+
+      if(object_modified)
+      {
+        modified=true;
+      }
       map[entry.first]=new_object;
+
     }
 
     if(map[entry.first]->is_top())
     {
       map.erase(entry.first);
       is_bottom=false;
+      modified=true;
     }
-    modified=true;
+  }
+
+  std::vector<map_keyt> to_remove;
+  for(const auto &entry : map)
+  {
+    if(env.map.find(entry.first)==env.map.end())
+    {
+      to_remove.push_back(entry.first);
+    }
+  }
+  for(const map_keyt &key_to_remove : to_remove)
+  {
+    map.erase(key_to_remove);
   }
   return modified;
 }

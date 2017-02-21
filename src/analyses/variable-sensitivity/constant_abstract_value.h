@@ -28,6 +28,8 @@ public:
 
   virtual exprt to_constant (void) const;
 
+  virtual bool operator==(const abstract_objectt &other) const;
+
   virtual void output(
     std::ostream &out,
     const class ai_baset &ai,

@@ -58,7 +58,8 @@ protected:
  // Hook for domain specific handling of operators
  virtual abstract_object_pointert eval_rest(const exprt &e) const;
 
- std::map<symbol_exprt, abstract_object_pointert> map;
+ typedef symbol_exprt map_keyt;
+ std::map<map_keyt, abstract_object_pointert> map;
 
 };
 

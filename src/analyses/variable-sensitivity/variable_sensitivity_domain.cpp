@@ -208,6 +208,7 @@ Function: variable_sensitivity_domaint::merge
  Purpose: Computes the join between "this" and "b".
 
 \*******************************************************************/
+
 bool variable_sensitivity_domaint::merge(
   const variable_sensitivity_domaint &b,
   locationt from,
