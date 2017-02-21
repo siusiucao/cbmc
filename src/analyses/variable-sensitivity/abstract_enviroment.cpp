@@ -56,6 +56,10 @@ abstract_object_pointert abstract_environmentt::eval(
           expr.type(), to_constant_expr(expr));
       }
     }
+    /* ID_member
+     * ID_addressof
+     * ID_pointer
+     * ID_indexof*/
   };
   #if 0
   [&](const exprt &expr)
