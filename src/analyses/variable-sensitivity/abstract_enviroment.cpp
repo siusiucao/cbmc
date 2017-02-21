@@ -444,6 +444,22 @@ bool abstract_environmentt::get_is_bottom() const
 
 /*******************************************************************\
 
+Function: abstract_environmentt::get_is_top
+
+  Inputs:
+
+ Outputs:
+
+ Purpose: Gets whether the domain is top
+
+\*******************************************************************/
+
+bool abstract_environmentt::get_is_top() const
+{
+  return map.empty() && !is_bottom;
+}
+
+/*******************************************************************\
 Function: abstract_environmentt::output
 
   Inputs:

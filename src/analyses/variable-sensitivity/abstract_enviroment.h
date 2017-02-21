@@ -41,6 +41,7 @@ public:
   void make_bottom();
 
   bool get_is_bottom() const;
+  bool get_is_top() const;
 
   void output(
     std::ostream &out, const class ai_baset &ai, const namespacet &ns) const;

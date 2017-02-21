@@ -200,7 +200,7 @@ Function: variable_sensitivity_domaint::make_entry
 void variable_sensitivity_domaint::make_entry()
 {
   abstract_state.make_bottom();
-  is_bottom=false;
+  is_set_to_bottom=false;
 }
 
 /*******************************************************************\
@@ -227,9 +227,9 @@ bool variable_sensitivity_domaint::merge(
 
   // Use the abstract_environment merge
   bool any_changes=abstract_state.merge(b.abstract_state);
-  if(abstract_state.get_is_bottom() && !is_bottom)
+  if(abstract_state.get_is_bottom() && !is_set_to_bottom)
   {
-    is_bottom=true;
+    is_set_to_bottom=true;
     std::cout << "\tsetting to bottom" << std::endl;
     return true;
   }
@@ -239,6 +239,16 @@ bool variable_sensitivity_domaint::merge(
               << std::endl;
     return any_changes;
   }
+}
+
+bool variable_sensitivity_domaint::is_bottom() const
+{
+  return is_set_to_bottom && abstract_state.get_is_bottom();
+}
+
+bool variable_sensitivity_domaint::is_top() const
+{
+  return abstract_state.get_is_top();
 }
 
 

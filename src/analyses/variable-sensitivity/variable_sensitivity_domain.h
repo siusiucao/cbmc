@@ -43,9 +43,14 @@ public:
     locationt from,
     locationt to);
 
+  bool is_bottom() const override;
+  bool is_top() const override;
+
 private:
   abstract_environmentt abstract_state;
-  bool is_bottom;
+  bool is_set_to_bottom;
+
+
 };
 
 #endif // CPROVER_GOTO_ANALYZER_VARIABLE_SENSITIVITY_VARIABLE_SENSITIVITY_DOMAIN_H // NOLINT(*)
