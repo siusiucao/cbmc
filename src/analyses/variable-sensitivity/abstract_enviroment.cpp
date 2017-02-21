@@ -35,7 +35,7 @@ abstract_object_pointert abstract_environmentt::eval(
   static std::map<irep_idt, eval_handlert> handlers=
   {
     {
-      ID_symbol,[&](const exprt &expr)
+      ID_symbol, [&](const exprt &expr)
       {
         const symbol_exprt &symbol(to_symbol_expr(expr));
         const auto &symbol_entry=map.find(symbol);
@@ -50,25 +50,68 @@ abstract_object_pointert abstract_environmentt::eval(
       }
     },
     {
-      ID_constant,[&](const exprt &expr)
+      ID_constant, [&](const exprt &expr)
       {
         return abstract_object_factory(
           expr.type(), to_constant_expr(expr));
       }
-    }
-    /* ID_member
-     * ID_addressof
-     * ID_pointer
-     * ID_indexof*/
-  };
+    },
+    {
+      ID_member, [&](const exprt &expr)
+      {
   #if 0
-  [&](const exprt &expr)
-        {
-          return abstract_object_factory(
-            expr.type(), to_constant_expr(expr));
-        }
+        member_exprt member_expr(to_member_expr(expr));
+  #endif
+        // TODO(tkiley): eval the compound to (hopefully) get an
+        // abstract_struct_objectt then use that to get an AO for a specific
+        // component.
+        // For now, just return top
+        return abstract_object_pointert(
+          new abstract_objectt(expr.type(), true, false));
       }
-#endif
+    },
+    {
+      ID_address_of, [&](const exprt &expr)
+      {
+  #if 0
+        address_of_exprt address_expr(to_address_of_expr(expr));
+  #endif
+        // TODO(tkiley): This needs special handling
+        // For now just return top
+        return abstract_object_pointert(
+          new abstract_objectt(expr.type(), true, false));
+      }
+    },
+    {
+      ID_dereference, [&](const exprt &expr)
+      {
+  #if 0
+        dereference_exprt dereference(to_dereference_expr(expr));
+  #endif
+        // TODO(tkiley): eval the pointer to (hopefully) get an
+        // abstract_pointer_objectt then use that to get an AO for a specific
+        // value.
+        // For now, just return top
+        return abstract_object_pointert(
+          new abstract_objectt(expr.type(), true, false));
+      }
+    },
+    {
+      ID_index, [&](const exprt &expr)
+      {
+  #if 0
+        index_exprt index_expr(to_index_expr(expr));
+  #endif
+        // TODO(tkiley): eval the array to (hopefully) get an
+        // abstract_array_objectt then use that to get an AO for a specific
+        // index.
+        // For now, just return top
+        return abstract_object_pointert(
+          new abstract_objectt(expr.type(), true, false));
+      }
+    }
+  };
+
   const auto &handler=handlers.find(expr.id());
   if(handler==handlers.cend())
   {
