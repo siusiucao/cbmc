@@ -11,6 +11,7 @@
 #include <analyses/variable-sensitivity/abstract_object.h>
 #include <analyses/variable-sensitivity/constant_abstract_value.h>
 #include <analyses/ai.h>
+#include <analyses/constant_propagator.h>
 
 
 
@@ -241,6 +242,8 @@ Function: abstract_environmentt::merge
 
 \*******************************************************************/
 
+#include <iostream>
+
 bool abstract_environmentt::merge(const abstract_environmentt &env)
 {
   // Use the sharing_map's "iterative over all differences" functionality
@@ -250,7 +253,12 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
   // for each entry in the incoming environment we need to either add it
   // if it is new, or merge with the existing key if it is not present
 
+  std::stringstream merge_message;
+
   bool modified=false;
+  ait<constant_propagator_domaint> ai;
+  symbol_tablet symbol_table;
+  namespacet ns(symbol_table);
   for(const auto &entry:env.map)
   {
     if(map.find(entry.first)==map.end())
@@ -258,6 +266,9 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
       // We only add new stuff if we are bottom
       if(is_bottom)
       {
+        merge_message << "adding " << entry.first.get_identifier() << "(";
+        entry.second->output(merge_message, ai, ns);
+        merge_message << ")\n";
         map[entry.first] = entry.second;
         modified=true;
       }
@@ -270,6 +281,12 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
 
       if(object_modified)
       {
+        merge_message << "modified " << entry.first.get_identifier() << "(";
+        map[entry.first]->output(merge_message, ai, ns);
+        merge_message << " -> ";
+
+        entry.second->output(merge_message, ai, ns);
+        merge_message << ")\n";
         modified=true;
       }
       map[entry.first]=new_object;
@@ -281,6 +298,7 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
       map.erase(entry.first);
       is_bottom=false;
       modified=true;
+      std::cout << "removing " << entry.first.get_identifier() << std::endl;
     }
   }
 
@@ -295,7 +313,11 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
   for(const map_keyt &key_to_remove : to_remove)
   {
     map.erase(key_to_remove);
+    std::cout << "removing " << key_to_remove.get_identifier() << std::endl;
   }
+
+  std::cout << merge_message.str();
+
   return modified;
 }
 
