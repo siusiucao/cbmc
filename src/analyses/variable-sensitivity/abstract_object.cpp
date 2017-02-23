@@ -6,10 +6,14 @@
 
 \*******************************************************************/
 
-#include "abstract_object.h"
 #include <iostream>
+
 #include <util/type.h>
 #include <util/std_expr.h>
+#include <analyses/variable-sensitivity/abstract_enviroment.h>
+#include <analyses/variable-sensitivity/constant_abstract_value.h>
+
+#include "abstract_object.h"
 
 /*******************************************************************\
 
@@ -143,13 +147,56 @@ abstract_object_pointert abstract_objectt::merge(
   return m;
 }
 
-#if 0
-abstract_object_pointert abstract_objectt::expression_transform_logical(
-  const exprt &expr, abstract_environmentt &environment)
+abstract_object_pointert abstract_objectt::expression_transform_binary(
+  const exprt &expr, const abstract_environmentt &environment) const
 {
+  typedef std::function<abstract_object_pointert(const exprt &)> eval_handlert;
+  std::map<irep_idt, eval_handlert> handlers=
+  {
+    {
+      ID_equal, [&](const exprt &expr)
+      {
+        return expression_transform_equals_simple(
+          expr.op0(), expr.op1(), environment);
+      }
+    },
+    {
+      ID_notequal, [&](const exprt &expr)
+      {
+        abstract_object_pointert equals=expression_transform_equals_simple(
+          expr.op0(), expr.op1(), environment);
+        const exprt &result=equals->to_constant();
+        if(result.id()==ID_nil)
+        {
+          return equals;
+        }
+        else
+        {
+          constant_exprt not_value;
+          if(result.is_false())
+          {
+            not_value.make_true();
+          }
+          else
+          {
+            not_value.make_false();
+          }
+          return abstract_object_pointert(
+            environment.abstract_object_factory(
+              not_value.type(), not_value));
+        }
+      }
+    }
+  };
 
+  // Normally if we can't handle an binary operation we would just pass it
+  // to a less precise version, but we are the least precise, so we need to
+  // implement all the operations.
+  // We could always fall back to returning top for the type of the expression
+  assert(handlers.find(expr.id())!=handlers.end());
+
+  return handlers[expr.id()](expr);
 }
-#endif
 
 /*******************************************************************\
 
@@ -236,5 +283,40 @@ void abstract_objectt::output(
   else
   {
     out << "Unknown";
+  }
+}
+
+abstract_object_pointert abstract_objectt::expression_transform_equals_simple(
+  const exprt &lhs,
+  const exprt &rhs,
+  const abstract_environmentt &enviroment) const
+{
+
+  abstract_object_pointert lhs_abstract_object=enviroment.eval(lhs);
+  abstract_object_pointert rhs_abstract_object=enviroment.eval(rhs);
+
+  const exprt &lhs_value=lhs_abstract_object->to_constant();
+  const exprt &rhs_value=rhs_abstract_object->to_constant();
+
+  if(lhs_value.id()==ID_nil || rhs_value.id()==ID_nil)
+  {
+    // One or both of the values is unknown so therefore we can't conclude
+    // whether this is true or false
+    return abstract_object_pointert(
+      new abstract_objectt(bool_typet(), true, false));
+  }
+  else
+  {
+    bool logical_result=lhs_value==rhs_value;
+    if(logical_result)
+    {
+      return abstract_object_pointert(
+        new constant_abstract_valuet(true_exprt()));
+    }
+    else
+    {
+      return abstract_object_pointert(
+        new constant_abstract_valuet(false_exprt()));
+    }
   }
 }

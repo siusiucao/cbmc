@@ -82,7 +82,8 @@ public:
     const abstract_object_pointert op, bool &out_any_modifications);
 
   // Interface for transforms
-  //abstract_object_pointert expression_transform_logical(const exprt &expr, abstract_environmentt &environment);
+  abstract_object_pointert expression_transform_binary(
+    const exprt &expr, const abstract_environmentt &environment) const;
 
   virtual exprt to_constant(void) const;
 
@@ -95,6 +96,12 @@ protected:
   typet type;
   bool top;
   bool bottom;
+
+private:
+  abstract_object_pointert expression_transform_equals_simple(
+    const exprt &lhs,
+    const exprt &rhs,
+    const abstract_environmentt &enviroment) const;
 };
 
 #endif // CPROVER_ANALYSES_VARIABLE_SENSITIVITY_ABSTRACT_OBJECT_H

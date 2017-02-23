@@ -80,8 +80,7 @@ abstract_object_pointert abstract_environmentt::eval(
   #endif
         // TODO(tkiley): This needs special handling
         // For now just return top
-        return abstract_object_pointert(
-          new abstract_objectt(expr.type(), true, false));
+        return abstract_object_factory(expr.type(), true, false);
       }
     },
     {
@@ -107,6 +106,25 @@ abstract_object_pointert abstract_environmentt::eval(
       }
     }
   };
+
+  std::unordered_set<irep_idt, irep_id_hash> logical_expression=
+  {
+    ID_equal
+    //ID_notequal,
+    //ID_not,
+    //ID_ge,
+    //ID_le,
+    //ID_lt,
+    //ID_gt,
+    //ID_and,
+    //ID_or,
+    //ID_not
+  };
+
+  if(logical_expression.find(expr.id())!=logical_expression.end())
+  {
+    return eval_logical(expr);
+  }
 
   const auto &handler=handlers.find(expr.id());
   if(handler==handlers.cend())
@@ -561,45 +579,10 @@ void abstract_environmentt::output(
 abstract_object_pointert abstract_environmentt::eval_logical(
   const exprt &e) const
 {
-  typedef std::function<abstract_object_pointert(const exprt &)> eval_handlert;
-  std::map<irep_idt, eval_handlert> handlers=
-  {
-    {
-      ID_equal, [&](const exprt &expr)
-      {
-        abstract_object_pointert lhs=eval(expr.op0());
-        abstract_object_pointert rhs=eval(expr.op1());
-
-        const exprt &lhs_value=lhs->to_constant();
-        const exprt &rhs_value=rhs->to_constant();
-
-        if(lhs_value.id()==ID_nil || rhs_value.id()==ID_nil)
-        {
-          // One or both of the values is unknown so therefore we can't conclude
-          // whether this is true or false
-          return abstract_object_pointert(
-            new abstract_objectt(expr.type(), true, false));
-        }
-        else
-        {
-          bool logical_result=lhs_value==rhs_value;
-          if(logical_result)
-          {
-            return abstract_object_pointert(
-              new constant_abstract_valuet(true_exprt()));
-          }
-          else
-          {
-            return abstract_object_pointert(
-              new constant_abstract_valuet(false_exprt()));
-          }
-        }
-      }
-    }
-  };
-
-  assert(handlers.find(e.id())!=handlers.end());
-  return handlers[e.id()](e);
+  // Delegate responsibility of resolving to a boolean abstract object
+  // to the abstract object being compared against
+  abstract_object_pointert lhs=eval(e.op0());
+  return lhs->expression_transform_binary(e, *this);
 }
 
 abstract_object_pointert abstract_environmentt::eval_rest(const exprt &e) const
