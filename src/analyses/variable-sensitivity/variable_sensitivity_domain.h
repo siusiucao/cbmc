@@ -55,7 +55,6 @@ public:
 
 private:
   abstract_environmentt abstract_state;
-  bool is_set_to_bottom;
 
 };
 
