@@ -33,6 +33,7 @@ Function: abstract_environmentt::eval
 abstract_object_pointert abstract_environmentt::eval(
   const exprt &expr) const
 {
+  assert(!is_bottom);
   typedef std::function<abstract_object_pointert(const exprt &)> eval_handlert;
   std::map<irep_idt, eval_handlert> handlers=
   {
@@ -363,70 +364,72 @@ bool abstract_environmentt::merge(const abstract_environmentt &env)
 
   std::stringstream merge_message;
 
-  bool modified=false;
+
   ait<constant_propagator_domaint> ai;
   symbol_tablet symbol_table;
   namespacet ns(symbol_table);
-  for(const auto &entry:env.map)
+
+  if(is_bottom)
   {
-    if(map.find(entry.first)==map.end())
+    *this=env;
+    return !env.is_bottom;
+  }
+  else if(env.is_bottom)
+  {
+    return false;
+  }
+  else
+  {
+    bool modified=false;
+    for(const auto &entry:env.map)
     {
-      // We only add new stuff if we are bottom
-      if(is_bottom)
+      if(map.find(entry.first)!=map.end())
       {
-        merge_message << "adding " << entry.first.get_identifier() << "(";
-        entry.second->output(merge_message, ai, ns);
-        merge_message << ")\n";
-        map[entry.first] = entry.second;
+        bool object_modified=false;
+        abstract_object_pointert new_object=map[entry.first]->merge(
+          entry.second, object_modified);
+
+        if(object_modified)
+        {
+          merge_message << "modified " << entry.first.get_identifier() << "(";
+          map[entry.first]->output(merge_message, ai, ns);
+          merge_message << " -> ";
+
+          entry.second->output(merge_message, ai, ns);
+          merge_message << ")\n";
+          modified=true;
+        }
+        map[entry.first]=new_object;
+
+      }
+
+      if(map[entry.first]->is_top())
+      {
+        map.erase(entry.first);
         modified=true;
+        std::cout << "removing " << entry.first.get_identifier() << std::endl;
       }
     }
-    else
-    {
-      bool object_modified=false;
-      abstract_object_pointert new_object=map[entry.first]->merge(
-        entry.second, object_modified);
 
-      if(object_modified)
+    std::vector<map_keyt> to_remove;
+    for(const auto &entry : map)
+    {
+      if(env.map.find(entry.first)==env.map.end())
       {
-        merge_message << "modified " << entry.first.get_identifier() << "(";
-        map[entry.first]->output(merge_message, ai, ns);
-        merge_message << " -> ";
-
-        entry.second->output(merge_message, ai, ns);
-        merge_message << ")\n";
-        modified=true;
+        to_remove.push_back(entry.first);
       }
-      map[entry.first]=new_object;
-
     }
-
-    if(map[entry.first]->is_top())
+    for(const map_keyt &key_to_remove : to_remove)
     {
-      map.erase(entry.first);
-      is_bottom=false;
+      map.erase(key_to_remove);
+      std::cout << "removing " << key_to_remove.get_identifier() << std::endl;
       modified=true;
-      std::cout << "removing " << entry.first.get_identifier() << std::endl;
     }
-  }
 
-  std::vector<map_keyt> to_remove;
-  for(const auto &entry : map)
-  {
-    if(env.map.find(entry.first)==env.map.end())
-    {
-      to_remove.push_back(entry.first);
-    }
-  }
-  for(const map_keyt &key_to_remove : to_remove)
-  {
-    map.erase(key_to_remove);
-    std::cout << "removing " << key_to_remove.get_identifier() << std::endl;
-  }
+    std::cout << merge_message.str();
 
-  std::cout << merge_message.str();
-
-  return modified;
+    return modified;
+  }
 }
 
 /*******************************************************************\
