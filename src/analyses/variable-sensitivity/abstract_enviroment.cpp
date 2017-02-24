@@ -12,6 +12,8 @@
 #include <analyses/variable-sensitivity/abstract_object.h>
 #include <analyses/variable-sensitivity/constant_abstract_value.h>
 #include <analyses/variable-sensitivity/struct_abstract_object.h>
+#include <analyses/variable-sensitivity/pointer_abstract_object.h>
+#include <analyses/variable-sensitivity/array_abstract_object.h>
 #include <analyses/ai.h>
 #include <analyses/constant_propagator.h>
 
