@@ -107,29 +107,19 @@ abstract_object_pointert abstract_environmentt::eval(
     }
   };
 
-  std::unordered_set<irep_idt, irep_id_hash> logical_expression=
-  {
-    ID_equal
-    //ID_notequal,
-    //ID_not,
-    //ID_ge,
-    //ID_le,
-    //ID_lt,
-    //ID_gt,
-    //ID_and,
-    //ID_or,
-    //ID_not
-  };
-
-  if(logical_expression.find(expr.id())!=logical_expression.end())
-  {
-    return eval_logical(expr, ns);
-  }
-
   const auto &handler=handlers.find(expr.id());
   if(handler==handlers.cend())
   {
-    return abstract_object_factory(expr.type(), true);
+    // No special handling required by the abstract environment
+    // delegate to the abstract object
+    if(expr.operands().size()==2)
+    {
+      return eval_binary_operations(expr, ns);
+    }
+    else
+    {
+      return abstract_object_factory(expr.type(), true);
+    }
   }
   else
   {
@@ -576,7 +566,7 @@ void abstract_environmentt::output(
   out << "}\n";
 }
 
-abstract_object_pointert abstract_environmentt::eval_logical(
+abstract_object_pointert abstract_environmentt::eval_binary_operations(
   const exprt &e, const namespacet &ns) const
 {
   // Delegate responsibility of resolving to a boolean abstract object
