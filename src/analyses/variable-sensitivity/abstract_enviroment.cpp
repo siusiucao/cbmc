@@ -16,6 +16,7 @@
 #include <analyses/variable-sensitivity/array_abstract_object.h>
 #include <analyses/ai.h>
 #include <analyses/constant_propagator.h>
+#include <util/simplify_expr.h>
 
 
 
@@ -33,7 +34,7 @@ Function: abstract_environmentt::eval
 \*******************************************************************/
 
 abstract_object_pointert abstract_environmentt::eval(
-  const exprt &expr) const
+  const exprt &expr, const namespacet &ns) const
 {
   assert(!is_bottom);
   typedef std::function<abstract_object_pointert(const exprt &)> eval_handlert;
@@ -67,7 +68,7 @@ abstract_object_pointert abstract_environmentt::eval(
         member_exprt member_expr(to_member_expr(expr));
         sharing_ptrt<struct_abstract_objectt> struct_abstract_object=
           std::dynamic_pointer_cast<struct_abstract_objectt>(
-            eval(member_expr.compound()));
+            eval(member_expr.compound(), ns));
 
         return struct_abstract_object->read_component(*this, member_expr);
       }
@@ -80,8 +81,7 @@ abstract_object_pointert abstract_environmentt::eval(
   #endif
         // TODO(tkiley): This needs special handling
         // For now just return top
-        return abstract_object_pointert(
-          new abstract_objectt(expr.type(), true, false));
+        return abstract_object_factory(expr.type(), true, false);
       }
     },
     {
@@ -90,7 +90,7 @@ abstract_object_pointert abstract_environmentt::eval(
         dereference_exprt dereference(to_dereference_expr(expr));
         sharing_ptrt<pointer_abstract_objectt> pointer_abstract_object=
           std::dynamic_pointer_cast<pointer_abstract_objectt>(
-            eval(dereference.pointer()));
+            eval(dereference.pointer(), ns));
 
         return pointer_abstract_object->read_dereference(*this);
       }
@@ -101,21 +101,33 @@ abstract_object_pointert abstract_environmentt::eval(
         index_exprt index_expr(to_index_expr(expr));
         sharing_ptrt<array_abstract_objectt> array_abstract_object=
           std::dynamic_pointer_cast<array_abstract_objectt>(
-            eval(index_expr.array()));
+            eval(index_expr.array(), ns));
 
         return array_abstract_object->read_index(*this, index_expr);
       }
     }
   };
 
-  const auto &handler=handlers.find(expr.id());
+  // first try to collapse constant folding
+  const exprt &simplified_expr=simplify_expr(expr, ns);
+
+  const auto &handler=handlers.find(simplified_expr.id());
   if(handler==handlers.cend())
   {
-    return abstract_object_factory(expr.type(), true);
+    // No special handling required by the abstract environment
+    // delegate to the abstract object
+    if(simplified_expr.operands().size()>0)
+    {
+      return eval_expression(simplified_expr, ns);
+    }
+    else
+    {
+      return abstract_object_factory(simplified_expr.type(), true);
+    }
   }
   else
   {
-    return handler->second(expr);
+    return handler->second(simplified_expr);
   }
 }
 
@@ -233,14 +245,14 @@ bool abstract_environmentt::assign(
   }
 
   // Write the value for the root symbol back into the map
-  if (value->is_top())
+  if (final_value->is_top())
   {
     map.erase(symbol_expr);
 
   }
   else
   {
-    map[symbol_expr]=value;
+    map[symbol_expr]=final_value;
   }
   return true;
 }
@@ -258,9 +270,9 @@ Function: abstract_environmentt::assume
 
 \*******************************************************************/
 
-bool abstract_environmentt::assume(const exprt &expr)
+bool abstract_environmentt::assume(const exprt &expr, const namespacet &ns)
 {
-  abstract_object_pointert res = eval(expr);
+  abstract_object_pointert res = eval(expr, ns);
   std::string not_implemented_string=__func__;
   not_implemented_string.append(" not implemented");
   throw not_implemented_string;
@@ -300,7 +312,7 @@ abstract_object_pointert abstract_environmentt::abstract_object_factory(
   const typet type, bool top, bool bottom) const
 {
   // TODO (tkiley): Here we should look at some config file
-  if(type.id()==ID_signedbv)
+  if(type.id()==ID_signedbv || type.id()==ID_bool || type.id()==ID_c_bool)
   {
     return abstract_object_pointert(
       new constant_abstract_valuet(type, top, bottom));
@@ -330,7 +342,7 @@ abstract_object_pointert abstract_environmentt::abstract_object_factory(
   const typet type, const constant_exprt e) const
 {
   assert(type==e.type());
-  if(type.id()==ID_signedbv)
+  if(type.id()==ID_signedbv || type.id()==ID_bool || type.id()==ID_c_bool)
   {
     return abstract_object_pointert(
       new constant_abstract_valuet(e));
@@ -558,48 +570,13 @@ void abstract_environmentt::output(
   out << "}\n";
 }
 
-abstract_object_pointert abstract_environmentt::eval_logical(
-  const exprt &e) const
+abstract_object_pointert abstract_environmentt::eval_expression(
+  const exprt &e, const namespacet &ns) const
 {
-  typedef std::function<abstract_object_pointert(const exprt &)> eval_handlert;
-  std::map<irep_idt, eval_handlert> handlers=
-  {
-    {
-      ID_equal, [&](const exprt &expr)
-      {
-        abstract_object_pointert lhs=eval(expr.op0());
-        abstract_object_pointert rhs=eval(expr.op1());
-
-        const exprt &lhs_value=lhs->to_constant();
-        const exprt &rhs_value=rhs->to_constant();
-
-        if(lhs_value.id()==ID_nil || rhs_value.id()==ID_nil)
-        {
-          // One or both of the values is unknown so therefore we can't conclude
-          // whether this is true or false
-          return abstract_object_pointert(
-            new abstract_objectt(expr.type(), true, false));
-        }
-        else
-        {
-          bool logical_result=lhs_value==rhs_value;
-          if(logical_result)
-          {
-            return abstract_object_pointert(
-              new constant_abstract_valuet(true_exprt()));
-          }
-          else
-          {
-            return abstract_object_pointert(
-              new constant_abstract_valuet(false_exprt()));
-          }
-        }
-      }
-    }
-  };
-
-  assert(handlers.find(e.id())!=handlers.end());
-  return handlers[e.id()](e);
+  // Delegate responsibility of resolving to a boolean abstract object
+  // to the abstract object being compared against
+  abstract_object_pointert lhs=eval(e.op0(), ns);
+  return lhs->expression_transform(e, *this, ns);
 }
 
 abstract_object_pointert abstract_environmentt::eval_rest(const exprt &e) const
