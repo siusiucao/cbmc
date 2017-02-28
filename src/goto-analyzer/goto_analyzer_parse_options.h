@@ -129,6 +129,11 @@ class optionst;
   "(dependence-graph)" \
   "(variable)(variable-sensitivity)"
 
+#define GOTO_ANALYSER_OPTIONS_VARIABLE_SENSITIVITY_DOMAIN_CONFIG \
+  "(pointers)" \
+  "(arrays)" \
+  "(structs)" \
+
 #define GOTO_ANALYSER_OPTIONS_STORAGE \
   "(one-domain-per-history)" \
   "(one-domain-per-location)"
@@ -165,6 +170,7 @@ class optionst;
   "(location-sensitive)(concurrent)" \
   GOTO_ANALYSER_OPTIONS_HISTORY \
   GOTO_ANALYSER_OPTIONS_DOMAIN \
+  GOTO_ANALYSER_OPTIONS_VARIABLE_SENSITIVITY_DOMAIN_CONFIG \
   GOTO_ANALYSER_OPTIONS_STORAGE \
   GOTO_ANALYSER_OPTIONS_OUTPUT \
   GOTO_ANALYSER_OPTIONS_SPECIFIC_ANALYSES \
