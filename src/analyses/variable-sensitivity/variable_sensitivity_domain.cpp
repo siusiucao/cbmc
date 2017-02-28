@@ -10,6 +10,7 @@ Date: April 2016
 
 
 #include <util/message.h>
+#include <util/simplify_expr.h>
 
 #include "variable_sensitivity_domain.h"
 
@@ -272,6 +273,7 @@ bool variable_sensitivity_domaint::ai_simplify(
     condition = c;
     return b;
   }
+  assert(0); // All conditions should be handled
 }
 
 bool variable_sensitivity_domaint::is_bottom() const
