@@ -140,6 +140,8 @@ void variable_sensitivity_domaint::transform(
   default:
     throw "unrecognised instruction type";
   }
+
+  assert(abstract_state.verify());
 }
 
 /*******************************************************************\
@@ -238,6 +240,8 @@ bool variable_sensitivity_domaint::merge(
 
   // Use the abstract_environment merge
   bool any_changes=abstract_state.merge(b.abstract_state);
+
+  assert(abstract_state.verify());
   return any_changes;
 }
 
