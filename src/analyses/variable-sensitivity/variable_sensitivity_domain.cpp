@@ -267,8 +267,7 @@ Function: variable_sensitivity_domaint::ai_simplify
    ns - the namespace
    lhs - is the expression on the left hand side
 
- Outputs: True if simplified the condition. False otherwise. condition
-          will be updated with the simplified condition if it has worked
+ Outputs: True if no simplification was made
 
  Purpose: Use the information in the domain to simplify the expression
           with respect to the current location.  This may be able to
@@ -283,12 +282,12 @@ bool variable_sensitivity_domaint::ai_simplify(
   exprt c = res->to_constant();
 
   if (c.id() == ID_nil)  // TODO : simplification within an expression
-    return false;
+    return true;
   else
   {
-    bool b = (condition!=c);
+    bool condition_changed = (condition!=c);
     condition = c;
-    return b;
+    return !condition_changed;
   }
   assert(0); // All conditions should be handled
 }
