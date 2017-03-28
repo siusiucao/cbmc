@@ -78,7 +78,7 @@ void variable_sensitivity_domaint::transform(
 
   case GOTO:
     {
-      if (1) // (flow_sensitivity == FLOW_SENSITIVE)
+      if(1) // (flow_sensitivity == FLOW_SENSITIVE)
       {
         // Get the next line
         locationt next=from;
@@ -278,18 +278,17 @@ Function: variable_sensitivity_domaint::ai_simplify
 bool variable_sensitivity_domaint::ai_simplify(
   exprt &condition, const namespacet &ns) const
 {
-  sharing_ptrt<abstract_objectt> res = abstract_state.eval(condition, ns);
-  exprt c = res->to_constant();
+  sharing_ptrt<abstract_objectt> res=abstract_state.eval(condition, ns);
+  exprt c=res->to_constant();
 
-  if(c.id() == ID_nil)  // TODO : simplification within an expression
+  if(c.id()==ID_nil)  // TODO : simplification within an expression
     return true;
   else
   {
-    bool condition_changed = (condition!=c);
-    condition = c;
+    bool condition_changed=(condition!=c);
+    condition=c;
     return !condition_changed;
   }
-  assert(0); // All conditions should be handled
 }
 
 /*******************************************************************\
