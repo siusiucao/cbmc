@@ -107,6 +107,14 @@ public:
   bool is_top() const override;
 
 private:
+  void transform_function_call(
+    locationt from,
+    locationt to,
+    ai_baset &ai,
+    const namespacet &ns);
+
+  bool ignore_function_call_transform(const irep_idt &function_id) const;
+
   abstract_environmentt abstract_state;
 };
 
