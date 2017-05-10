@@ -25,6 +25,61 @@ SRC = arith_tools.cpp base_type.cpp cmdline.cpp config.cpp symbol_table.cpp \
       fresh_symbol.cpp \
       format_number_range.cpp \
       nondet_ifthenelse.cpp \
+      get_base_name.cpp \
+      get_module.cpp \
+      graph.cpp \
+      guard.cpp \
+      identifier.cpp \
+      ieee_float.cpp \
+      invariant.cpp \
+      irep.cpp \
+      irep_hash.cpp \
+      irep_hash_container.cpp \
+      irep_ids.cpp \
+      irep_serialization.cpp \
+      json.cpp \
+      json_expr.cpp \
+      json_irep.cpp \
+      language.cpp \
+      language_file.cpp \
+      lispexpr.cpp \
+      lispirep.cpp \
+      memory_info.cpp \
+      merge_irep.cpp \
+      message.cpp \
+      mp_arith.cpp \
+      namespace.cpp \
+      options.cpp \
+      parse_options.cpp \
+      parser.cpp \
+      pipe_stream.cpp \
+      pointer_offset_size.cpp \
+      pointer_predicates.cpp \
+      rational.cpp \
+      rational_tools.cpp \
+      ref_expr_set.cpp \
+      rename.cpp \
+      rename_symbol.cpp \
+      replace_expr.cpp \
+      replace_symbol.cpp \
+      run.cpp \
+      signal_catcher.cpp \
+      simplify_expr.cpp \
+      simplify_expr_array.cpp \
+      simplify_expr_boolean.cpp \
+      simplify_expr_floatbv.cpp \
+      simplify_expr_int.cpp \
+      simplify_expr_pointer.cpp \
+      simplify_expr_struct.cpp \
+      simplify_utils.cpp \
+      source_location.cpp \
+      ssa_expr.cpp \
+      std_code.cpp \
+      std_expr.cpp \
+      std_types.cpp \
+      string2int.cpp \
+      string_container.cpp \
+      string_hash.cpp \
       string_utils.cpp \
       refined_string_type.cpp \
       #Empty last line
