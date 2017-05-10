@@ -4628,6 +4628,27 @@ def CheckAltTokens(filename, clean_lines, linenum, error):
               _ALT_TOKEN_REPLACEMENT[match.group(1)], match.group(1)))
 
 
+def CheckAssert(filename, clean_lines, linenum, error):
+  """Check for uses of assert.
+
+  Args:
+    filename: The name of the current file.
+    clean_lines: A CleansedLines instance containing the file.
+    linenum: The number of the line to check.
+    error: The function to call with any errors found.
+  """
+  line = clean_lines.elided[linenum]
+  match = Match(r'.*\s+assert\(.*\).*', line)
+  if match:
+    if Match(r'.*\s+assert\(0\).*', line):
+      error(filename, linenum, 'build/depreciated', 4,
+            'assert is depreciated, use UNREACHABLE instead')
+    else:
+      error(filename, linenum, 'build/depreciated', 4,
+            'assert is depreciated, use INVARIANT, PRECONDITION, CHECK_RETURN, etc. instead')
+
+
+
 def GetLineWidth(line):
   """Determines the width of the line in column positions.
 
@@ -4852,6 +4873,7 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, nesting_state,
   CheckSpacingForFunctionCall(filename, clean_lines, linenum, error)
   CheckCheck(filename, clean_lines, linenum, error)
   CheckAltTokens(filename, clean_lines, linenum, error)
+  CheckAssert(filename, clean_lines, linenum, error)
   classinfo = nesting_state.InnermostClass()
   if classinfo:
     CheckSectionSpacing(filename, clean_lines, classinfo, linenum, error)
