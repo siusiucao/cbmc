@@ -31,7 +31,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 // Mark different kinds of error condition
 // General
-#define UNREACHABLE throw "Supposidly unreachable location reached"
 #define PARSERERROR(S) throw S
 
 // Error checking the expression type
@@ -42,7 +41,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #define UNEXPECTEDCASE(S) throw "Unexpected case: " S
 
 // General todos
-#define TODO(S) throw "TODO: " S
+#define SMT2_TODO(S) throw "TODO: " S
 
 /*******************************************************************\
 
@@ -1212,7 +1211,7 @@ void smt2_convt::convert_expr(const exprt &expr)
         out << "))"; // mk-, let
       }
       else
-        TODO("bitnot for vectors");
+        SMT2_TODO("bitnot for vectors");
     }
     else
     {
@@ -1277,7 +1276,7 @@ void smt2_convt::convert_expr(const exprt &expr)
         out << "))"; // mk-, let
       }
       else
-        TODO("unary minus for vector");
+        SMT2_TODO("unary minus for vector");
     }
     else
     {
@@ -1623,7 +1622,7 @@ void smt2_convt::convert_expr(const exprt &expr)
     assert(expr.operands().size()==1);
 
     out << "false"; // TODO
-    TODO("pointer_object_has_type not implemented");
+    SMT2_TODO("pointer_object_has_type not implemented");
   }
   else if(expr.id()==ID_string_constant)
   {
@@ -1692,7 +1691,7 @@ void smt2_convt::convert_expr(const exprt &expr)
       convert_expr(tmp);
       out << ")) bin1)"; // bvlshr, extract, =
       #endif
-      TODO("smt2: extractbits with non-constant index");
+      SMT2_TODO("smt2: extractbits with non-constant index");
     }
   }
   else if(expr.id()==ID_replication)
@@ -2216,7 +2215,7 @@ void smt2_convt::convert_typecast(const typecast_exprt &expr)
           // This conversion is non-trivial as it requires creating a
           // new bit-vector variable and then asserting that it converts
           // to the required floating-point number.
-          TODO("bit-wise floatbv to bv");
+          SMT2_TODO("bit-wise floatbv to bv");
         }
         else
         {
@@ -2289,7 +2288,7 @@ void smt2_convt::convert_typecast(const typecast_exprt &expr)
         out << "(_ bv" << i << " " << to_width << ")";
       }
       else
-        TODO("can't convert non-constant integer to bitvector");
+        SMT2_TODO("can't convert non-constant integer to bitvector");
     }
     else if(src_type.id()==ID_struct) // flatten a struct to a bit-vector
     {
@@ -2479,7 +2478,7 @@ void smt2_convt::convert_typecast(const typecast_exprt &expr)
   }
   else if(dest_type.id()==ID_range)
   {
-    TODO("range typecast");
+    SMT2_TODO("range typecast");
   }
   else if(dest_type.id()==ID_floatbv)
   {
@@ -3430,11 +3429,11 @@ void smt2_convt::convert_floatbv_plus(const ieee_float_op_exprt &expr)
     }
     else if(type.id()==ID_complex)
     {
-      TODO("+ for floatbv complex");
+      SMT2_TODO("+ for floatbv complex");
     }
     else if(type.id()==ID_vector)
     {
-      TODO("+ for floatbv vector");
+      SMT2_TODO("+ for floatbv vector");
     }
     else
       UNEXPECTEDCASE("unsupported type for +: "+type.id_string());
@@ -3503,7 +3502,7 @@ void smt2_convt::convert_minus(const minus_exprt &expr)
   }
   else if(expr.type().id()==ID_pointer)
   {
-    TODO("pointer subtraction");
+    SMT2_TODO("pointer subtraction");
   }
   else if(expr.type().id()==ID_vector)
   {
@@ -4009,7 +4008,7 @@ void smt2_convt::convert_with(const with_exprt &expr)
     typecast_exprt index_tc(index, expr_type);
 
     // TODO: SMT2-ify
-    TODO("SMT2-ify");
+    SMT2_TODO("SMT2-ify");
     out << "(bvor ";
     out << "(band ";
 
@@ -4059,7 +4058,7 @@ void smt2_convt::convert_update(const exprt &expr)
 {
   assert(expr.operands().size()==3);
 
-  TODO("smt2_convt::convert_update to be implemented");
+  SMT2_TODO("smt2_convt::convert_update to be implemented");
 }
 
 /*******************************************************************\
@@ -4157,7 +4156,7 @@ void smt2_convt::convert_index(const index_exprt &expr)
       mp_integer index_int;
       if(to_integer(expr.index(), index_int))
       {
-        TODO("non-constant index on vectors");
+        SMT2_TODO("non-constant index on vectors");
       }
       else
       {
@@ -4168,7 +4167,7 @@ void smt2_convt::convert_index(const index_exprt &expr)
     }
     else
     {
-      TODO("index on vectors");
+      SMT2_TODO("index on vectors");
     }
   }
   else
