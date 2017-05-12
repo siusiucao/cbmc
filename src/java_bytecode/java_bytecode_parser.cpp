@@ -78,7 +78,7 @@ protected:
     if(index==0 || index>=constant_pool.size())
     {
       error() << "invalid constant pool index (" << index << ")" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     return constant_pool[index];
@@ -132,7 +132,7 @@ protected:
       if(!*in)
       {
         error() << "unexpected end of bytecode file" << eom;
-        throw 0;
+        THROWZERO;
       }
       in->get();
     }
@@ -146,7 +146,7 @@ protected:
       if(!*in)
       {
         error() << "unexpected end of bytecode file" << eom;
-        throw 0;
+        THROWZERO;
       }
       result<<=8;
       result|=in->get();
@@ -283,13 +283,13 @@ void java_bytecode_parsert::rClassFile()
   if(magic!=0xCAFEBABE)
   {
     error() << "wrong magic" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(major_version<44)
   {
     error() << "unexpected major version" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   rconstant_pool();
@@ -445,7 +445,7 @@ void java_bytecode_parsert::rconstant_pool()
   if(constant_pool_count==0)
   {
     error() << "invalid constant_pool_count" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   constant_pool.resize(constant_pool_count);
@@ -494,7 +494,7 @@ void java_bytecode_parsert::rconstant_pool()
       if(it==constant_pool.end())
       {
         error() << "invalid double entry" << eom;
-        throw 0;
+        THROWZERO;
       }
       it++;
       it->tag=0;
@@ -519,7 +519,7 @@ void java_bytecode_parsert::rconstant_pool()
     default:
       error() << "unknown constant pool entry (" << it->tag << ")"
               << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 
@@ -964,7 +964,7 @@ void java_bytecode_parsert::rbytecode(
   if(address!=code_length)
   {
     error() << "bytecode length mismatch" << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 

@@ -76,7 +76,7 @@ std::string cpp_typecheckt::template_suffix(
         error() << "template argument expression expected to be "
                 << "scalar constant, but got `"
                 << to_string(e) << "'" << eom;
-        throw 0;
+        THROWZERO;
       }
 
       result+=integer2string(i);
@@ -153,7 +153,7 @@ const symbolt &cpp_typecheckt::class_template_symbol(
     error() << "`" << template_symbol.base_name
             << "' is a template; thus, expected template arguments"
             << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // produce new symbol name
@@ -277,7 +277,7 @@ const symbolt &cpp_typecheckt::instantiate_template(
     error().source_location=source_location;
     error() << "reached maximum template recursion depth ("
             << MAX_DEPTH << ")" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   instantiation_levelt i_level(instantiation_stack);
@@ -320,7 +320,7 @@ const symbolt &cpp_typecheckt::instantiate_template(
     error() << "`" << template_symbol.base_name
             << "' is a template; thus, expected template arguments"
             << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // produce new symbol name
@@ -335,7 +335,7 @@ const symbolt &cpp_typecheckt::instantiate_template(
     error().source_location=source_location;
     error() << "identifier: " << template_symbol.name << '\n'
             << "template instantiation error: scope not found" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   ASSERT(template_scope!=NULL);
@@ -516,14 +516,14 @@ const symbolt &cpp_typecheckt::instantiate_template(
       error().source_location=new_decl.source_location();
       error() << "invalid use of `virtual' in template declaration"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(new_decl.is_typedef())
     {
       error().source_location=new_decl.source_location();
       error() << "template declaration for typedef" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(new_decl.storage_spec().is_extern() ||
@@ -534,7 +534,7 @@ const symbolt &cpp_typecheckt::instantiate_template(
       error().source_location=new_decl.source_location();
       error() << "invalid storage class specified for template field"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     bool is_static=new_decl.storage_spec().is_static();

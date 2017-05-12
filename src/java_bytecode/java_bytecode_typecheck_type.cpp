@@ -35,7 +35,7 @@ void java_bytecode_typecheckt::typecheck_type(typet &type)
     if(s_it==symbol_table.symbols.end())
     {
       error() << "failed to find type symbol "<< identifier << eom;
-      throw 0;
+      THROWZERO;
     }
 
     ASSERT(s_it->second.is_type);

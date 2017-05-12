@@ -84,7 +84,7 @@ void cpp_typecheckt::convert_anonymous_union(
   {
     error().source_location=follow(declaration.type()).source_location();
     error() << "anonymous union is not POD" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   codet decl_statement(ID_decl);
@@ -104,7 +104,7 @@ void cpp_typecheckt::convert_anonymous_union(
       error().source_location=union_symbol.type.source_location();
       error() << "anonymous union `" << union_symbol.base_name
               << "' shall not have function members" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     const irep_idt &base_name=it->get(ID_base_name);
@@ -114,7 +114,7 @@ void cpp_typecheckt::convert_anonymous_union(
       error().source_location=union_symbol.type.source_location();
       error() << "identifier `" << base_name << "' already in scope"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     cpp_idt &id=cpp_scopes.current_scope().insert(base_name);
@@ -173,7 +173,7 @@ void cpp_typecheckt::convert_non_template_declaration(
       error().source_location=final_type.source_location();
       error() << "top-level declaration does not declare anything"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     codet dummy;

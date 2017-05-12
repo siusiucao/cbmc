@@ -55,7 +55,7 @@ codet cpp_typecheckt::cpp_constructor(
     {
       error().source_location=source_location;
       error() << "bad array initializer" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     ASSERT(operands.empty() || operands.size()==1);
@@ -87,7 +87,7 @@ codet cpp_typecheckt::cpp_constructor(
       error().source_location=source_location;
       error() << "array size `" << to_string(size_expr)
               << "' is not a constant" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     /*if(cpp_is_pod(tmp_type))
@@ -180,7 +180,7 @@ codet cpp_typecheckt::cpp_constructor(
       error().source_location=source_location;
       error() << "initialization of POD requires one argument, "
                  "but got " << operands.size() << eom;
-      throw 0;
+      THROWZERO;
     }
 
     return new_code;

@@ -46,7 +46,7 @@ void c_typecheck_baset::implicit_typecast(
   }
 
   if(!c_typecast.errors.empty())
-    throw 0; // give up
+    THROWZERO; // give up
 
   for(std::list<std::string>::const_iterator
       it=c_typecast.warnings.begin();

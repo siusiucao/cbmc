@@ -149,7 +149,7 @@ void java_bytecode_convert_classt::convert(const classt &c)
   if(symbol_table.move(new_symbol, class_symbol))
   {
     error() << "failed to add class symbol " << new_symbol.name << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // now do fields

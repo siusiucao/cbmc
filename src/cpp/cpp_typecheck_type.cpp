@@ -40,14 +40,14 @@ void cpp_typecheckt::typecheck_type(typet &type)
   {
     error().source_location=type.source_location();
     error() << err << eom;
-    throw 0;
+    THROWZERO;
   }
 
   catch(const std::string &err)
   {
     error().source_location=type.source_location();
     error() << err << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(type.id()==ID_cpp_name)
@@ -66,7 +66,7 @@ void cpp_typecheckt::typecheck_type(typet &type)
     {
       error().source_location=type.source_location();
       error() << "error: expected type" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     type=symbol_expr.type();
@@ -252,7 +252,7 @@ void cpp_typecheckt::typecheck_type(typet &type)
   {
     error().source_location=type.source_location();
     error() << "unexpected cpp type: " << type.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   ASSERT(type.is_not_nil());

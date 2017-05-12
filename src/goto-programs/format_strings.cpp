@@ -41,7 +41,7 @@ void parse_flags(
       case '-': curtok.flags.push_back(format_tokent::LEFT_ADJUST); break;
       case ' ': curtok.flags.push_back(format_tokent::SIGNED_SPACE); break;
       case '+': curtok.flags.push_back(format_tokent::SIGN); break;
-      default: throw 0;
+      default: THROWZERO;
     }
     it++;
   }

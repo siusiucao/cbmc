@@ -48,7 +48,7 @@ void cpp_typecheckt::convert(cpp_itemt &item)
   {
     error().source_location=item.source_location();
     error() << "unknown parse-tree element: " << item.id() << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 

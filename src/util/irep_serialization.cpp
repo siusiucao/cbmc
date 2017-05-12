@@ -128,7 +128,7 @@ void irep_serializationt::read_irep(
   if(in.get()!=0)
   {
     std::cerr << "irep not terminated" << std::endl;
-    throw 0;
+    THROWZERO;
   }
 }
 

@@ -228,7 +228,7 @@ void goto_convert_functionst::convert_function(const irep_idt &identifier)
     error().source_location=symbol.value.find_source_location();
     error() << "got invalid code for function `" << identifier << "'"
             << eom;
-    throw 0;
+    THROWZERO;
   }
 
   const codet &code=to_code(symbol.value);
@@ -341,19 +341,19 @@ void goto_convert(
   catch(int)
   {
     goto_convert_functions.error();
-    throw 0;
+    THROWZERO;
   }
 
   catch(const char *e)
   {
     goto_convert_functions.error() << e << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 
   catch(const std::string &e)
   {
     goto_convert_functions.error() << e << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 }
 
@@ -386,18 +386,18 @@ void goto_convert(
   catch(int)
   {
     goto_convert_functions.error();
-    throw 0;
+    THROWZERO;
   }
 
   catch(const char *e)
   {
     goto_convert_functions.error() << e << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 
   catch(const std::string &e)
   {
     goto_convert_functions.error() << e << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 }

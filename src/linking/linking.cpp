@@ -451,7 +451,7 @@ void linkingt::link_error(
           << "' " << new_symbol.location << '\n'
           << type_to_string_verbose(ns, new_symbol) << eom;
 
-  throw 0;
+  THROWZERO;
 }
 
 /*******************************************************************\
@@ -1143,7 +1143,7 @@ void linkingt::duplicate_object_symbol(
         error() << "new value in module " << new_symbol.module
                 << " " << new_symbol.value.find_source_location() << '\n'
                 << expr_to_string(ns, new_symbol.name, tmp_new) << eom;
-        throw 0;
+        THROWZERO;
       }
     }
   }

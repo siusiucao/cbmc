@@ -42,13 +42,13 @@ void cpp_typecheckt::convert(cpp_static_assertt &cpp_static_assert)
     if(cpp_static_assert.op1().id()==ID_string_constant)
       error() << ": " << cpp_static_assert.op1().get(ID_value);
     error() << eom;
-    throw 0;
+    THROWZERO;
   }
   else
   {
     // not true or false
     error().source_location=cpp_static_assert.source_location();
     error() << "static assertion is not constant" << eom;
-    throw 0;
+    THROWZERO;
   }
 }

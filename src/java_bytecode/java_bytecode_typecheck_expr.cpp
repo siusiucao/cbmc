@@ -258,7 +258,7 @@ void java_bytecode_typecheckt::typecheck_expr_java_string_literal(exprt &expr)
   if(symbol_table.add(new_symbol))
   {
     error() << "failed to add string literal symbol to symbol table" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   expr=address_of_exprt(new_symbol.symbol_expr());
@@ -309,7 +309,7 @@ void java_bytecode_typecheckt::typecheck_expr_symbol(symbol_exprt &expr)
     if(symbol_table.add(new_symbol))
     {
       error() << "failed to add expression symbol to symbol table" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
   else

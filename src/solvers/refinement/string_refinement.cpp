@@ -450,7 +450,7 @@ void string_refinementt::set_to(const exprt &expr, bool value)
     {
       error() << "string_refinementt::set_to got non-boolean operand: "
               << expr.pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // Preprocessing to remove function applications.

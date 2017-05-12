@@ -180,7 +180,7 @@ void convert(const irept &irep, goto_programt &program)
       {
         std::cout << "Warning: could not resolve target link "
                   << "during irep->goto_program translation." << std::endl;
-        throw 0;
+        THROWZERO;
       }
     }
   }

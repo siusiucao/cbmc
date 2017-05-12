@@ -35,7 +35,7 @@ void c_typecheck_baset::add_argc_argv(const symbolt &main_symbol)
   {
     error().source_location=main_symbol.location;
     error() << "main expected to have no or two or three parameters" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   symbolt *argc_new_symbol;
@@ -58,7 +58,7 @@ void c_typecheck_baset::add_argc_argv(const symbolt &main_symbol)
       error().source_location=main_symbol.location;
       error() << "argc argument expected to be integer type, but got `"
               << to_string(argc_symbol.type) << "'" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     move_symbol(argc_symbol, argc_new_symbol);
@@ -72,7 +72,7 @@ void c_typecheck_baset::add_argc_argv(const symbolt &main_symbol)
       error() << "argv argument expected to be pointer-to-pointer type, "
                  "but got `"
               << to_string(op1.type()) << '\'' << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // we make the type of this thing an array of pointers
@@ -119,7 +119,7 @@ void c_typecheck_baset::add_argc_argv(const symbolt &main_symbol)
       error().source_location=main_symbol.location;
       error() << "envp argument expected to be pointer type, but got `"
               << to_string(envp_symbol.type) << '\'' << eom;
-      throw 0;
+      THROWZERO;
     }
 
     exprt size_expr = envp_new_size_symbol->symbol_expr();

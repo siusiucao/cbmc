@@ -757,7 +757,7 @@ void string_abstractiont::abstract_function_call(
     if(it1==arguments.end())
     {
       error() << "function call: not enough arguments" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     str_args.push_back(exprt());

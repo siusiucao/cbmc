@@ -72,7 +72,7 @@ void goto_inlinet::parameter_assignments(
     {
       error().source_location=source_location;
       error() << "no identifier for function parameter" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     {
@@ -144,7 +144,7 @@ void goto_inlinet::parameter_assignments(
                   << "', parameter is `"
                   << from_type(ns, identifier, par_type)
                   << "'" << eom;
-          throw 0;
+          THROWZERO;
         }
       }
 
@@ -209,7 +209,7 @@ void goto_inlinet::parameter_destruction(
     {
       error().source_location=source_location;
       error() << "no identifier for function parameter" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     {

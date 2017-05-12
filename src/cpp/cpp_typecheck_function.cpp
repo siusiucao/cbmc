@@ -62,7 +62,7 @@ void cpp_typecheckt::convert_parameter(
     error().source_location=symbol.location;
     error() << "cpp_typecheckt::convert_parameter: symbol_table.move(\""
             << symbol.name << "\") failed" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // put into scope

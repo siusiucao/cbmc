@@ -34,7 +34,7 @@ void cpp_typecheckt::convert(cpp_namespace_spect &namespace_spec)
     // "unique namespace"
     error().source_location=namespace_spec.source_location();
     error() << "unique namespace not supported yet" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   irep_idt final_name(name);
@@ -54,7 +54,7 @@ void cpp_typecheckt::convert(cpp_namespace_spect &namespace_spec)
               << "' previously declared\n"
               << "location of previous declaration: "
               << it->second.location << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(it->second.type.id()!=ID_namespace)
@@ -64,7 +64,7 @@ void cpp_typecheckt::convert(cpp_namespace_spect &namespace_spec)
               << "' previously declared\n"
               << "location of previous declaration: "
               << it->second.location << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // enter that scope
@@ -87,7 +87,7 @@ void cpp_typecheckt::convert(cpp_namespace_spect &namespace_spec)
       error().source_location=symbol.location;
       error() << "cpp_typecheckt::convert_namespace: symbol_table.move() failed"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     cpp_scopes.new_namespace(final_name);

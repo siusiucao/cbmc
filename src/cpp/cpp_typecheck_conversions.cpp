@@ -1746,7 +1746,7 @@ void cpp_typecheckt::implicit_typecast(exprt &expr, const typet &type)
     str << "\n " << follow(e.type()).pretty() << std::endl;
     str << "\n " << type.pretty() << std::endl;
     #endif
-    throw 0;
+    THROWZERO;
   }
 }
 
@@ -1822,7 +1822,7 @@ void cpp_typecheckt::reference_initializer(
 
   error().source_location=expr.find_source_location();
   error() << "bad reference initializer" << eom;
-  throw 0;
+  THROWZERO;
 }
 
 /*******************************************************************\

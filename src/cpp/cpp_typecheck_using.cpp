@@ -50,7 +50,7 @@ void cpp_typecheckt::convert(cpp_usingt &cpp_using)
             << (using_directive?"namespace":"identifier")
             << " `"
             << base_name << "' not found" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // go back to where we used to be

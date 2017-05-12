@@ -62,7 +62,7 @@ const symbolt &get_module_by_name(
   if(symbolptr_list.empty())
   {
     message.error() << "module `" << module << "' not found" << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
   else if(symbolptr_list.size()>=2)
   {
@@ -72,7 +72,7 @@ const symbolt &get_module_by_name(
       message.error() << "  " << (*it)->name << '\n';
 
     message.error() << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 
   // symbolptr_list has exactly one element
@@ -120,7 +120,7 @@ const symbolt &get_module(
   if(symbolptr_list.empty())
   {
     message.error() << "no module found" << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
   else if(symbolptr_list.size()>=2)
   {
@@ -136,7 +136,7 @@ const symbolt &get_module(
       message.error() << "  " << s_it << '\n';
 
     message.error() << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 
   // symbolptr_list has exactly one element

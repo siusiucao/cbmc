@@ -554,7 +554,7 @@ void cpp_typecheckt::default_assignop_value(
       {
         // error().source_location=object);
         // err << "cannot copy array of infinite size" << std::endl;
-        // throw 0;
+        // THROWZERO;
         continue;
       }
 
@@ -642,7 +642,7 @@ void cpp_typecheckt::check_member_initializers(
         error().source_location=member_name.source_location();
         error() << "invalid initializer `" << member_name.to_string()
                 << "'" << eom;
-        throw 0;
+        THROWZERO;
       }
       return;
     }
@@ -721,7 +721,7 @@ void cpp_typecheckt::check_member_initializers(
     {
       error().source_location=member_name.source_location();
       error() << "invalid initializer `" << base_name << "'" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 }
@@ -984,7 +984,7 @@ void cpp_typecheckt::full_member_initialization(
     {
       error().source_location=mem_it->source_location();
       error() << "reference must be explicitly initialized" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // If the data member is not POD and is not explicitly initialized,

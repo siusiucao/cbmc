@@ -158,7 +158,7 @@ void goto_convertt::finish_gotos(goto_programt &dest)
         {
           error().source_location=i.code.find_source_location();
           error() << "goto label `" << it->id() << "' not found" << eom;
-          throw 0;
+          THROWZERO;
         }
 
         i.targets.push_back(l_it->second.first);
@@ -175,7 +175,7 @@ void goto_convertt::finish_gotos(goto_programt &dest)
       {
         error().source_location=i.code.find_source_location();
         error() << "goto label `" << goto_label << "' not found" << eom;
-        throw 0;
+        THROWZERO;
       }
 
       i.targets.push_back(l_it->second.first);
@@ -190,7 +190,7 @@ void goto_convertt::finish_gotos(goto_programt &dest)
       {
         error().source_location=i.code.find_source_location();
         error() << "goto label `" << goto_label << "' not found" << eom;
-        throw 0;
+        THROWZERO;
       }
 
       i.targets.clear();
@@ -242,7 +242,7 @@ void goto_convertt::finish_gotos(goto_programt &dest)
     {
       error().source_location=i.code.find_source_location();
       error() << "finish_gotos: unexpected goto" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 
@@ -427,7 +427,7 @@ void goto_convertt::convert_label(
   {
     error().source_location=code.find_source_location();
     error() << "label statement expected to have one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // grab the label
@@ -494,7 +494,7 @@ void goto_convertt::convert_switch_case(
     error().source_location=code.find_source_location();
     error() << "switch-case statement expected to have two operands"
             << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -545,7 +545,7 @@ void goto_convertt::convert_gcc_switch_case_range(
     error().source_location=code.find_source_location();
     error() << "GCC's switch-case-range statement expected to have "
             << "three operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -685,7 +685,7 @@ void goto_convertt::convert(
       error().source_location=code.op0().find_source_location();
       error() << "static assertion "
               << get_string_constant(code.op1()) << eom;
-      throw 0;
+      THROWZERO;
     }
     else if(assertion.is_true())
     {
@@ -777,7 +777,7 @@ void goto_convertt::convert_expression(
   {
     error().source_location=code.find_source_location();
     error() << "expression statement takes one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   exprt expr=code.op0();
@@ -834,7 +834,7 @@ void goto_convertt::convert_decl(
   {
     error().source_location=op0.find_source_location();
     error() << "decl statement expects symbol as first operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   const irep_idt &identifier=op0.get(ID_identifier);
@@ -940,7 +940,7 @@ void goto_convertt::convert_assign(
     {
       error().source_location=rhs.find_source_location();
       error() << "function_call sideeffect takes two operands" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     Forall_operands(it, rhs)
@@ -1031,7 +1031,7 @@ void goto_convertt::convert_init(
   {
     error().source_location=code.find_source_location();
     error() <<"init statement takes two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // make it an assignment
@@ -1061,7 +1061,7 @@ void goto_convertt::convert_cpp_delete(
   {
     error().source_location=code.find_source_location();
     error() << "cpp_delete statement takes one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   exprt tmp_op=code.op0();
@@ -1219,7 +1219,7 @@ void goto_convertt::convert_loop_invariant(
   {
     error().source_location=code.find_source_location();
     error() << "loop invariant is not side-effect free" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   ASSERT(loop->is_goto());
@@ -1429,7 +1429,7 @@ void goto_convertt::convert_dowhile(
   {
     error().source_location=code.find_source_location();
     error() << "dowhile takes two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // save source location
@@ -1567,7 +1567,7 @@ void goto_convertt::convert_switch(
   {
     error().source_location=code.find_source_location();
     error() << "switch takes at least two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   exprt argument=code.value();
@@ -1647,7 +1647,7 @@ void goto_convertt::convert_break(
   {
     error().source_location=code.find_source_location();
     error() << "break without target" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // need to process destructor stack
@@ -1680,7 +1680,7 @@ void goto_convertt::convert_return(
   {
     error().source_location=code.find_source_location();
     error() << "return without target" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(!code.operands().empty() &&
@@ -1688,7 +1688,7 @@ void goto_convertt::convert_return(
   {
     error().source_location=code.find_source_location();
     error() << "return takes none or one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   code_returnt new_code(code);
@@ -1713,7 +1713,7 @@ void goto_convertt::convert_return(
     {
       error().source_location=new_code.find_source_location();
       error() << "function must return value" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // Now add a return node to set the return value.
@@ -1729,7 +1729,7 @@ void goto_convertt::convert_return(
     {
       error().source_location=new_code.find_source_location();
       error() << "function must not return value" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 
@@ -1762,7 +1762,7 @@ void goto_convertt::convert_continue(
   {
     error().source_location=code.find_source_location();
     error() << "continue without target" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // need to process destructor stack
@@ -1907,7 +1907,7 @@ void goto_convertt::convert_specc_event(
   {
     error().source_location=op.find_source_location();
     error() << "convert_convert_event got " << op.id() << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 
@@ -1934,7 +1934,7 @@ void goto_convertt::convert_specc_wait(
   {
     error().source_location=code.find_source_location();
     error() << "specc_wait expects one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   const exprt &op=code.op0();
@@ -1990,7 +1990,7 @@ void goto_convertt::convert_start_thread(
   {
     error().source_location=code.find_source_location();
     error() << "start_thread expects one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt::targett start_thread=
@@ -2041,7 +2041,7 @@ void goto_convertt::convert_end_thread(
   {
     error().source_location=code.find_source_location();
     error() << "end_thread expects no operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   copy(code, END_THREAD, dest);
@@ -2067,7 +2067,7 @@ void goto_convertt::convert_atomic_begin(
   {
     error().source_location=code.find_source_location();
     error() << "atomic_begin expects no operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   copy(code, ATOMIC_BEGIN, dest);
@@ -2093,7 +2093,7 @@ void goto_convertt::convert_atomic_end(
   {
     error().source_location=code.find_source_location();
     error() << "atomic_end expects no operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   copy(code, ATOMIC_END, dest);
@@ -2119,7 +2119,7 @@ void goto_convertt::convert_bp_enforce(
   {
     error().source_location=code.find_source_location();
     error() << "bp_enfroce expects two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // do an assume
@@ -2190,7 +2190,7 @@ void goto_convertt::convert_bp_abortif(
   {
     error().source_location=code.find_source_location();
     error() << "bp_abortif expects one argument" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // do an assert
@@ -2225,7 +2225,7 @@ void goto_convertt::convert_ifthenelse(
   {
     error().source_location=code.find_source_location();
     error() << "ifthenelse takes three operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   ASSERT(code.then_case().is_not_nil());
@@ -2693,7 +2693,7 @@ irep_idt goto_convertt::get_string_constant(const exprt &expr)
     error() << "expected string constant, but got: "
       << expr.pretty() << eom;
 
-    throw 0;
+    THROWZERO;
   }
 
   return result;
@@ -2843,7 +2843,7 @@ const symbolt &goto_convertt::lookup(const irep_idt &identifier)
   if(ns.lookup(identifier, symbol))
   {
     error() << "failed to find symbol " << identifier << eom;
-    throw 0;
+    THROWZERO;
   }
   return *symbol;
 }
@@ -2876,19 +2876,19 @@ void goto_convert(
   catch(int)
   {
     goto_convert.error();
-    throw 0;
+    THROWZERO;
   }
 
   catch(const char *e)
   {
     goto_convert.error() << e << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 
   catch(const std::string &e)
   {
     goto_convert.error() << e << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 }
 

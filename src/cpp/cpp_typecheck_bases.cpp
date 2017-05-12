@@ -47,7 +47,7 @@ void cpp_typecheckt::typecheck_compound_bases(struct_typet &type)
     {
       error().source_location=name.source_location();
       error() << "expected type as struct/class base" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // elaborate any class template instances given as bases
@@ -57,7 +57,7 @@ void cpp_typecheckt::typecheck_compound_bases(struct_typet &type)
     {
       error().source_location=name.source_location();
       error() << "expected type symbol as struct/class base" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     const symbolt &base_symbol=
@@ -67,14 +67,14 @@ void cpp_typecheckt::typecheck_compound_bases(struct_typet &type)
     {
       error().source_location=name.source_location();
       error() << "base type is incomplete" << eom;
-      throw 0;
+      THROWZERO;
     }
     else if(base_symbol.type.id()!=ID_struct)
     {
       error().source_location=name.source_location();
       error() << "expected struct or class as base, but got `"
               << to_string(base_symbol.type) << "'" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     bool virtual_base = base_it->get_bool(ID_virtual);
@@ -156,7 +156,7 @@ void cpp_typecheckt::add_base_components(
     error().source_location=to.source_location();
     error() << "error: non-virtual base class " << from_name
             << " inherited multiple times" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   bases.insert(from_name);

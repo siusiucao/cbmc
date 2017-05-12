@@ -51,7 +51,7 @@ void cpp_typecheckt::typecheck_enum_body(symbolt &enum_symbol)
       {
         error().source_location=value.find_source_location();
         error() << "failed to produce integer for enum constant" << eom;
-        throw 0;
+        THROWZERO;
       }
     }
 
@@ -77,7 +77,7 @@ void cpp_typecheckt::typecheck_enum_body(symbolt &enum_symbol)
       error().source_location=symbol.location;
       error() << "cpp_typecheckt::typecheck_enum_body: "
               << "symbol_table.move() failed" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     cpp_idt &scope_identifier=
@@ -126,7 +126,7 @@ void cpp_typecheckt::typecheck_enum_type(typet &type)
     {
       error().source_location=type.source_location();
       error() << "enum tag is expected to be a simple name" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 
@@ -157,7 +157,7 @@ void cpp_typecheckt::typecheck_enum_type(typet &type)
               << "' declared previously\n"
               << "location of previous definition: "
               << symbol.location << eom;
-      throw 0;
+      THROWZERO;
     }
   }
   else if(has_body)
@@ -181,7 +181,7 @@ void cpp_typecheckt::typecheck_enum_type(typet &type)
       {
         error().source_location=type.source_location();
         error() << "underlying type must be integral" << eom;
-        throw 0;
+        THROWZERO;
       }
     }
 
@@ -205,7 +205,7 @@ void cpp_typecheckt::typecheck_enum_type(typet &type)
       error().source_location=symbol.location;
       error() << "cpp_typecheckt::typecheck_enum_type: "
               << "symbol_table.move() failed" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // put into scope
@@ -221,7 +221,7 @@ void cpp_typecheckt::typecheck_enum_type(typet &type)
     error().source_location=type.source_location();
     error() << "use of enum `" << base_name
             << "' without previous declaration" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // create enum tag expression, and add the qualifiers

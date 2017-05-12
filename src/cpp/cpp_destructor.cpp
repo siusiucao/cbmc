@@ -67,7 +67,7 @@ codet cpp_typecheckt::cpp_destructor(
       error().source_location=source_location;
       error() << "array size `" << to_string(size_expr)
               << "' is not a constant" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     new_code.type().id(ID_code);

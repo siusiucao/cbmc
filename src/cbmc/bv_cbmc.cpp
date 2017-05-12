@@ -29,7 +29,7 @@ bvt bv_cbmct::convert_waitfor(const exprt &expr)
   {
     error().source_location=expr.find_source_location();
     error() << "waitfor expected to have four operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   exprt new_cycle;
@@ -45,7 +45,7 @@ bvt bv_cbmct::convert_waitfor(const exprt &expr)
   {
     error().source_location=expr.find_source_location();
     error() << "waitfor bound must be a constant" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   {
@@ -162,7 +162,7 @@ bvt bv_cbmct::convert_waitfor_symbol(const exprt &expr)
   {
     error().source_location=expr.find_source_location();
     error() << "waitfor_symbol expected to have one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   exprt result;

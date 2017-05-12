@@ -230,7 +230,7 @@ void cpp_typecheckt::typecheck_compound_type(
                 << "' declared previously\n"
                 << "location of previous definition: "
                 << symbol.location << eom;
-        throw 0;
+        THROWZERO;
       }
     }
   }
@@ -263,7 +263,7 @@ void cpp_typecheckt::typecheck_compound_type(
       error().source_location=symbol.location;
       error() << "cpp_typecheckt::typecheck_compound_type: "
               << "symbol_table.move() failed" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // put into dest_scope
@@ -359,7 +359,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
     error().source_location=cpp_name.source_location();
     error() << "declarator in compound needs to be simple name"
             << eom;
-    throw 0;
+    THROWZERO;
   }
 
   bool is_method=!is_typedef && final_type.id()==ID_code;
@@ -377,42 +377,42 @@ void cpp_typecheckt::typecheck_compound_declarator(
   {
     error().source_location=cpp_name.source_location();
     error() << "only methods can be virtual" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(is_inline && !is_method)
   {
     error().source_location=cpp_name.source_location();
     error() << "only methods can be inlined" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(is_virtual && is_static)
   {
     error().source_location=cpp_name.source_location();
     error() << "static methods cannot be virtual" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(is_cast_operator && is_static)
   {
     error().source_location=cpp_name.source_location();
     error() << "cast operators cannot be static`" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(is_constructor && is_virtual)
   {
     error().source_location=cpp_name.source_location();
     error() << "constructors cannot be virtual" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(!is_constructor && is_explicit)
   {
     error().source_location=cpp_name.source_location();
     error() << "only constructors can be explicit" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(is_constructor &&
@@ -420,7 +420,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
   {
     error().source_location=cpp_name.source_location();
     error() << "member function must return a value or void" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(is_destructor &&
@@ -428,7 +428,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
   {
     error().source_location=cpp_name.source_location();
     error() << "destructor with wrong name" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // now do actual work
@@ -541,7 +541,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
       {
         error().source_location=cpp_name.source_location();
         error() << "no initialization allowed here" << eom;
-        throw 0;
+        THROWZERO;
       }
     }
     else // virtual
@@ -561,7 +561,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
             error().source_location=declarator.name().source_location();
             error() << "expected 0 to mark pure virtual method, got "
                     << i << eom;
-            throw 0;
+            THROWZERO;
           }
           component.set("is_pure_virtual", true);
           value.make_nil();
@@ -764,7 +764,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
       error() << "redeclaration of static member `"
               << static_symbol.base_name
               << "'" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(value.is_not_nil())
@@ -899,7 +899,7 @@ void cpp_typecheckt::put_compound_into_scope(
         error().source_location=compound.source_location();
         error() << "`" << base_name
                 << "' already in compound scope" << eom;
-        throw 0;
+        THROWZERO;
       }
     }
 
@@ -938,7 +938,7 @@ void cpp_typecheckt::typecheck_friend_declaration(
     return; // TODO
     error().source_location=declaration.type().source_location();
     error() << "friend template not supported" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // we distinguish these whether there is a declarator
@@ -951,14 +951,14 @@ void cpp_typecheckt::typecheck_friend_declaration(
     {
       error().source_location=declaration.type().source_location();
       error() << "unexpected friend" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(ftype.find(ID_body).is_not_nil())
     {
       error().source_location=declaration.type().source_location();
       error() << "friend declaration must not have compound body" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // typecheck ftype
@@ -1042,7 +1042,7 @@ void cpp_typecheckt::typecheck_compound_body(symbolt &symbol)
     {
       error().source_location=symbol.location;
       error() << "union types must not have bases" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     typecheck_compound_bases(to_struct_type(type));
@@ -1107,7 +1107,7 @@ void cpp_typecheckt::typecheck_compound_body(symbolt &symbol)
       {
         error().source_location=declaration.storage_spec().location();
         error() << "invalid storage class specified for field" << eom;
-        throw 0;
+        THROWZERO;
       }
 
       typet final_type=follow(declaration.type());
@@ -1123,7 +1123,7 @@ void cpp_typecheckt::typecheck_compound_body(symbolt &symbol)
           error().source_location=declaration.type().source_location();
           error() << "member declaration does not declare anything"
                   << eom;
-          throw 0;
+          THROWZERO;
         }
 
         convert_anon_struct_union_member(
@@ -1336,7 +1336,7 @@ void cpp_typecheckt::move_member_initializers(
       error().source_location=location;
       error() << "only constructors are allowed to "
               << "have member initializers" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(value.is_nil())
@@ -1344,7 +1344,7 @@ void cpp_typecheckt::move_member_initializers(
       error().source_location=location;
       error() << "only constructors with body are allowed to "
               << "have member initializers" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     to_code(value).make_block();
@@ -1387,7 +1387,7 @@ void cpp_typecheckt::typecheck_member_function(
     {
       error().source_location=component.source_location();
       error() << "method is static -- no qualifiers allowed" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
   else
@@ -1440,7 +1440,7 @@ void cpp_typecheckt::typecheck_member_function(
             << "location of previous symbol: "
             << new_symbol->location << eom;
 
-    throw 0;
+    THROWZERO;
   }
 
   // Is this in a class template?
@@ -1524,7 +1524,7 @@ void cpp_typecheckt::add_anonymous_members_to_scope(
       error() << "anonymous struct/union member `"
               << struct_union_symbol.base_name
               << "' shall not have function members" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(comp.get_anonymous())
@@ -1541,7 +1541,7 @@ void cpp_typecheckt::add_anonymous_members_to_scope(
       {
         error().source_location=comp.source_location();
         error() << "`" << base_name << "' already in scope" << eom;
-        throw 0;
+        THROWZERO;
       }
 
       cpp_idt &id=cpp_scopes.current_scope().insert(base_name);
@@ -1578,14 +1578,14 @@ void cpp_typecheckt::convert_anon_struct_union_member(
   {
     error().source_location=struct_union_symbol.type.source_location();
     error() << "storage class is not allowed here" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(!cpp_is_pod(struct_union_symbol.type))
   {
     error().source_location=struct_union_symbol.type.source_location();
     error() << "anonymous struct/union member is not POD" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // produce an anonymous member
@@ -1672,7 +1672,7 @@ bool cpp_typecheckt::get_component(
               << "' is not accessible (" << component.get(ID_access) << ")";
           str << std::endl
               << "struct name: " << final_type.get(ID_name);
-          throw 0;
+          THROWZERO;
           #endif
         }
       }
@@ -1707,7 +1707,7 @@ bool cpp_typecheckt::get_component(
             error().source_location=source_location;
             str << "error: member `" << component_name
                 << "' is not accessible";
-            throw 0;
+            THROWZERO;
             #endif
           }
 
