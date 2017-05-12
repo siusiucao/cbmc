@@ -12,6 +12,8 @@ Author:
 #include <fstream>
 #include <string>
 
+#include <util/invariant.h>
+
 // we follow
 // https://developer.apple.com/library/mac/#documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html
 

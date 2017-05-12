@@ -11,6 +11,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <vector>
 
+#include <util/invariant.h>
 #include <solvers/prop/literal.h>
 
 class clauset

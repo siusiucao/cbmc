@@ -10,6 +10,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #define CPROVER_ANSI_C_LITERALS_UNESCAPE_STRING_H
 
 #include <string>
+#include "util/invariant.h"
 
 std::string unescape_string(const std::string &);
 std::basic_string<unsigned int> unescape_wide_string(const std::string &);

@@ -14,6 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <map>
 
 #include <solvers/prop/literal.h>
+#include <util/invariant.h>
 
 class aig_nodet
 {
