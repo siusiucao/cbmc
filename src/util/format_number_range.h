@@ -11,6 +11,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <string>
 #include <vector>
+#include "invariant.h"
 
 class format_number_ranget
 {

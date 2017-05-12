@@ -14,6 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <unordered_map>
 #include <vector>
 
+#include "invariant.h"
 
 template <typename T>
 // NOLINTNEXTLINE(readability/identifiers)
