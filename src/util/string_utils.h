@@ -11,6 +11,7 @@ Author: Daniel Poetzl
 
 #include <string>
 #include <vector>
+#include "invariant.h"
 
 std::string strip_string(const std::string &s);
 

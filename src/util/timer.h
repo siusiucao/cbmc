@@ -13,6 +13,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <iosfwd>
 
 #include "time_stopping.h"
+#include "invariant.h"
 
 class timert
 {

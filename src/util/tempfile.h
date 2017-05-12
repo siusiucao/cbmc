@@ -10,6 +10,7 @@ Author: Daniel Kroening
 #define CPROVER_UTIL_TEMPFILE_H
 
 #include <string>
+#include "invariant.h"
 
 // Returns an unused file name for a writeable temporary file,
 // and makes sure it exists.

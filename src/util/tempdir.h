@@ -10,6 +10,7 @@ Author: CM Wintersteiger
 #define CPROVER_UTIL_TEMPDIR_H
 
 #include <string>
+#include "invariant.h"
 
 std::string get_temporary_directory(const std::string &name_template);
 

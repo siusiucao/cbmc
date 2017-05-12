@@ -10,6 +10,7 @@ Author: Daniel Poetzl
 #include <cctype>
 #include <algorithm>
 
+#include "invariant.h"
 #include "string_utils.h"
 
 /*******************************************************************\

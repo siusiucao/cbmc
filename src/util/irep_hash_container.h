@@ -12,6 +12,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <cstdlib>  // for size_t
 #include <vector>
 
+#include "invariant.h"
 #include "irep_hash.h"
 #include "numbering.h"
 

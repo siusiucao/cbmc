@@ -10,6 +10,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #define CPROVER_UTIL_SUBSTITUTE_H
 
 #include <string>
+#include "invariant.h"
 
 void substitute(
   std::string &dest,

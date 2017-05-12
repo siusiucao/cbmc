@@ -14,6 +14,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <cassert>
 #include <iosfwd>
 
+#include "invariant.h"
+
 #define USE_DSTRING
 #define SHARING
 // #define HASH_CODE

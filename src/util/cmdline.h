@@ -13,6 +13,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <list>
 #include <string>
 
+#include "invariant.h"
+
 class cmdlinet
 {
 public:

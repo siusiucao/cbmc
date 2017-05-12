@@ -8,6 +8,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <cassert>
 
+#include "invariant.h"
 #include "irep_ids.h"
 #include "string_container.h"
 

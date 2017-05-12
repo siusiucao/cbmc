@@ -10,6 +10,7 @@ Author: Michael Tautschnig, michael.tautschnig@cs.ox.ac.uk
 #define CPROVER_UTIL_STRING2INT_H
 
 #include <string>
+#include "invariant.h"
 
 // These check that the string is indeed a valid number,
 // and fail an assertion otherwise.

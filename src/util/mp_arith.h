@@ -12,6 +12,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <string>
 #include <iosfwd>
 
+#include "invariant.h"
 #include "big-int/bigint.hh"
 
 // NOLINTNEXTLINE(readability/identifiers)
