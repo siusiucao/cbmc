@@ -69,8 +69,8 @@ bool memory_model_sct::program_order_is_relaxed(
   partial_order_concurrencyt::event_it e1,
   partial_order_concurrencyt::event_it e2) const
 {
-  assert(e1->is_shared_read() || e1->is_shared_write());
-  assert(e2->is_shared_read() || e2->is_shared_write());
+  ASSERT(e1->is_shared_read() || e1->is_shared_write());
+  ASSERT(e2->is_shared_read() || e2->is_shared_write());
 
   return false;
 }

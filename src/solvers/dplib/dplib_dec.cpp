@@ -100,7 +100,7 @@ decision_proceduret::resultt dplib_dect::dec_solve()
     "dplibl "+temp_out_filename+" > "+temp_result_filename+" 2>&1";
 
   int res=system(command.c_str());
-  assert(0 == res);
+  ASSERT(0 == res);
 
   status("Reading result from CVCL");
 
@@ -172,7 +172,7 @@ void dplib_dect::read_assert(std::istream &in, std::string &line)
     if(line[0]=='l')
     {
       unsigned number=unsafe_str2unsigned(line.c_str()+1);
-      assert(number<dplib_prop.no_variables());
+      ASSERT(number<dplib_prop.no_variables());
       dplib_prop.assignment[number]=value;
     }
   }

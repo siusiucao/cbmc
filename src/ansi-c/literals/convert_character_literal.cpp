@@ -32,14 +32,14 @@ exprt convert_character_literal(
   const std::string &src,
   bool force_integer_type)
 {
-  assert(src.size()>=2);
+  ASSERT(src.size()>=2);
 
   exprt result;
 
   if(src[0]=='L' || src[0]=='u' || src[0]=='U')
   {
-    assert(src[1]=='\'');
-    assert(src[src.size()-1]=='\'');
+    ASSERT(src[1]=='\'');
+    ASSERT(src[src.size()-1]=='\'');
 
     std::basic_string<unsigned int> value=
       unescape_wide_string(std::string(src, 2, src.size()-3));
@@ -75,8 +75,8 @@ exprt convert_character_literal(
   }
   else
   {
-    assert(src[0]=='\'');
-    assert(src[src.size()-1]=='\'');
+    ASSERT(src[0]=='\'');
+    ASSERT(src[src.size()-1]=='\'');
 
     std::string value=
       unescape_string(std::string(src, 1, src.size()-2));

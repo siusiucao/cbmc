@@ -58,7 +58,7 @@ public:
 */
 inline const transt &to_trans_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_trans && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_trans && expr.operands().size()==3);
   return static_cast<const transt &>(expr);
 }
 
@@ -67,7 +67,7 @@ inline const transt &to_trans_expr(const exprt &expr)
 */
 inline transt &to_trans_expr(exprt &expr)
 {
-  assert(expr.id()==ID_trans && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_trans && expr.operands().size()==3);
   return static_cast<transt &>(expr);
 }
 
@@ -195,7 +195,7 @@ public:
 */
 inline const symbol_exprt &to_symbol_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_symbol && !expr.has_operands());
+  ASSERT(expr.id()==ID_symbol && !expr.has_operands());
   return static_cast<const symbol_exprt &>(expr);
 }
 
@@ -204,7 +204,7 @@ inline const symbol_exprt &to_symbol_expr(const exprt &expr)
 */
 inline symbol_exprt &to_symbol_expr(exprt &expr)
 {
-  assert(expr.id()==ID_symbol && !expr.has_operands());
+  ASSERT(expr.id()==ID_symbol && !expr.has_operands());
   return static_cast<symbol_exprt &>(expr);
 }
 
@@ -270,7 +270,7 @@ public:
 */
 inline const unary_exprt &to_unary_expr(const exprt &expr)
 {
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
   return static_cast<const unary_exprt &>(expr);
 }
 
@@ -279,7 +279,7 @@ inline const unary_exprt &to_unary_expr(const exprt &expr)
 */
 inline unary_exprt &to_unary_expr(exprt &expr)
 {
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
   return static_cast<unary_exprt &>(expr);
 }
 
@@ -310,7 +310,7 @@ public:
 */
 inline const abs_exprt &to_abs_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_abs && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_abs && expr.operands().size()==1);
   return static_cast<const abs_exprt &>(expr);
 }
 
@@ -319,7 +319,7 @@ inline const abs_exprt &to_abs_expr(const exprt &expr)
 */
 inline abs_exprt &to_abs_expr(exprt &expr)
 {
-  assert(expr.id()==ID_abs && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_abs && expr.operands().size()==1);
   return static_cast<abs_exprt &>(expr);
 }
 
@@ -357,7 +357,7 @@ public:
 */
 inline const unary_minus_exprt &to_unary_minus_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_unary_minus && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_unary_minus && expr.operands().size()==1);
   return static_cast<const unary_minus_exprt &>(expr);
 }
 
@@ -366,7 +366,7 @@ inline const unary_minus_exprt &to_unary_minus_expr(const exprt &expr)
 */
 inline unary_minus_exprt &to_unary_minus_expr(exprt &expr)
 {
-  assert(expr.id()==ID_unary_minus && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_unary_minus && expr.operands().size()==1);
   return static_cast<unary_minus_exprt &>(expr);
 }
 
@@ -499,7 +499,7 @@ protected:
 */
 inline const binary_exprt &to_binary_expr(const exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
   return static_cast<const binary_exprt &>(expr);
 }
 
@@ -508,7 +508,7 @@ inline const binary_exprt &to_binary_expr(const exprt &expr)
 */
 inline binary_exprt &to_binary_expr(exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
   return static_cast<binary_exprt &>(expr);
 }
 
@@ -590,7 +590,7 @@ public:
 */
 inline const binary_relation_exprt &to_binary_relation_expr(const exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
   return static_cast<const binary_relation_exprt &>(expr);
 }
 
@@ -599,7 +599,7 @@ inline const binary_relation_exprt &to_binary_relation_expr(const exprt &expr)
 */
 inline binary_relation_exprt &to_binary_relation_expr(exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
   return static_cast<binary_relation_exprt &>(expr);
 }
 
@@ -640,7 +640,7 @@ public:
 */
 inline const plus_exprt &to_plus_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_plus && expr.operands().size()>=2);
+  ASSERT(expr.id()==ID_plus && expr.operands().size()>=2);
   return static_cast<const plus_exprt &>(expr);
 }
 
@@ -649,7 +649,7 @@ inline const plus_exprt &to_plus_expr(const exprt &expr)
 */
 inline plus_exprt &to_plus_expr(exprt &expr)
 {
-  assert(expr.id()==ID_plus && expr.operands().size()>=2);
+  ASSERT(expr.id()==ID_plus && expr.operands().size()>=2);
   return static_cast<plus_exprt &>(expr);
 }
 
@@ -682,7 +682,7 @@ public:
 */
 inline const minus_exprt &to_minus_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_minus && expr.operands().size()>=2);
+  ASSERT(expr.id()==ID_minus && expr.operands().size()>=2);
   return static_cast<const minus_exprt &>(expr);
 }
 
@@ -691,7 +691,7 @@ inline const minus_exprt &to_minus_expr(const exprt &expr)
 */
 inline minus_exprt &to_minus_expr(exprt &expr)
 {
-  assert(expr.id()==ID_minus && expr.operands().size()>=2);
+  ASSERT(expr.id()==ID_minus && expr.operands().size()>=2);
   return static_cast<minus_exprt &>(expr);
 }
 
@@ -724,7 +724,7 @@ public:
 */
 inline const mult_exprt &to_mult_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_mult && expr.operands().size()>=2);
+  ASSERT(expr.id()==ID_mult && expr.operands().size()>=2);
   return static_cast<const mult_exprt &>(expr);
 }
 
@@ -733,7 +733,7 @@ inline const mult_exprt &to_mult_expr(const exprt &expr)
 */
 inline mult_exprt &to_mult_expr(exprt &expr)
 {
-  assert(expr.id()==ID_mult && expr.operands().size()>=2);
+  ASSERT(expr.id()==ID_mult && expr.operands().size()>=2);
   return static_cast<mult_exprt &>(expr);
 }
 
@@ -766,7 +766,7 @@ public:
 */
 inline const div_exprt &to_div_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_div && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_div && expr.operands().size()==2);
   return static_cast<const div_exprt &>(expr);
 }
 
@@ -775,7 +775,7 @@ inline const div_exprt &to_div_expr(const exprt &expr)
 */
 inline div_exprt &to_div_expr(exprt &expr)
 {
-  assert(expr.id()==ID_div && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_div && expr.operands().size()==2);
   return static_cast<div_exprt &>(expr);
 }
 
@@ -808,7 +808,7 @@ public:
 */
 inline const mod_exprt &to_mod_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_mod && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_mod && expr.operands().size()==2);
   return static_cast<const mod_exprt &>(expr);
 }
 
@@ -817,7 +817,7 @@ inline const mod_exprt &to_mod_expr(const exprt &expr)
 */
 inline mod_exprt &to_mod_expr(exprt &expr)
 {
-  assert(expr.id()==ID_mod && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_mod && expr.operands().size()==2);
   return static_cast<mod_exprt &>(expr);
 }
 
@@ -850,7 +850,7 @@ public:
 */
 inline const rem_exprt &to_rem_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_rem && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_rem && expr.operands().size()==2);
   return static_cast<const rem_exprt &>(expr);
 }
 
@@ -859,7 +859,7 @@ inline const rem_exprt &to_rem_expr(const exprt &expr)
 */
 inline rem_exprt &to_rem_expr(exprt &expr)
 {
-  assert(expr.id()==ID_rem && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_rem && expr.operands().size()==2);
   return static_cast<rem_exprt &>(expr);
 }
 
@@ -892,7 +892,7 @@ class power_exprt:public binary_exprt
 */
 inline const power_exprt &to_power_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_power && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_power && expr.operands().size()==2);
   return static_cast<const power_exprt &>(expr);
 }
 
@@ -901,7 +901,7 @@ inline const power_exprt &to_power_expr(const exprt &expr)
 */
 inline power_exprt &to_power_expr(exprt &expr)
 {
-  assert(expr.id()==ID_power && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_power && expr.operands().size()==2);
   return static_cast<power_exprt &>(expr);
 }
 
@@ -934,7 +934,7 @@ class factorial_power_exprt:public binary_exprt
 */
 inline const factorial_power_exprt &to_factorial_power_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_factorial_power && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_factorial_power && expr.operands().size()==2);
   return static_cast<const factorial_power_exprt &>(expr);
 }
 
@@ -943,7 +943,7 @@ inline const factorial_power_exprt &to_factorial_power_expr(const exprt &expr)
 */
 inline factorial_power_exprt &to_factorial_expr(exprt &expr)
 {
-  assert(expr.id()==ID_factorial_power && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_factorial_power && expr.operands().size()==2);
   return static_cast<factorial_power_exprt &>(expr);
 }
 
@@ -974,7 +974,7 @@ public:
 */
 inline const equal_exprt &to_equal_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_equal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_equal && expr.operands().size()==2);
   return static_cast<const equal_exprt &>(expr);
 }
 
@@ -983,7 +983,7 @@ inline const equal_exprt &to_equal_expr(const exprt &expr)
 */
 inline equal_exprt &to_equal_expr(exprt &expr)
 {
-  assert(expr.id()==ID_equal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_equal && expr.operands().size()==2);
   return static_cast<equal_exprt &>(expr);
 }
 
@@ -1014,7 +1014,7 @@ public:
 */
 inline const notequal_exprt &to_notequal_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_notequal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_notequal && expr.operands().size()==2);
   return static_cast<const notequal_exprt &>(expr);
 }
 
@@ -1023,7 +1023,7 @@ inline const notequal_exprt &to_notequal_expr(const exprt &expr)
 */
 inline notequal_exprt &to_notequal_expr(exprt &expr)
 {
-  assert(expr.id()==ID_notequal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_notequal && expr.operands().size()==2);
   return static_cast<notequal_exprt &>(expr);
 }
 
@@ -1090,7 +1090,7 @@ public:
 */
 inline const index_exprt &to_index_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_index && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_index && expr.operands().size()==2);
   return static_cast<const index_exprt &>(expr);
 }
 
@@ -1099,7 +1099,7 @@ inline const index_exprt &to_index_expr(const exprt &expr)
 */
 inline index_exprt &to_index_expr(exprt &expr)
 {
-  assert(expr.id()==ID_index && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_index && expr.operands().size()==2);
   return static_cast<index_exprt &>(expr);
 }
 
@@ -1141,7 +1141,7 @@ public:
 */
 inline const array_of_exprt &to_array_of_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_array_of && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_array_of && expr.operands().size()==1);
   return static_cast<const array_of_exprt &>(expr);
 }
 
@@ -1150,7 +1150,7 @@ inline const array_of_exprt &to_array_of_expr(const exprt &expr)
 */
 inline array_of_exprt &to_array_of_expr(exprt &expr)
 {
-  assert(expr.id()==ID_array_of && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_array_of && expr.operands().size()==1);
   return static_cast<array_of_exprt &>(expr);
 }
 
@@ -1181,7 +1181,7 @@ public:
 */
 inline const array_exprt &to_array_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_array);
+  ASSERT(expr.id()==ID_array);
   return static_cast<const array_exprt &>(expr);
 }
 
@@ -1190,7 +1190,7 @@ inline const array_exprt &to_array_expr(const exprt &expr)
 */
 inline array_exprt &to_array_expr(exprt &expr)
 {
-  assert(expr.id()==ID_array);
+  ASSERT(expr.id()==ID_array);
   return static_cast<array_exprt &>(expr);
 }
 
@@ -1221,7 +1221,7 @@ public:
 */
 inline const vector_exprt &to_vector_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_vector);
+  ASSERT(expr.id()==ID_vector);
   return static_cast<const vector_exprt &>(expr);
 }
 
@@ -1230,7 +1230,7 @@ inline const vector_exprt &to_vector_expr(const exprt &expr)
 */
 inline vector_exprt &to_vector_expr(exprt &expr)
 {
-  assert(expr.id()==ID_vector);
+  ASSERT(expr.id()==ID_vector);
   return static_cast<vector_exprt &>(expr);
 }
 
@@ -1290,7 +1290,7 @@ public:
 */
 inline const union_exprt &to_union_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_union && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_union && expr.operands().size()==1);
   return static_cast<const union_exprt &>(expr);
 }
 
@@ -1299,7 +1299,7 @@ inline const union_exprt &to_union_expr(const exprt &expr)
 */
 inline union_exprt &to_union_expr(exprt &expr)
 {
-  assert(expr.id()==ID_union && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_union && expr.operands().size()==1);
   return static_cast<union_exprt &>(expr);
 }
 
@@ -1330,7 +1330,7 @@ public:
 */
 inline const struct_exprt &to_struct_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_struct);
+  ASSERT(expr.id()==ID_struct);
   return static_cast<const struct_exprt &>(expr);
 }
 
@@ -1339,7 +1339,7 @@ inline const struct_exprt &to_struct_expr(const exprt &expr)
 */
 inline struct_exprt &to_struct_expr(exprt &expr)
 {
-  assert(expr.id()==ID_struct);
+  ASSERT(expr.id()==ID_struct);
   return static_cast<struct_exprt &>(expr);
 }
 
@@ -1396,7 +1396,7 @@ public:
 */
 inline const complex_exprt &to_complex_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_complex && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_complex && expr.operands().size()==2);
   return static_cast<const complex_exprt &>(expr);
 }
 
@@ -1405,7 +1405,7 @@ inline const complex_exprt &to_complex_expr(const exprt &expr)
 */
 inline complex_exprt &to_complex_expr(exprt &expr)
 {
-  assert(expr.id()==ID_complex && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_complex && expr.operands().size()==2);
   return static_cast<complex_exprt &>(expr);
 }
 
@@ -1441,7 +1441,7 @@ public:
 
     while(p->id()==ID_member || p->id()==ID_index)
     {
-      assert(!p->operands().empty());
+      ASSERT(!p->operands().empty());
       p=&p->op0();
     }
 
@@ -1472,7 +1472,7 @@ public:
 inline const object_descriptor_exprt &to_object_descriptor_expr(
   const exprt &expr)
 {
-  assert(expr.id()==ID_object_descriptor && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_object_descriptor && expr.operands().size()==2);
   return static_cast<const object_descriptor_exprt &>(expr);
 }
 
@@ -1481,7 +1481,7 @@ inline const object_descriptor_exprt &to_object_descriptor_expr(
 */
 inline object_descriptor_exprt &to_object_descriptor_expr(exprt &expr)
 {
-  assert(expr.id()==ID_object_descriptor && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_object_descriptor && expr.operands().size()==2);
   return static_cast<object_descriptor_exprt &>(expr);
 }
 
@@ -1533,7 +1533,7 @@ public:
 inline const dynamic_object_exprt &to_dynamic_object_expr(
   const exprt &expr)
 {
-  assert(expr.id()==ID_dynamic_object && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_dynamic_object && expr.operands().size()==2);
   return static_cast<const dynamic_object_exprt &>(expr);
 }
 
@@ -1542,7 +1542,7 @@ inline const dynamic_object_exprt &to_dynamic_object_expr(
 */
 inline dynamic_object_exprt &to_dynamic_object_expr(exprt &expr)
 {
-  assert(expr.id()==ID_dynamic_object && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_dynamic_object && expr.operands().size()==2);
   return static_cast<dynamic_object_exprt &>(expr);
 }
 
@@ -1585,7 +1585,7 @@ public:
 */
 inline const typecast_exprt &to_typecast_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_typecast && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_typecast && expr.operands().size()==1);
   return static_cast<const typecast_exprt &>(expr);
 }
 
@@ -1594,7 +1594,7 @@ inline const typecast_exprt &to_typecast_expr(const exprt &expr)
 */
 inline typecast_exprt &to_typecast_expr(exprt &expr)
 {
-  assert(expr.id()==ID_typecast && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_typecast && expr.operands().size()==1);
   return static_cast<typecast_exprt &>(expr);
 }
 
@@ -1648,7 +1648,7 @@ public:
 */
 inline const floatbv_typecast_exprt &to_floatbv_typecast_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_floatbv_typecast && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_floatbv_typecast && expr.operands().size()==2);
   return static_cast<const floatbv_typecast_exprt &>(expr);
 }
 
@@ -1657,7 +1657,7 @@ inline const floatbv_typecast_exprt &to_floatbv_typecast_expr(const exprt &expr)
 */
 inline floatbv_typecast_exprt &to_floatbv_typecast_expr(exprt &expr)
 {
-  assert(expr.id()==ID_floatbv_typecast && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_floatbv_typecast && expr.operands().size()==2);
   return static_cast<floatbv_typecast_exprt &>(expr);
 }
 
@@ -1717,7 +1717,7 @@ exprt conjunction(const exprt::operandst &);
 */
 inline const and_exprt &to_and_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_and);
+  ASSERT(expr.id()==ID_and);
   return static_cast<const and_exprt &>(expr);
 }
 
@@ -1726,7 +1726,7 @@ inline const and_exprt &to_and_expr(const exprt &expr)
 */
 inline and_exprt &to_and_expr(exprt &expr)
 {
-  assert(expr.id()==ID_and);
+  ASSERT(expr.id()==ID_and);
   return static_cast<and_exprt &>(expr);
 }
 
@@ -1757,7 +1757,7 @@ public:
 */
 inline const implies_exprt &to_implies_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_implies && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_implies && expr.operands().size()==2);
   return static_cast<const implies_exprt &>(expr);
 }
 
@@ -1766,7 +1766,7 @@ inline const implies_exprt &to_implies_expr(const exprt &expr)
 */
 inline implies_exprt &to_implies_expr(exprt &expr)
 {
-  assert(expr.id()==ID_implies && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_implies && expr.operands().size()==2);
   return static_cast<implies_exprt &>(expr);
 }
 
@@ -1825,7 +1825,7 @@ exprt disjunction(const exprt::operandst &);
 */
 inline const or_exprt &to_or_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_or);
+  ASSERT(expr.id()==ID_or);
   return static_cast<const or_exprt &>(expr);
 }
 
@@ -1834,7 +1834,7 @@ inline const or_exprt &to_or_expr(const exprt &expr)
 */
 inline or_exprt &to_or_expr(exprt &expr)
 {
-  assert(expr.id()==ID_or);
+  ASSERT(expr.id()==ID_or);
   return static_cast<or_exprt &>(expr);
 }
 
@@ -1881,7 +1881,7 @@ public:
 */
 inline const bitor_exprt &to_bitor_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_bitor);
+  ASSERT(expr.id()==ID_bitor);
   return static_cast<const bitor_exprt &>(expr);
 }
 
@@ -1890,7 +1890,7 @@ inline const bitor_exprt &to_bitor_expr(const exprt &expr)
 */
 inline bitor_exprt &to_bitor_expr(exprt &expr)
 {
-  assert(expr.id()==ID_bitor);
+  ASSERT(expr.id()==ID_bitor);
   return static_cast<bitor_exprt &>(expr);
 }
 
@@ -1922,7 +1922,7 @@ public:
 */
 inline const bitxor_exprt &to_bitxor_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_bitxor);
+  ASSERT(expr.id()==ID_bitxor);
   return static_cast<const bitxor_exprt &>(expr);
 }
 
@@ -1931,7 +1931,7 @@ inline const bitxor_exprt &to_bitxor_expr(const exprt &expr)
 */
 inline bitxor_exprt &to_bitxor_expr(exprt &expr)
 {
-  assert(expr.id()==ID_bitxor);
+  ASSERT(expr.id()==ID_bitxor);
   return static_cast<bitxor_exprt &>(expr);
 }
 
@@ -1963,7 +1963,7 @@ public:
 */
 inline const bitand_exprt &to_bitand_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_bitand);
+  ASSERT(expr.id()==ID_bitand);
   return static_cast<const bitand_exprt &>(expr);
 }
 
@@ -1972,7 +1972,7 @@ inline const bitand_exprt &to_bitand_expr(const exprt &expr)
 */
 inline bitand_exprt &to_bitand_expr(exprt &expr)
 {
-  assert(expr.id()==ID_bitand);
+  ASSERT(expr.id()==ID_bitand);
   return static_cast<bitand_exprt &>(expr);
 }
 
@@ -2033,7 +2033,7 @@ public:
 */
 inline const shift_exprt &to_shift_expr(const exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
   return static_cast<const shift_exprt &>(expr);
 }
 
@@ -2042,7 +2042,7 @@ inline const shift_exprt &to_shift_expr(const exprt &expr)
 */
 inline shift_exprt &to_shift_expr(exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
   return static_cast<shift_exprt &>(expr);
 }
 
@@ -2160,7 +2160,7 @@ public:
 */
 inline const replication_exprt &to_replication_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_replication && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_replication && expr.operands().size()==2);
   return static_cast<const replication_exprt &>(expr);
 }
 
@@ -2169,7 +2169,7 @@ inline const replication_exprt &to_replication_expr(const exprt &expr)
 */
 inline replication_exprt &to_replication_expr(exprt &expr)
 {
-  assert(expr.id()==ID_replication && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_replication && expr.operands().size()==2);
   return static_cast<replication_exprt &>(expr);
 }
 
@@ -2225,7 +2225,7 @@ public:
 */
 inline const extractbit_exprt &to_extractbit_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_extractbit && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_extractbit && expr.operands().size()==2);
   return static_cast<const extractbit_exprt &>(expr);
 }
 
@@ -2234,7 +2234,7 @@ inline const extractbit_exprt &to_extractbit_expr(const exprt &expr)
 */
 inline extractbit_exprt &to_extractbit_expr(exprt &expr)
 {
-  assert(expr.id()==ID_extractbit && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_extractbit && expr.operands().size()==2);
   return static_cast<extractbit_exprt &>(expr);
 }
 
@@ -2307,7 +2307,7 @@ public:
 */
 inline const extractbits_exprt &to_extractbits_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_extractbits && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_extractbits && expr.operands().size()==3);
   return static_cast<const extractbits_exprt &>(expr);
 }
 
@@ -2316,7 +2316,7 @@ inline const extractbits_exprt &to_extractbits_expr(const exprt &expr)
 */
 inline extractbits_exprt &to_extractbits_expr(exprt &expr)
 {
-  assert(expr.id()==ID_extractbits && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_extractbits && expr.operands().size()==3);
   return static_cast<extractbits_exprt &>(expr);
 }
 
@@ -2360,7 +2360,7 @@ public:
 */
 inline const address_of_exprt &to_address_of_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_address_of && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_address_of && expr.operands().size()==1);
   return static_cast<const address_of_exprt &>(expr);
 }
 
@@ -2369,7 +2369,7 @@ inline const address_of_exprt &to_address_of_expr(const exprt &expr)
 */
 inline address_of_exprt &to_address_of_expr(exprt &expr)
 {
-  assert(expr.id()==ID_address_of && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_address_of && expr.operands().size()==1);
   return static_cast<address_of_exprt &>(expr);
 }
 
@@ -2411,7 +2411,7 @@ public:
 */
 inline const not_exprt &to_not_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_not && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_not && expr.operands().size()==1);
   return static_cast<const not_exprt &>(expr);
 }
 
@@ -2420,7 +2420,7 @@ inline const not_exprt &to_not_expr(const exprt &expr)
 */
 inline not_exprt &to_not_expr(exprt &expr)
 {
-  assert(expr.id()==ID_not && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_not && expr.operands().size()==1);
   return static_cast<not_exprt &>(expr);
 }
 
@@ -2475,7 +2475,7 @@ public:
 */
 inline const dereference_exprt &to_dereference_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_dereference && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_dereference && expr.operands().size()==1);
   return static_cast<const dereference_exprt &>(expr);
 }
 
@@ -2484,7 +2484,7 @@ inline const dereference_exprt &to_dereference_expr(const exprt &expr)
 */
 inline dereference_exprt &to_dereference_expr(exprt &expr)
 {
-  assert(expr.id()==ID_dereference && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_dereference && expr.operands().size()==1);
   return static_cast<dereference_exprt &>(expr);
 }
 
@@ -2557,7 +2557,7 @@ public:
 */
 inline const if_exprt &to_if_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_if && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_if && expr.operands().size()==3);
   return static_cast<const if_exprt &>(expr);
 }
 
@@ -2566,7 +2566,7 @@ inline const if_exprt &to_if_expr(const exprt &expr)
 */
 inline if_exprt &to_if_expr(exprt &expr)
 {
-  assert(expr.id()==ID_if && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_if && expr.operands().size()==3);
   return static_cast<if_exprt &>(expr);
 }
 
@@ -2634,7 +2634,7 @@ public:
 */
 inline const with_exprt &to_with_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_with && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_with && expr.operands().size()==3);
   return static_cast<const with_exprt &>(expr);
 }
 
@@ -2643,7 +2643,7 @@ inline const with_exprt &to_with_expr(const exprt &expr)
 */
 inline with_exprt &to_with_expr(exprt &expr)
 {
-  assert(expr.id()==ID_with && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_with && expr.operands().size()==3);
   return static_cast<with_exprt &>(expr);
 }
 
@@ -2679,7 +2679,7 @@ public:
 */
 inline const index_designatort &to_index_designator(const exprt &expr)
 {
-  assert(expr.id()==ID_index_designator && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_index_designator && expr.operands().size()==1);
   return static_cast<const index_designatort &>(expr);
 }
 
@@ -2688,7 +2688,7 @@ inline const index_designatort &to_index_designator(const exprt &expr)
 */
 inline index_designatort &to_index_designator(exprt &expr)
 {
-  assert(expr.id()==ID_index_designator && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_index_designator && expr.operands().size()==1);
   return static_cast<index_designatort &>(expr);
 }
 
@@ -2719,7 +2719,7 @@ public:
 */
 inline const member_designatort &to_member_designator(const exprt &expr)
 {
-  assert(expr.id()==ID_member_designator && expr.operands().size()==0);
+  ASSERT(expr.id()==ID_member_designator && expr.operands().size()==0);
   return static_cast<const member_designatort &>(expr);
 }
 
@@ -2728,7 +2728,7 @@ inline const member_designatort &to_member_designator(const exprt &expr)
 */
 inline member_designatort &to_member_designator(exprt &expr)
 {
-  assert(expr.id()==ID_member_designator && expr.operands().size()==0);
+  ASSERT(expr.id()==ID_member_designator && expr.operands().size()==0);
   return static_cast<member_designatort &>(expr);
 }
 
@@ -2805,7 +2805,7 @@ public:
 */
 inline const update_exprt &to_update_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_update && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_update && expr.operands().size()==3);
   return static_cast<const update_exprt &>(expr);
 }
 
@@ -2814,7 +2814,7 @@ inline const update_exprt &to_update_expr(const exprt &expr)
 */
 inline update_exprt &to_update_expr(exprt &expr)
 {
-  assert(expr.id()==ID_update && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_update && expr.operands().size()==3);
   return static_cast<update_exprt &>(expr);
 }
 
@@ -2881,7 +2881,7 @@ public:
 */
 inline const array_update_exprt &to_array_update_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_array_update && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_array_update && expr.operands().size()==3);
   return static_cast<const array_update_exprt &>(expr);
 }
 
@@ -2890,7 +2890,7 @@ inline const array_update_exprt &to_array_update_expr(const exprt &expr)
 */
 inline array_update_exprt &to_array_update_expr(exprt &expr)
 {
-  assert(expr.id()==ID_array_update && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_array_update && expr.operands().size()==3);
   return static_cast<array_update_exprt &>(expr);
 }
 #endif
@@ -2998,7 +2998,7 @@ public:
 */
 inline const member_exprt &to_member_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_member && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_member && expr.operands().size()==1);
   return static_cast<const member_exprt &>(expr);
 }
 
@@ -3007,7 +3007,7 @@ inline const member_exprt &to_member_expr(const exprt &expr)
 */
 inline member_exprt &to_member_expr(exprt &expr)
 {
-  assert(expr.id()==ID_member && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_member && expr.operands().size()==1);
   return static_cast<member_exprt &>(expr);
 }
 
@@ -3038,7 +3038,7 @@ public:
 */
 inline const isnan_exprt &to_isnan_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_isnan && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isnan && expr.operands().size()==1);
   return static_cast<const isnan_exprt &>(expr);
 }
 
@@ -3047,7 +3047,7 @@ inline const isnan_exprt &to_isnan_expr(const exprt &expr)
 */
 inline isnan_exprt &to_isnan_expr(exprt &expr)
 {
-  assert(expr.id()==ID_isnan && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isnan && expr.operands().size()==1);
   return static_cast<isnan_exprt &>(expr);
 }
 
@@ -3078,7 +3078,7 @@ public:
 */
 inline const isinf_exprt &to_isinf_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_isinf && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isinf && expr.operands().size()==1);
   return static_cast<const isinf_exprt &>(expr);
 }
 
@@ -3087,7 +3087,7 @@ inline const isinf_exprt &to_isinf_expr(const exprt &expr)
 */
 inline isinf_exprt &to_isinf_expr(exprt &expr)
 {
-  assert(expr.id()==ID_isinf && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isinf && expr.operands().size()==1);
   return static_cast<isinf_exprt &>(expr);
 }
 
@@ -3118,7 +3118,7 @@ public:
 */
 inline const isfinite_exprt &to_isfinite_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_isfinite && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isfinite && expr.operands().size()==1);
   return static_cast<const isfinite_exprt &>(expr);
 }
 
@@ -3127,7 +3127,7 @@ inline const isfinite_exprt &to_isfinite_expr(const exprt &expr)
 */
 inline isfinite_exprt &to_isfinite_expr(exprt &expr)
 {
-  assert(expr.id()==ID_isfinite && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isfinite && expr.operands().size()==1);
   return static_cast<isfinite_exprt &>(expr);
 }
 
@@ -3158,7 +3158,7 @@ public:
 */
 inline const isnormal_exprt &to_isnormal_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_isnormal && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isnormal && expr.operands().size()==1);
   return static_cast<const isnormal_exprt &>(expr);
 }
 
@@ -3167,7 +3167,7 @@ inline const isnormal_exprt &to_isnormal_expr(const exprt &expr)
 */
 inline isnormal_exprt &to_isnormal_expr(exprt &expr)
 {
-  assert(expr.id()==ID_isnormal && expr.operands().size()==1);
+  ASSERT(expr.id()==ID_isnormal && expr.operands().size()==1);
   return static_cast<isnormal_exprt &>(expr);
 }
 
@@ -3198,7 +3198,7 @@ public:
 */
 inline const ieee_float_equal_exprt &to_ieee_float_equal_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_ieee_float_equal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_ieee_float_equal && expr.operands().size()==2);
   return static_cast<const ieee_float_equal_exprt &>(expr);
 }
 
@@ -3207,7 +3207,7 @@ inline const ieee_float_equal_exprt &to_ieee_float_equal_expr(const exprt &expr)
 */
 inline ieee_float_equal_exprt &to_ieee_float_equal_expr(exprt &expr)
 {
-  assert(expr.id()==ID_ieee_float_equal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_ieee_float_equal && expr.operands().size()==2);
   return static_cast<ieee_float_equal_exprt &>(expr);
 }
 
@@ -3240,7 +3240,7 @@ public:
 inline const ieee_float_notequal_exprt &to_ieee_float_notequal_expr(
   const exprt &expr)
 {
-  assert(expr.id()==ID_ieee_float_notequal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_ieee_float_notequal && expr.operands().size()==2);
   return static_cast<const ieee_float_notequal_exprt &>(expr);
 }
 
@@ -3249,7 +3249,7 @@ inline const ieee_float_notequal_exprt &to_ieee_float_notequal_expr(
 */
 inline ieee_float_notequal_exprt &to_ieee_float_notequal_expr(exprt &expr)
 {
-  assert(expr.id()==ID_ieee_float_notequal && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_ieee_float_notequal && expr.operands().size()==2);
   return static_cast<ieee_float_notequal_exprt &>(expr);
 }
 
@@ -3316,7 +3316,7 @@ public:
 */
 inline const ieee_float_op_exprt &to_ieee_float_op_expr(const exprt &expr)
 {
-  assert(expr.operands().size()==3);
+  ASSERT(expr.operands().size()==3);
   return static_cast<const ieee_float_op_exprt &>(expr);
 }
 
@@ -3325,7 +3325,7 @@ inline const ieee_float_op_exprt &to_ieee_float_op_expr(const exprt &expr)
 */
 inline ieee_float_op_exprt &to_ieee_float_op_expr(exprt &expr)
 {
-  assert(expr.operands().size()==3);
+  ASSERT(expr.operands().size()==3);
   return static_cast<ieee_float_op_exprt &>(expr);
 }
 
@@ -3389,7 +3389,7 @@ public:
 */
 inline const constant_exprt &to_constant_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_constant);
+  ASSERT(expr.id()==ID_constant);
   return static_cast<const constant_exprt &>(expr);
 }
 
@@ -3398,7 +3398,7 @@ inline const constant_exprt &to_constant_expr(const exprt &expr)
 */
 inline constant_exprt &to_constant_expr(exprt &expr)
 {
-  assert(expr.id()==ID_constant);
+  ASSERT(expr.id()==ID_constant);
   return static_cast<constant_exprt &>(expr);
 }
 
@@ -3504,7 +3504,7 @@ public:
 inline const function_application_exprt &to_function_application_expr(
   const exprt &expr)
 {
-  assert(expr.id()==ID_function_application && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_function_application && expr.operands().size()==2);
   return static_cast<const function_application_exprt &>(expr);
 }
 
@@ -3513,7 +3513,7 @@ inline const function_application_exprt &to_function_application_expr(
 */
 inline function_application_exprt &to_function_application_expr(exprt &expr)
 {
-  assert(expr.id()==ID_function_application && expr.operands().size()==2);
+  ASSERT(expr.id()==ID_function_application && expr.operands().size()==2);
   return static_cast<function_application_exprt &>(expr);
 }
 
@@ -3556,7 +3556,7 @@ public:
 */
 inline const concatenation_exprt &to_concatenation_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_concatenation);
+  ASSERT(expr.id()==ID_concatenation);
   return static_cast<const concatenation_exprt &>(expr);
 }
 
@@ -3565,7 +3565,7 @@ inline const concatenation_exprt &to_concatenation_expr(const exprt &expr)
 */
 inline concatenation_exprt &to_concatenation_expr(exprt &expr)
 {
-  assert(expr.id()==ID_concatenation);
+  ASSERT(expr.id()==ID_concatenation);
   return static_cast<concatenation_exprt &>(expr);
 }
 
@@ -3634,7 +3634,7 @@ public:
 */
 inline const let_exprt &to_let_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_let && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_let && expr.operands().size()==3);
   return static_cast<const let_exprt &>(expr);
 }
 
@@ -3643,7 +3643,7 @@ inline const let_exprt &to_let_expr(const exprt &expr)
 */
 inline let_exprt &to_let_expr(exprt &expr)
 {
-  assert(expr.id()==ID_let && expr.operands().size()==3);
+  ASSERT(expr.id()==ID_let && expr.operands().size()==3);
   return static_cast<let_exprt &>(expr);
 }
 

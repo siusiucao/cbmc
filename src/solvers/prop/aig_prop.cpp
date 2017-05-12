@@ -495,7 +495,7 @@ void aig_prop_solvert::usage_count(
       }
       else
       {
-        assert(p_usage_count[n]==1 && n_usage_count[n]==1);
+        ASSERT(p_usage_count[n]==1 && n_usage_count[n]==1);
         ++usedTwiceMixed;
       }
       break;

@@ -166,7 +166,7 @@ Function: qbf_bdd_coret::l_get
 
 tvt qbf_bdd_coret::l_get(literalt a) const
 {
-  assert(false);
+  ASSERT(false);
   return tvt(false);
 }
 
@@ -480,7 +480,7 @@ const exprt qbf_bdd_certificatet::f_get(literalt l)
   // universal?
   if(q.type==quantifiert::UNIVERSAL)
   {
-    assert(l.var_no()!=0);
+    ASSERT(l.var_no()!=0);
     variable_mapt::const_iterator it=variable_map.find(l.var_no());
 
     if(it==variable_map.end())
@@ -504,7 +504,7 @@ const exprt qbf_bdd_certificatet::f_get(literalt l)
   else
   {
     // skolem functions for existentials
-    assert(q.type==quantifiert::EXISTENTIAL);
+    ASSERT(q.type==quantifiert::EXISTENTIAL);
 
     function_cachet::const_iterator it=function_cache.find(l.var_no());
     if(it!=function_cache.end())
@@ -521,7 +521,7 @@ const exprt qbf_bdd_certificatet::f_get(literalt l)
 
     // no cached function, so construct one
 
-    assert(model_bdds[l.var_no()]!=NULL);
+    ASSERT(model_bdds[l.var_no()]!=NULL);
     BDD &model=*model_bdds[l.var_no()];
 
     #if 0

@@ -88,7 +88,7 @@ literalt arrayst::record_array_equality(
     throw "record_array_equality got equality without matching types";
   }
 
-  assert(ns.follow(op0.type()).id()==ID_array);
+  ASSERT(ns.follow(op0.type()).id()==ID_array);
 
   array_equalities.push_back(array_equalityt());
 
@@ -259,12 +259,12 @@ void arrayst::collect_arrays(const exprt &a)
   else if(a.id()==ID_byte_update_little_endian ||
           a.id()==ID_byte_update_big_endian)
   {
-    assert(0);
+    ASSERT(0);
   }
   else if(a.id()==ID_typecast)
   {
     // cast between array types?
-    assert(a.operands().size()==1);
+    ASSERT(a.operands().size()==1);
 
     if(a.op0().type().id()==ID_array)
     {
@@ -471,7 +471,7 @@ void arrayst::update_index_map(std::size_t i)
     return;
 
   std::size_t root_number=arrays.find_number(i);
-  assert(root_number!=i);
+  ASSERT(root_number!=i);
 
   index_sett &root_index_set=index_map[root_number];
   index_sett &index_set=index_map[i];
@@ -554,7 +554,7 @@ void arrayst::add_array_constraints(
     index_expr2.array()=array_equality.f2;
     index_expr2.index()=*it;
 
-    assert(index_expr1.type()==index_expr2.type());
+    ASSERT(index_expr1.type()==index_expr2.type());
 
     array_equalityt equal;
     equal.f1 = index_expr1;
@@ -608,12 +608,12 @@ void arrayst::add_array_constraints(
   else if(expr.id()==ID_byte_update_little_endian ||
           expr.id()==ID_byte_update_big_endian)
   {
-    assert(0);
+    ASSERT(0);
   }
   else if(expr.id()==ID_typecast)
   {
     // we got a=(type[])b
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     // add a[i]=b[i]
     for(index_sett::const_iterator
@@ -631,7 +631,7 @@ void arrayst::add_array_constraints(
       index_expr2.array()=expr.op0();
       index_expr2.index()=*it;
 
-      assert(index_expr1.type()==index_expr2.type());
+      ASSERT(index_expr1.type()==index_expr2.type());
 
       // add constraint
       lazy_constraintt lazy(ARRAY_TYPECAST,
@@ -679,7 +679,7 @@ void arrayst::add_array_constraints_with(
     if(index_expr.type()!=value.type())
     {
       std::cout << expr.pretty() << std::endl;
-      assert(false);
+      ASSERT(false);
     }
 
      lazy_constraintt lazy(ARRAY_WITH, equal_exprt(index_expr, value));
@@ -717,7 +717,7 @@ void arrayst::add_array_constraints_with(
         index_expr2.array()=expr.op0();
         index_expr2.index()=other_index;
 
-        assert(index_expr1.type()==index_expr2.type());
+        ASSERT(index_expr1.type()==index_expr2.type());
 
         equal_exprt equality_expr(index_expr1, index_expr2);
 
@@ -774,7 +774,7 @@ void arrayst::add_array_constraints_update(
     if(index_expr.type()!=value.type())
     {
       std::cout << expr.pretty() << std::endl;
-      assert(false);
+      ASSERT(false);
     }
 
     set_to_true(equal_exprt(index_expr, value));
@@ -811,7 +811,7 @@ void arrayst::add_array_constraints_update(
         index_expr2.array()=expr.op0();
         index_expr2.index()=other_index;
 
-        assert(index_expr1.type()==index_expr2.type());
+        ASSERT(index_expr1.type()==index_expr2.type());
 
         equal_exprt equality_expr(index_expr1, index_expr2);
 
@@ -859,7 +859,7 @@ void arrayst::add_array_constraints_array_of(
     index_expr.array()=expr;
     index_expr.index()=*it;
 
-    assert(base_type_eq(index_expr.type(), expr.op0().type(), ns));
+    ASSERT(base_type_eq(index_expr.type(), expr.op0().type(), ns));
 
     // add constraint
     lazy_constraintt lazy(ARRAY_OF, equal_exprt(index_expr, expr.op0()));
@@ -907,7 +907,7 @@ void arrayst::add_array_constraints_if(
     index_expr2.array()=expr.true_case();
     index_expr2.index()=*it;
 
-    assert(index_expr1.type()==index_expr2.type());
+    ASSERT(index_expr1.type()==index_expr2.type());
 
     // add implication
     lazy_constraintt lazy(ARRAY_IF,
@@ -936,7 +936,7 @@ void arrayst::add_array_constraints_if(
     index_expr2.array()=expr.false_case();
     index_expr2.index()=*it;
 
-    assert(index_expr1.type()==index_expr2.type());
+    ASSERT(index_expr1.type()==index_expr2.type());
 
     // add implication
     lazy_constraintt lazy(ARRAY_IF, or_exprt(literal_exprt(cond_lit),

@@ -176,7 +176,7 @@ typedef struct __CPROVER_jsa_abstract_heap
       longjmp(__CPROVER_jsa_jump_buffer, 1);\
   }\
   while(false)
-#define __CPROVER_jsa_assert(c, str) assert((c) && str)
+#define __CPROVER_jsa_assert(c, str) ASSERT((c) && str)
 #endif
 
 // Heap comparison

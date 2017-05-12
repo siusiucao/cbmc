@@ -61,7 +61,7 @@ Function: satcheck_zcoret::l_get
 
 tvt satcheck_zcoret::l_get(literalt a) const
 {
-  assert(false);
+  ASSERT(false);
   return tvt(tvt::tv_enumt::TV_UNKNOWN);
 }
 

@@ -56,14 +56,14 @@ void pointer_arithmetict::read(const exprt &src)
   }
   else if(src.id()==ID_minus)
   {
-    assert(src.operands().size()==2);
+    ASSERT(src.operands().size()==2);
     read(src.op0());
     exprt o=unary_minus_exprt(src.op1(), src.op1().type());
     add_to_offset(o);
   }
   else if(src.id()==ID_address_of)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     if(src.op0().id()==ID_index)
     {
       const index_exprt &index_expr=

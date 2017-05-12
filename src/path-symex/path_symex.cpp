@@ -428,7 +428,7 @@ void path_symext::assign_rec(
   if(ssa_lhs.id()==ID_symbol)
   {
     // These are expected to be SSA symbols
-    assert(ssa_lhs.get_bool(ID_C_SSA_symbol));
+    ASSERT(ssa_lhs.get_bool(ID_C_SSA_symbol));
 
     const symbol_exprt &symbol_expr=to_symbol_expr(ssa_lhs);
     const irep_idt &full_identifier=symbol_expr.get(ID_C_full_identifier);
@@ -440,7 +440,7 @@ void path_symext::assign_rec(
     #endif
 
     var_mapt::var_infot &var_info=state.var_map[full_identifier];
-    assert(var_info.full_identifier==full_identifier);
+    ASSERT(var_info.full_identifier==full_identifier);
 
     // increase the SSA counter and produce new SSA symbol expression
     var_info.increment_ssa_counter();
@@ -584,7 +584,7 @@ void path_symext::assign_rec(
     else if(ssa_lhs.id()==ID_byte_extract_big_endian)
       new_id=ID_byte_update_big_endian;
     else
-      assert(false);
+      ASSERT(false);
 
     byte_update_exprt new_rhs(new_id);
 
@@ -607,7 +607,7 @@ void path_symext::assign_rec(
     // split up into components
     const exprt::operandst &operands=ssa_lhs.operands();
 
-    assert(operands.size()==components.size());
+    ASSERT(operands.size()==components.size());
 
     for(std::size_t i=0; i<components.size(); i++)
     {
@@ -971,7 +971,7 @@ void path_symext::do_goto(
   }
 
   const loct &loc=state.locs[state.pc()];
-  assert(!loc.branch_target.is_nil());
+  ASSERT(!loc.branch_target.is_nil());
 
   exprt guard=state.read(instruction.guard);
 
@@ -1035,7 +1035,7 @@ void path_symext::do_goto(
   {
     // branch taken case
     const loct &loc=state.locs[state.pc()];
-    assert(!loc.branch_target.is_nil());
+    ASSERT(!loc.branch_target.is_nil());
     state.set_pc(loc.branch_target);
     state.history->guard=guard;
     state.history->branch=stept::BRANCH_TAKEN;
@@ -1097,7 +1097,7 @@ void path_symext::operator()(
   case START_THREAD:
     {
       const loct &loc=state.locs[state.pc()];
-      assert(!loc.branch_target.is_nil());
+      ASSERT(!loc.branch_target.is_nil());
 
       state.record_step();
       state.next_pc();

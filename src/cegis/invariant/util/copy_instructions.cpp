@@ -34,7 +34,7 @@ goto_programt::targett copy_instructionst::operator()(
     goto_programt::targett insert_after,
     const goto_programt::instructionst &old_instrs)
 {
-  assert(!old_instrs.empty());
+  ASSERT(!old_instrs.empty());
   ++insert_after;
   for (goto_programt::const_targett pos=old_instrs.begin();
       pos != old_instrs.end(); ++pos)
@@ -62,7 +62,7 @@ public:
   void operator()(goto_programt::targett &target) const
   {
     const target_mapt::const_iterator it=target_mapping.find(target);
-    assert(target_mapping.end() != it);
+    ASSERT(target_mapping.end() != it);
     target=it->second;
   }
 

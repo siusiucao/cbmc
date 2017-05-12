@@ -147,15 +147,15 @@ goto_program_coverage_recordt::goto_program_coverage_recordt(
   const symex_coveraget::coveraget &coverage):
   coverage_recordt("method")
 {
-  assert(gf_it->second.body_available());
+  ASSERT(gf_it->second.body_available());
 
   // identify the file name, inlined functions aren't properly
   // accounted for
   goto_programt::const_targett end_function=
     --gf_it->second.body.instructions.end();
-  assert(end_function->is_end_function());
+  ASSERT(end_function->is_end_function());
   file_name=end_function->source_location.get_file();
-  assert(!file_name.empty());
+  ASSERT(!file_name.empty());
 
   // compute the maximum coverage of individual source-code lines
   coverage_lines_mapt coverage_lines_map;
@@ -505,7 +505,7 @@ bool symex_coveraget::generate_report(
   const goto_functionst &goto_functions,
   const std::string &path) const
 {
-  assert(!path.empty());
+  ASSERT(!path.empty());
 
   if(path=="-")
     return output_report(goto_functions, std::cout);

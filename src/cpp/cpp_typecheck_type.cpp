@@ -28,8 +28,8 @@ Function: cpp_typecheckt::typecheck_type
 
 void cpp_typecheckt::typecheck_type(typet &type)
 {
-  assert(type.id()!=irep_idt());
-  assert(type.is_not_nil());
+  ASSERT(type.id()!=irep_idt());
+  ASSERT(type.is_not_nil());
 
   try
   {
@@ -70,7 +70,7 @@ void cpp_typecheckt::typecheck_type(typet &type)
     }
 
     type=symbol_expr.type();
-    assert(type.is_not_nil());
+    ASSERT(type.is_not_nil());
 
     if(type.get_bool(ID_C_constant))
       qualifiers.is_constant = true;
@@ -97,7 +97,7 @@ void cpp_typecheckt::typecheck_type(typet &type)
 
       if(class_object.id()==ID_cpp_name)
       {
-        assert(class_object.get_sub().back().id()=="::");
+        ASSERT(class_object.get_sub().back().id()=="::");
         class_object.get_sub().pop_back();
       }
 
@@ -255,5 +255,5 @@ void cpp_typecheckt::typecheck_type(typet &type)
     throw 0;
   }
 
-  assert(type.is_not_nil());
+  ASSERT(type.is_not_nil());
 }

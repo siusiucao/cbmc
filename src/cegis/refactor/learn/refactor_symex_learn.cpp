@@ -77,7 +77,7 @@ public:
         std::bind(starts_with, v, std::bind(id2string, std::placeholders::_1)));
     if (progs.end() == it || !ends_with(v, CEGIS_REFACTOR_PROG_SUFFIX)) return;
     const array_exprt &value=to_array_expr(step.full_lhs_value);
-    assert(candidate.insert(std::make_pair(v, value)).second);
+    ASSERT(candidate.insert(std::make_pair(v, value)).second);
   }
 };
 }

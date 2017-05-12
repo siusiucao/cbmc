@@ -55,9 +55,9 @@ void qdimacs_cnft::write_prefix(std::ostream &out) const
   {
     const quantifiert &quantifier=*it;
 
-    assert(quantifier.var_no<no_variables());
+    ASSERT(quantifier.var_no<no_variables());
     // double quantification?
-    assert(!quantified[quantifier.var_no]);
+    ASSERT(!quantified[quantifier.var_no]);
     quantified[quantifier.var_no]=true;
 
     switch(quantifier.type)
@@ -71,7 +71,7 @@ void qdimacs_cnft::write_prefix(std::ostream &out) const
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
 
     out << " " << quantifier.var_no << " 0" << std::endl;

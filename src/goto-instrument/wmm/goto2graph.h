@@ -381,7 +381,7 @@ public:
     render_po_aligned = aligned;
     render_by_file = file;
     render_by_function = function;
-    assert(!render_by_file || !render_by_function);
+    ASSERT(!render_by_file || !render_by_function);
   }
 
   /* prints outputs:

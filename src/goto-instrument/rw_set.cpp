@@ -69,7 +69,7 @@ void _rw_set_loct::compute()
 {
   if(target->is_assign())
   {
-    assert(target->code.operands().size()==2);
+    ASSERT(target->code.operands().size()==2);
     assign(target->code.op0(), target->code.op1());
   }
   else if(target->is_goto() ||
@@ -161,20 +161,20 @@ void _rw_set_loct::read_write_rec(
   }
   else if(expr.id()==ID_member)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     const std::string &component_name=expr.get_string(ID_component_name);
     read_write_rec(expr.op0(), r, w, "."+component_name+suffix, guard);
   }
   else if(expr.id()==ID_index)
   {
     // we don't distinguish the array elements for now
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     read_write_rec(expr.op0(), r, w, "[]"+suffix, guard);
     read(expr.op1(), guard);
   }
   else if(expr.id()==ID_dereference)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     set_track_deref();
     read(expr.op0(), guard);
 
@@ -213,16 +213,16 @@ void _rw_set_loct::read_write_rec(
   }
   else if(expr.id()==ID_typecast)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     read_write_rec(expr.op0(), r, w, suffix, guard);
   }
   else if(expr.id()==ID_address_of)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
   }
   else if(expr.id()==ID_if)
   {
-    assert(expr.operands().size()==3);
+    ASSERT(expr.operands().size()==3);
     read(expr.op0(), guard);
 
     guardt true_guard(guard);

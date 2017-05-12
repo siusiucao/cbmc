@@ -105,20 +105,20 @@ void remove_instanceoft::lower_instanceof(
   if(expr.id()==ID_java_instanceof)
   {
     const exprt &check_ptr=expr.op0();
-    assert(check_ptr.type().id()==ID_pointer);
+    ASSERT(check_ptr.type().id()==ID_pointer);
     const exprt &target_arg=expr.op1();
-    assert(target_arg.id()==ID_type);
+    ASSERT(target_arg.id()==ID_type);
     const typet &target_type=target_arg.type();
 
     // Find all types we know about that satisfy the given requirement:
-    assert(target_type.id()==ID_symbol);
+    ASSERT(target_type.id()==ID_symbol);
     const irep_idt &target_name=
       to_symbol_type(target_type).get_identifier();
     std::vector<irep_idt> children=
       class_hierarchy.get_children_trans(target_name);
     children.push_back(target_name);
 
-    assert(!children.empty() && "Unable to execute instanceof");
+    ASSERT(!children.empty() && "Unable to execute instanceof");
 
     // Insert an instruction before this one that assigns the clsid we're
     // checking against to a temporary, as GOTO program if-expressions should
@@ -191,7 +191,7 @@ void remove_instanceoft::lower_instanceof(
   // code (e.g. a guarded-goto), but this assertion checks that this
   // assumption is correct and remains true on future evolution of the
   // allowable goto instruction types.
-  assert(!(code_iof && guard_iof));
+  ASSERT(!(code_iof && guard_iof));
   if(code_iof)
     lower_instanceof(target->code, goto_program, target, inst_switch);
   if(guard_iof)

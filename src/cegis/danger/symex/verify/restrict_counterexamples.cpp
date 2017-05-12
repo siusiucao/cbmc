@@ -30,7 +30,7 @@ goto_programt::targett find_assertion(goto_functionst &gf)
   goto_programt &body=get_entry_body(gf);
   goto_programt::instructionst &i=body.instructions;
   const goto_programt::targett it=std::find_if(i.begin(), i.end(), &is_assert);
-  assert(i.end() != it);
+  ASSERT(i.end() != it);
   return it;
 }
 

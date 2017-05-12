@@ -709,7 +709,7 @@ void disjunctive_polynomial_accelerationt::assert_for_values(
       {
         std::map<exprt, exprt>::iterator v_it=values.find(e);
 
-        assert(v_it!=values.end());
+        ASSERT(v_it!=values.end());
 
         mult_exprt mult(concrete_value, v_it->second);
         mult.swap(concrete_value);
@@ -794,7 +794,7 @@ void disjunctive_polynomial_accelerationt::build_path(
 
     // We should have a looping path, so we should never hit a location
     // with no successors.
-    assert(succs.size() > 0);
+    ASSERT(succs.size() > 0);
 
     if(succs.size()==1)
     {
@@ -825,7 +825,7 @@ void disjunctive_polynomial_accelerationt::build_path(
       }
     }
 
-    assert(found_branch);
+    ASSERT(found_branch);
 
     exprt cond=nil_exprt();
 
@@ -942,7 +942,7 @@ void disjunctive_polynomial_accelerationt::build_fixed()
 
     if(t->is_goto())
     {
-      assert(fixedt->is_goto());
+      ASSERT(fixedt->is_goto());
       // If this is a forwards jump, it's either jumping inside the loop
       // (in which case we leave it alone), or it jumps outside the loop.
       // If it jumps out of the loop, it's on a path we don't care about

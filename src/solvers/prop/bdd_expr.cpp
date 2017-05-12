@@ -27,7 +27,7 @@ Function: bdd_exprt::from_expr_rec
 
 mini_bddt bdd_exprt::from_expr_rec(const exprt &expr)
 {
-  assert(expr.type().id()==ID_bool);
+  ASSERT(expr.type().id()==ID_bool);
 
   if(expr.is_constant())
     return expr.is_false() ? bdd_mgr.False() : bdd_mgr.True();
@@ -37,7 +37,7 @@ mini_bddt bdd_exprt::from_expr_rec(const exprt &expr)
           expr.id()==ID_or ||
           expr.id()==ID_xor)
   {
-    assert(expr.operands().size()>=2);
+    ASSERT(expr.operands().size()>=2);
     exprt bin_expr=make_binary(expr);
 
     mini_bddt op0=from_expr_rec(bin_expr.op0());
@@ -68,7 +68,7 @@ mini_bddt bdd_exprt::from_expr_rec(const exprt &expr)
   }
   else if(expr.id()==ID_iff)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     mini_bddt op0=from_expr_rec(expr.op0());
     mini_bddt op1=from_expr_rec(expr.op1());
@@ -143,7 +143,7 @@ exprt bdd_exprt::as_expr(const mini_bddt &r) const
   }
 
   node_mapt::const_iterator entry=node_map.find(r.var());
-  assert(entry!=node_map.end());
+  ASSERT(entry!=node_map.end());
   const exprt &n_expr=entry->second;
 
   if(r.low().is_false())

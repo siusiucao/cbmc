@@ -53,7 +53,7 @@ irep_pipet::~irep_pipet()
 
 void irep_pipet::close_read()
 {
-  assert(!read_closed);
+  ASSERT(!read_closed);
 #ifndef _WIN32
   ::close(fd[0u]);
 #endif
@@ -67,7 +67,7 @@ bool irep_pipet::is_read_closed() const
 
 void irep_pipet::close_write()
 {
-  assert(!write_closed);
+  ASSERT(!write_closed);
 #ifndef _WIN32
   ::close(fd[1u]);
 #endif
@@ -93,7 +93,7 @@ const char SDU[]="sdu";
 void irep_pipet::send(const irept &sdu) const
 {
 #ifndef _WIN32
-  assert(!write_closed);
+  ASSERT(!write_closed);
   xmlt xml(SDU);
   convert(sdu, xml);
   std::ostringstream os;
@@ -113,7 +113,7 @@ void irep_pipet::send(const irept &sdu) const
     offset+=result;
   }
 #else
-  assert(!"Pipes currently not supported on Windows.");
+  ASSERT(!"Pipes currently not supported on Windows.");
 #endif
 }
 
@@ -125,7 +125,7 @@ const size_t READ_BUFFER_SIZE=1024;
 void irep_pipet::receive(irept &sdu) const
 {
 #ifndef _WIN32
-  assert(!read_closed);
+  ASSERT(!read_closed);
   std::string data;
   char buffer[READ_BUFFER_SIZE];
   do
@@ -146,7 +146,7 @@ void irep_pipet::receive(irept &sdu) const
   parse_xml(is, "", msg, xml);
   convert(xml, sdu);
 #else
-  assert(!"Pipes currently not supported on Windows.");
+  ASSERT(!"Pipes currently not supported on Windows.");
 #endif
 }
 

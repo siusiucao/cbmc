@@ -376,7 +376,7 @@ static void assert_l1_renaming(const exprt &expr)
   if(check_renaming_l1(expr))
   {
     std::cerr << expr.pretty() << std::endl;
-    assert(false);
+    ASSERT(false);
   }
   #else
   (void)expr;
@@ -389,7 +389,7 @@ static void assert_l2_renaming(const exprt &expr)
   if(check_renaming(expr))
   {
     std::cerr << expr.pretty() << std::endl;
-    assert(false);
+    ASSERT(false);
   }
   #else
   (void)expr;
@@ -413,7 +413,7 @@ void goto_symex_statet::assignment(
   assert_l1_renaming(lhs);
 
   #if 0
-  assert(l1_identifier != get_original_name(l1_identifier)
+  ASSERT(l1_identifier != get_original_name(l1_identifier)
       || l1_identifier=="goto_symex::\\guard"
       || ns.lookup(l1_identifier).is_shared()
       || has_prefix(id2string(l1_identifier), "symex::invalid_object")
@@ -535,7 +535,7 @@ void goto_symex_statet::set_ssa_indices(
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -616,9 +616,9 @@ void goto_symex_statet::rename(
   }
   else if(expr.id()==ID_address_of)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     rename_address(expr.op0(), ns, level);
-    assert(expr.type().id()==ID_pointer);
+    ASSERT(expr.type().id()==ID_pointer);
     expr.type().subtype()=expr.op0().type();
   }
   else
@@ -635,7 +635,7 @@ void goto_symex_statet::rename(
       expr.type()=to_with_expr(expr).old().type();
     else if(expr.id()==ID_if)
     {
-      assert(to_if_expr(expr).true_case().type()==
+      ASSERT(to_if_expr(expr).true_case().type()==
              to_if_expr(expr).false_case().type());
       expr.type()=to_if_expr(expr).true_case().type();
     }
@@ -663,7 +663,7 @@ bool goto_symex_statet::l2_thread_read_encoding(
     return false;
 
   // is it a shared object?
-  assert(dirty!=0);
+  ASSERT(dirty!=0);
   const irep_idt &obj_identifier=expr.get_object_name();
   if(obj_identifier=="goto_symex::\\guard" ||
      (!ns.lookup(obj_identifier).is_shared() &&
@@ -788,7 +788,7 @@ bool goto_symex_statet::l2_thread_read_encoding(
   expr=ssa_l1;
 
   // and record that
-  assert(symex_target!=NULL);
+  ASSERT(symex_target!=NULL);
   symex_target->shared_read(
     guard.as_expr(),
     expr,
@@ -818,7 +818,7 @@ bool goto_symex_statet::l2_thread_write_encoding(
     return false;
 
   // is it a shared object?
-  assert(dirty!=0);
+  ASSERT(dirty!=0);
   const irep_idt &obj_identifier=expr.get_object_name();
   if(obj_identifier=="goto_symex::\\guard" ||
      (!ns.lookup(obj_identifier).is_shared() &&
@@ -886,7 +886,7 @@ void goto_symex_statet::rename_address(
       index_exprt &index_expr=to_index_expr(expr);
 
       rename_address(index_expr.array(), ns, level);
-      assert(index_expr.array().type().id()==ID_array);
+      ASSERT(index_expr.array().type().id()==ID_array);
       expr.type()=index_expr.array().type().subtype();
 
       // the index is not an address
@@ -916,7 +916,7 @@ void goto_symex_statet::rename_address(
           to_struct_union_type(member_expr.struct_op().type());
         const struct_union_typet::componentt &comp=
           su_type.get_component(member_expr.get_component_name());
-        assert(comp.is_not_nil());
+        ASSERT(comp.is_not_nil());
         expr.type()=comp.type();
       }
       else
@@ -1120,8 +1120,8 @@ Function: goto_symex_statet::switch_to_thread
 
 void goto_symex_statet::switch_to_thread(unsigned t)
 {
-  assert(source.thread_nr<threads.size());
-  assert(t<threads.size());
+  ASSERT(source.thread_nr<threads.size());
+  ASSERT(t<threads.size());
 
   // save PC
   threads[source.thread_nr].pc=source.pc;

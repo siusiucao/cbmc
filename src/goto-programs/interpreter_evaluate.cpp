@@ -983,7 +983,7 @@ void interpretert::evaluate(
         if(expr.op0().id()==ID_array)
         {
           const auto &ops=expr.op0().operands();
-          assert(read_from_index.is_long());
+          ASSERT(read_from_index.is_long());
           if(read_from_index>=0 && read_from_index<ops.size())
           {
             evaluate(ops[read_from_index.to_long()], dest);
@@ -996,12 +996,12 @@ void interpretert::evaluate(
           // This sort of construct comes from boolbv_get, but doesn't seem
           // to have an exprt yet. Its operands are a list of key-value pairs.
           const auto &ops=expr.op0().operands();
-          assert(ops.size()%2==0);
+          ASSERT(ops.size()%2==0);
           for(size_t listidx=0; listidx!=ops.size(); listidx+=2)
           {
             mp_vectort elem_idx;
             evaluate(ops[listidx], elem_idx);
-            assert(elem_idx.size()==1);
+            ASSERT(elem_idx.size()==1);
             if(elem_idx[0]==read_from_index)
             {
               evaluate(ops[listidx+1], dest);

@@ -114,7 +114,7 @@ void set_cegis_processor_sizes(const symbol_tablet &st,
     if (ID_symbol != param_type.id()) continue;
     const irep_idt &param_id=to_symbol_type(param_type).get_identifier();
     if (!ends_with(id2string(param_id), INSTR_TYPE_SUFFIX)) continue;
-    assert(call.arguments().size() == NUM_PROC_CALL_ARGS);
+    ASSERT(call.arguments().size() == NUM_PROC_CALL_ARGS);
     call.arguments().back()=sz_expr;
   }
 }

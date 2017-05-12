@@ -106,7 +106,7 @@ void goto_symext::symex_assume(statet &state, const exprt &cond)
   // of the thread containing the assertion:
   // T0                     T1
   // x=0;                   assume(x==1);
-  // assert(x!=42);         x=42;
+  // ASSERT(x!=42);         x=42;
   else
     state.guard.add(simplified_cond);
 
@@ -133,8 +133,8 @@ void goto_symext::rewrite_quantifiers(exprt &expr, statet &state)
   {
     // forall X. P -> P
     // we keep the quantified variable unique by means of L2 renaming
-    assert(expr.operands().size()==2);
-    assert(expr.op0().id()==ID_symbol);
+    ASSERT(expr.operands().size()==2);
+    ASSERT(expr.op0().id()==ID_symbol);
     symbol_exprt tmp0=
       to_symbol_expr(to_ssa_expr(expr.op0()).get_original_expr());
     symex_decl(state, tmp0);
@@ -160,17 +160,17 @@ void goto_symext::operator()(
   const goto_functionst &goto_functions,
   const goto_programt &goto_program)
 {
-  assert(!goto_program.instructions.empty());
+  ASSERT(!goto_program.instructions.empty());
 
   state.source=symex_targett::sourcet(goto_program);
-  assert(!state.threads.empty());
-  assert(!state.call_stack().empty());
+  ASSERT(!state.threads.empty());
+  ASSERT(!state.call_stack().empty());
   state.top().end_of_function=--goto_program.instructions.end();
   state.top().calling_location.pc=state.top().end_of_function;
   state.symex_target=&target;
   state.dirty=new dirtyt(goto_functions);
 
-  assert(state.top().end_of_function->is_end_function());
+  ASSERT(state.top().end_of_function->is_end_function());
 
   while(!state.call_stack().empty())
   {
@@ -258,8 +258,8 @@ void goto_symext::symex_step(
   std::cout << "Code: " << from_expr(ns, "", state.source.pc->code) << '\n';
   #endif
 
-  assert(!state.threads.empty());
-  assert(!state.call_stack().empty());
+  ASSERT(!state.threads.empty());
+  ASSERT(!state.call_stack().empty());
 
   const goto_programt::instructiont &instruction=*state.source.pc;
 

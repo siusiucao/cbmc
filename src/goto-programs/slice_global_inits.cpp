@@ -98,7 +98,7 @@ void slice_global_inits(
 
   symbol_collectort visitor;
 
-  assert(!functions_reached.empty());
+  ASSERT(!functions_reached.empty());
 
   for(const irep_idt &id : functions_reached)
   {
@@ -119,7 +119,7 @@ void slice_global_inits(
 
   goto_functionst::function_mapt::iterator f_it;
   f_it=goto_functions.function_map.find(initialize);
-  assert(f_it!=goto_functions.function_map.end());
+  ASSERT(f_it!=goto_functions.function_map.end());
 
   goto_programt &goto_program=f_it->second.body;
 

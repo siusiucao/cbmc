@@ -48,7 +48,7 @@ std::string cpp_typecheckt::template_suffix(
 
     const exprt expr=*it;
 
-    assert(expr.id()!="ambiguous");
+    ASSERT(expr.id()!="ambiguous");
 
     if(expr.id()==ID_type)
     {
@@ -144,7 +144,7 @@ const symbolt &cpp_typecheckt::class_template_symbol(
   const cpp_template_args_tct &full_template_args)
 {
   // we should never get 'unassigned' here
-  assert(!full_template_args.has_unassigned());
+  ASSERT(!full_template_args.has_unassigned());
 
   // do we have args?
   if(full_template_args.arguments().empty())
@@ -162,7 +162,7 @@ const symbolt &cpp_typecheckt::class_template_symbol(
   cpp_scopet *template_scope=
     static_cast<cpp_scopet *>(cpp_scopes.id_map[template_symbol.name]);
 
-  assert(template_scope!=NULL);
+  ASSERT(template_scope!=NULL);
 
   irep_idt identifier=
     id2string(template_scope->prefix)+
@@ -296,8 +296,8 @@ const symbolt &cpp_typecheckt::instantiate_template(
   bool specialization_given=specialization.is_not_nil();
 
   // we should never get 'unassigned' here
-  assert(!specialization_template_args.has_unassigned());
-  assert(!full_template_args.has_unassigned());
+  ASSERT(!specialization_template_args.has_unassigned());
+  ASSERT(!full_template_args.has_unassigned());
 
   #if 0
   std::cout << "A: <";
@@ -338,7 +338,7 @@ const symbolt &cpp_typecheckt::instantiate_template(
     throw 0;
   }
 
-  assert(template_scope!=NULL);
+  ASSERT(template_scope!=NULL);
 
   // produce new declaration
   cpp_declarationt new_decl=to_cpp_declaration(template_symbol.type);
@@ -390,7 +390,7 @@ const symbolt &cpp_typecheckt::instantiate_template(
       // It has already been instantianted!
       const cpp_idt &cpp_id = **id_set.begin();
 
-      assert(cpp_id.id_class == cpp_idt::CLASS ||
+      ASSERT(cpp_id.id_class == cpp_idt::CLASS ||
              cpp_id.id_class == cpp_idt::SYMBOL);
 
       const symbolt &symb=lookup(cpp_id.identifier);
@@ -505,11 +505,11 @@ const symbolt &cpp_typecheckt::instantiate_template(
     symbol_tablet::symbolst::iterator it =
       symbol_table.symbols.find(class_name);
 
-    assert(it!=symbol_table.symbols.end());
+    ASSERT(it!=symbol_table.symbols.end());
 
     symbolt &symb = it->second;
 
-    assert(new_decl.declarators().size() == 1);
+    ASSERT(new_decl.declarators().size() == 1);
 
     if(new_decl.member_spec().is_virtual())
     {
@@ -540,8 +540,8 @@ const symbolt &cpp_typecheckt::instantiate_template(
     bool is_static=new_decl.storage_spec().is_static();
     irep_idt access = new_decl.get(ID_C_access);
 
-    assert(access != irep_idt());
-    assert(symb.type.id()==ID_struct);
+    ASSERT(access != irep_idt());
+    ASSERT(symb.type.id()==ID_struct);
 
     typecheck_compound_declarator(
       symb,
@@ -559,7 +559,7 @@ const symbolt &cpp_typecheckt::instantiate_template(
   // not a class template, not a class template method,
   // it must be a function template!
 
-  assert(new_decl.declarators().size()==1);
+  ASSERT(new_decl.declarators().size()==1);
 
   convert_non_template_declaration(new_decl);
 

@@ -52,7 +52,7 @@ bool cpp_typecheckt::standard_conversion_lvalue_to_rvalue(
   const exprt &expr,
   exprt &new_expr) const
 {
-  assert(expr.get_bool(ID_C_lvalue));
+  ASSERT(expr.get_bool(ID_C_lvalue));
 
   if(expr.type().id()==ID_code ||
      expr.type().id()==ID_incomplete_struct ||
@@ -86,7 +86,7 @@ bool cpp_typecheckt::standard_conversion_array_to_pointer(
   const exprt &expr,
   exprt &new_expr) const
 {
-  assert(expr.type().id()==ID_array);
+  ASSERT(expr.type().id()==ID_array);
 
   exprt index(ID_index, expr.type().subtype());
   index.copy_to_operands(expr, from_integer(0, index_type()));
@@ -672,15 +672,15 @@ bool cpp_typecheckt::standard_conversion_pointer_to_member(
        expr.type().subtype().id()==ID_code)
     {
       code_typet code1=to_code_type(expr.type().subtype());
-      assert(code1.parameters().size()>0);
+      ASSERT(code1.parameters().size()>0);
       code_typet::parametert this1=code1.parameters()[0];
-      assert(this1.get(ID_C_base_name)==ID_this);
+      ASSERT(this1.get(ID_C_base_name)==ID_this);
       code1.parameters().erase(code1.parameters().begin());
 
       code_typet code2=to_code_type(type.subtype());
-      assert(code2.parameters().size()>0);
+      ASSERT(code2.parameters().size()>0);
       code_typet::parametert this2=code2.parameters()[0];
-      assert(this2.get(ID_C_base_name)==ID_this);
+      ASSERT(this2.get(ID_C_base_name)==ID_this);
       code2.parameters().erase(code2.parameters().begin());
 
       if(this2.type().subtype().get_bool(ID_C_constant) &&
@@ -803,7 +803,7 @@ bool cpp_typecheckt::standard_conversion_sequence(
   exprt &new_expr,
   unsigned &rank)
 {
-  assert(!is_reference(expr.type()) && !is_reference(type));
+  ASSERT(!is_reference(expr.type()) && !is_reference(type));
 
   exprt curr_expr=expr;
 
@@ -982,8 +982,8 @@ bool cpp_typecheckt::user_defined_conversion_sequence(
   exprt &new_expr,
   unsigned &rank)
 {
-  assert(!is_reference(expr.type()));
-  assert(!is_reference(type));
+  ASSERT(!is_reference(expr.type()));
+  ASSERT(!is_reference(type));
 
   const typet &from=follow(expr.type());
   const typet &to=follow(type);
@@ -1137,7 +1137,7 @@ bool cpp_typecheckt::user_defined_conversion_sequence(
               typecheck_side_effect_function_call(ctor_expr);
 
               new_expr.swap(ctor_expr);
-              assert(new_expr.get(ID_statement)==ID_temporary_object);
+              ASSERT(new_expr.get(ID_statement)==ID_temporary_object);
 
               if(to.get_bool(ID_C_constant))
                 new_expr.type().set(ID_C_constant, true);
@@ -1194,7 +1194,7 @@ bool cpp_typecheckt::user_defined_conversion_sequence(
 
                 new_expr.swap(ctor_expr);
 
-                assert(new_expr.get(ID_statement)==ID_temporary_object);
+                ASSERT(new_expr.get(ID_statement)==ID_temporary_object);
 
                 if(to.get_bool(ID_C_constant))
                   new_expr.type().set(ID_C_constant, true);
@@ -1225,7 +1225,7 @@ bool cpp_typecheckt::user_defined_conversion_sequence(
       if(!component.get_bool("is_cast_operator"))
         continue;
 
-      assert(component.get(ID_type)==ID_code &&
+      ASSERT(component.get(ID_type)==ID_code &&
              component.find(ID_type).find(ID_parameters).get_sub().size()==1);
 
       typet this_type =
@@ -1300,8 +1300,8 @@ bool cpp_typecheckt::reference_related(
   const exprt &expr,
   const typet &type) const
 {
-  assert(is_reference(type));
-  assert(!is_reference(expr.type()));
+  ASSERT(is_reference(type));
+  ASSERT(!is_reference(expr.type()));
 
   typet from=follow(expr.type());
   typet to=follow(type.subtype());
@@ -1348,8 +1348,8 @@ bool cpp_typecheckt::reference_compatible(
   const typet &type,
   unsigned &rank) const
 {
-  assert(is_reference(type));
-  assert(!is_reference(expr.type()));
+  ASSERT(is_reference(type));
+  ASSERT(!is_reference(expr.type()));
 
   if(!reference_related(expr, type))
     return false;
@@ -1422,8 +1422,8 @@ bool cpp_typecheckt::reference_binding(
   exprt &new_expr,
   unsigned &rank)
 {
-  assert(is_reference(type));
-  assert(!is_reference(expr.type()));
+  ASSERT(is_reference(type));
+  ASSERT(!is_reference(expr.type()));
 
   unsigned backup_rank=rank;
 
@@ -1500,7 +1500,7 @@ bool cpp_typecheckt::reference_binding(
       if(!is_reference(component_type.return_type()))
         continue;
 
-      assert(component_type.parameters().size()==1);
+      ASSERT(component_type.parameters().size()==1);
 
       typet this_type =
         component_type.parameters().front().type();
@@ -1542,7 +1542,7 @@ bool cpp_typecheckt::reference_binding(
            reference_compatible(returned_value, type, rank))
         {
           // returned values are lvalues in case of references only
-          assert(returned_value.id()==ID_dereference &&
+          ASSERT(returned_value.id()==ID_dereference &&
                  is_reference(returned_value.op0().type()));
 
           new_expr=returned_value.op0();
@@ -1809,7 +1809,7 @@ void cpp_typecheckt::reference_initializer(
   exprt &expr,
   const typet &type)
 {
-  assert(is_reference(type));
+  ASSERT(is_reference(type));
   add_implicit_dereference(expr);
 
   unsigned rank=0;
@@ -1842,7 +1842,7 @@ bool cpp_typecheckt::cast_away_constness(
   const typet &t1,
   const typet &t2) const
 {
-  assert(t1.id()==ID_pointer && t2.id()==ID_pointer);
+  ASSERT(t1.id()==ID_pointer && t2.id()==ID_pointer);
   typet nt1=t1;
   typet nt2=t2;
 
@@ -1918,7 +1918,7 @@ bool cpp_typecheckt::const_typecast(
   const typet &type,
   exprt &new_expr)
 {
-  assert(is_reference(expr.type())==false);
+  ASSERT(is_reference(expr.type())==false);
 
   exprt curr_expr=expr;
 
@@ -2017,7 +2017,7 @@ bool cpp_typecheckt::dynamic_typecast(
     {
       if(!e.get_bool(ID_C_lvalue))
         return false;
-      assert(0); // currently not supported
+      ASSERT(0); // currently not supported
     }
     else if(follow(type.subtype()).id()==ID_struct)
     {

@@ -145,7 +145,7 @@ Function: cpp_typecheckt::convert_non_template_declaration
 void cpp_typecheckt::convert_non_template_declaration(
   cpp_declarationt &declaration)
 {
-  assert(!declaration.is_template());
+  ASSERT(!declaration.is_template());
 
   // we first check if this is a typedef
   typet &declaration_type=declaration.type();

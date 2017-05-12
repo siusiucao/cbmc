@@ -52,7 +52,7 @@ void cpp_typecheckt::default_dtor(
   const symbolt &symbol,
   cpp_declarationt &dtor)
 {
-  assert(symbol.type.id()==ID_struct ||
+  ASSERT(symbol.type.id()==ID_struct ||
          symbol.type.id()==ID_union);
 
   irept name;
@@ -93,7 +93,7 @@ Function: cpp_typecheckt::dtor
 
 codet cpp_typecheckt::dtor(const symbolt &symbol)
 {
-  assert(symbol.type.id()==ID_struct ||
+  ASSERT(symbol.type.id()==ID_struct ||
          symbol.type.id()==ID_union);
 
   source_locationt source_location=symbol.type.source_location();
@@ -131,7 +131,7 @@ codet cpp_typecheckt::dtor(const symbolt &symbol)
 
       exprt var=virtual_table_symbol_var.symbol_expr();
       address_of_exprt address(var);
-      assert(address.type()==cit->type());
+      ASSERT(address.type()==cit->type());
 
       already_typechecked(address);
 
@@ -188,8 +188,8 @@ codet cpp_typecheckt::dtor(const symbolt &symbol)
       bit!=bases.rend();
       bit++)
   {
-    assert(bit->id()==ID_base);
-    assert(bit->find(ID_type).id()==ID_symbol);
+    ASSERT(bit->id()==ID_base);
+    ASSERT(bit->find(ID_type).id()==ID_symbol);
     const symbolt &psymb = lookup(bit->find(ID_type).get(ID_identifier));
 
     exprt object(ID_dereference);

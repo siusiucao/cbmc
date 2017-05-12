@@ -101,7 +101,7 @@ void createIx0(invariant_programt &program, const std::string &inv0_name,
 {
   const invariant_programt &prog=program;
   invariant_programt::const_invariant_loopst loops(prog.get_loops());
-  assert(!loops.empty() && "At least one loop required.");
+  ASSERT(!loops.empty() && "At least one loop required.");
   const invariant_programt::invariant_loopt &first=*loops.front();
   goto_programt::targett &meta=program.Ix0;
   goto_programt::targett pos=first.meta_variables.Ix;

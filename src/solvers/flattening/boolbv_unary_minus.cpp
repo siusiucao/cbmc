@@ -73,7 +73,7 @@ bvt boolbvt::convert_unary_minus(const unary_exprt &expr)
 
       for(std::size_t j=0; j<tmp_op.size(); j++)
       {
-        assert(i*sub_width+j<op_bv.size());
+        ASSERT(i*sub_width+j<op_bv.size());
         tmp_op[j]=op_bv[i*sub_width+j];
       }
 
@@ -87,11 +87,11 @@ bvt boolbvt::convert_unary_minus(const unary_exprt &expr)
       else
         tmp_result=bv_utils.negate(tmp_op);
 
-      assert(tmp_result.size()==sub_width);
+      ASSERT(tmp_result.size()==sub_width);
 
       for(std::size_t j=0; j<tmp_result.size(); j++)
       {
-        assert(i*sub_width+j<bv.size());
+        ASSERT(i*sub_width+j<bv.size());
         bv[i*sub_width+j]=tmp_result[j];
       }
     }
@@ -107,7 +107,7 @@ bvt boolbvt::convert_unary_minus(const unary_exprt &expr)
   }
   else if(bvtype==IS_FLOAT && op_bvtype==IS_FLOAT)
   {
-    assert(!no_overflow);
+    ASSERT(!no_overflow);
     float_utilst float_utils(prop, to_floatbv_type(expr.type()));
     return float_utils.negate(op_bv);
   }

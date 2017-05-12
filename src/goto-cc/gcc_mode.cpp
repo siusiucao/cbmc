@@ -315,7 +315,7 @@ int gcc_modet::doit()
   else if(cmdline.isset('E'))
   {
     compiler.mode=compilet::PREPROCESS_ONLY;
-    assert(false);
+    ASSERT(false);
   }
   else if(cmdline.isset("shared") ||
           cmdline.isset('r')) // really not well documented
@@ -337,7 +337,7 @@ int gcc_modet::doit()
     debug() << "Compiling and linking a library" << eom; break;
   case compilet::COMPILE_LINK_EXECUTABLE:
     debug() << "Compiling and linking an executable" << eom; break;
-  default: assert(false);
+  default: ASSERT(false);
   }
 
   if(cmdline.isset("i386-win32") ||
@@ -602,7 +602,7 @@ int gcc_modet::preprocess(
   new_argv.push_back(src);
 
   // overwrite argv[0]
-  assert(new_argv.size()>=1);
+  ASSERT(new_argv.size()>=1);
   new_argv[0]=native_tool_name.c_str();
 
   #if 0
@@ -629,7 +629,7 @@ Function: gcc_modet::run_gcc
 
 int gcc_modet::run_gcc()
 {
-  assert(!cmdline.parsed_argv.empty());
+  ASSERT(!cmdline.parsed_argv.empty());
 
   // build new argv
   std::vector<std::string> new_argv;

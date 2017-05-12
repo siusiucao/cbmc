@@ -178,7 +178,7 @@ exprt string_constraint_generatort::add_axioms_for_index_of(
   string_exprt str=get_string_expr(args[0]);
   const exprt &c=args[1];
   const refined_string_typet &ref_type=to_refined_string_type(str.type());
-  assert(f.type()==ref_type.get_index_type());
+  ASSERT(f.type()==ref_type.get_index_type());
   exprt from_index;
 
   if(args.size()==2)
@@ -186,7 +186,7 @@ exprt string_constraint_generatort::add_axioms_for_index_of(
   else if(args.size()==3)
     from_index=args[2];
   else
-    assert(false);
+    ASSERT(false);
 
   if(c.type().id()==ID_unsignedbv || c.type().id()==ID_signedbv)
   {
@@ -195,7 +195,7 @@ exprt string_constraint_generatort::add_axioms_for_index_of(
   }
   else
   {
-    assert(refined_string_typet::is_refined_string_type(c.type()));
+    ASSERT(refined_string_typet::is_refined_string_type(c.type()));
     string_exprt sub=get_string_expr(c);
     return add_axioms_for_index_of_string(str, sub, from_index);
   }
@@ -276,14 +276,14 @@ exprt string_constraint_generatort::add_axioms_for_last_index_of(
   exprt c=args[1];
   const refined_string_typet &ref_type=to_refined_string_type(str.type());
   exprt from_index;
-  assert(f.type()==ref_type.get_index_type());
+  ASSERT(f.type()==ref_type.get_index_type());
 
   if(args.size()==2)
     from_index=minus_exprt(str.length(), from_integer(1, str.length().type()));
   else if(args.size()==3)
     from_index=args[2];
   else
-    assert(false);
+    ASSERT(false);
 
   if(c.type().id()==ID_unsignedbv || c.type().id()==ID_signedbv)
   {

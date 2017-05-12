@@ -236,7 +236,7 @@ void symex_target_equationt::assignment(
   const sourcet &source,
   assignment_typet assignment_type)
 {
-  assert(ssa_lhs.is_not_nil());
+  ASSERT(ssa_lhs.is_not_nil());
 
   SSA_steps.push_back(SSA_stept());
   SSA_stept &SSA_step=SSA_steps.back();
@@ -275,7 +275,7 @@ void symex_target_equationt::decl(
   const sourcet &source,
   assignment_typet assignment_type)
 {
-  assert(ssa_lhs.is_not_nil());
+  ASSERT(ssa_lhs.is_not_nil());
 
   SSA_steps.push_back(SSA_stept());
   SSA_stept &SSA_step=SSA_steps.back();
@@ -821,7 +821,7 @@ void symex_target_equationt::convert_assertions(
         prop_conv.set_to_true(step.cond_expr);
     }
 
-    assert(false); // unreachable
+    ASSERT(false); // unreachable
   }
 
   // We do (NOT a1) OR (NOT a2) ...
@@ -1038,7 +1038,7 @@ void symex_target_equationt::SSA_stept::output(
   case goto_trace_stept::GOTO:
     out << "IF " << from_expr(ns, "", cond_expr) << " GOTO" << std::endl; break;
 
-  default: assert(false);
+  default: ASSERT(false);
   }
 
   if(is_assert() || is_assume() || is_assignment() || is_constraint())

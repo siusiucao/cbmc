@@ -321,7 +321,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
 
   if(is_cast_operator)
   {
-    assert(declarator.name().get_sub().size()==2 &&
+    ASSERT(declarator.name().get_sub().size()==2 &&
            declarator.name().get_sub().front().id()==ID_operator);
 
     typet type=static_cast<typet &>(declarator.name().get_sub()[1]);
@@ -523,9 +523,9 @@ void cpp_typecheckt::typecheck_compound_declarator(
         {
           is_virtual=true;
           const code_typet &code_type=to_code_type(comp.type());
-          assert(code_type.parameters().size()>0);
+          ASSERT(code_type.parameters().size()>0);
           const typet &pointer_type=code_type.parameters()[0].type();
-          assert(pointer_type.id()==ID_pointer);
+          ASSERT(pointer_type.id()==ID_pointer);
           virtual_bases.insert(pointer_type.subtype().get(ID_identifier));
         }
       }
@@ -596,7 +596,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
         vt_symb_type.is_type=true;
 
         bool failed=symbol_table.move(vt_symb_type);
-        assert(!failed);
+        ASSERT(!failed);
         vtit=symbol_table.symbols.find(vt_name);
 
         // add a virtual-table pointer
@@ -613,7 +613,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
         put_compound_into_scope(compo);
       }
 
-      assert(vtit->second.type.id()==ID_struct);
+      ASSERT(vtit->second.type.id()==ID_struct);
 
       struct_typet &virtual_table=
         to_struct_type(vtit->second.type);
@@ -674,7 +674,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
 
           // add the parameter to the symbol table
           bool failed=symbol_table.move(arg_symb);
-          assert(!failed);
+          ASSERT(!failed);
         }
 
         // do the body of the function
@@ -732,7 +732,7 @@ void cpp_typecheckt::typecheck_compound_declarator(
         // add the function to the symbol table
         {
           bool failed=symbol_table.move(func_symb);
-          assert(!failed);
+          ASSERT(!failed);
         }
 
         // next base
@@ -965,7 +965,7 @@ void cpp_typecheckt::typecheck_friend_declaration(
 
     // TODO
 //    typecheck_type(ftype);
-//    assert(ftype.id()==ID_symbol);
+//    ASSERT(ftype.id()==ID_symbol);
 //    symbol.type.add("#friends").move_to_sub(ftype);
 
     return;
@@ -1029,7 +1029,7 @@ void cpp_typecheckt::typecheck_compound_body(symbolt &symbol)
   // enter scope of compound
   cpp_scopes.set_scope(symbol.name);
 
-  assert(symbol.type.id()==ID_struct ||
+  ASSERT(symbol.type.id()==ID_struct ||
          symbol.type.id()==ID_union);
 
   struct_union_typet &type=
@@ -1267,7 +1267,7 @@ void cpp_typecheckt::typecheck_compound_body(symbolt &symbol)
       // build declaration
       cpp_declarationt cpctor;
       default_cpctor(symbol, cpctor);
-      assert(cpctor.declarators().size()==1);
+      ASSERT(cpctor.declarators().size()==1);
 
       exprt value("cpp_not_typechecked");
       value.copy_to_operands(cpctor.declarators()[0].value());
@@ -1285,7 +1285,7 @@ void cpp_typecheckt::typecheck_compound_body(symbolt &symbol)
       // build declaration
       cpp_declarationt assignop;
       default_assignop(symbol, assignop);
-      assert(assignop.declarators().size()==1);
+      ASSERT(assignop.declarators().size()==1);
 
       // The value will be typechecked only if the operator
       // is actually used
@@ -1636,7 +1636,7 @@ bool cpp_typecheckt::get_component(
 {
   const typet &followed_type=follow(object.type());
 
-  assert(followed_type.id()==ID_struct ||
+  ASSERT(followed_type.id()==ID_struct ||
          followed_type.id()==ID_union);
 
   struct_union_typet final_type=
@@ -1752,7 +1752,7 @@ bool cpp_typecheckt::check_component_access(
   if(access==ID_public)
     return false; // ok
 
-  assert(access==ID_private ||
+  ASSERT(access==ID_private ||
          access==ID_protected);
 
   const irep_idt &struct_identifier=
@@ -1826,8 +1826,8 @@ void cpp_typecheckt::get_bases(
 
   forall_irep(it, bases)
   {
-    assert(it->id()==ID_base);
-    assert(it->get(ID_type)==ID_symbol);
+    ASSERT(it->id()==ID_base);
+    ASSERT(it->get(ID_type)==ID_symbol);
 
     const struct_typet &base=
       to_struct_type(lookup(it->find(ID_type).get(ID_identifier)).type);
@@ -1860,8 +1860,8 @@ void cpp_typecheckt::get_virtual_bases(
 
   forall_irep(it, bases)
   {
-    assert(it->id()==ID_base);
-    assert(it->get(ID_type)==ID_symbol);
+    ASSERT(it->id()==ID_base);
+    ASSERT(it->get(ID_type)==ID_symbol);
 
     const struct_typet &base=
       to_struct_type(lookup(it->find(ID_type).get(ID_identifier)).type);
@@ -1917,8 +1917,8 @@ void cpp_typecheckt::make_ptr_typecast(
 {
   typet src_type=expr.type();
 
-  assert(src_type.id()==  ID_pointer);
-  assert(dest_type.id()== ID_pointer);
+  ASSERT(src_type.id()==  ID_pointer);
+  ASSERT(dest_type.id()== ID_pointer);
 
   struct_typet src_struct =
     to_struct_type(static_cast<const typet&>(follow(src_type.subtype())));
@@ -1926,7 +1926,7 @@ void cpp_typecheckt::make_ptr_typecast(
   struct_typet dest_struct =
     to_struct_type(static_cast<const typet&>(follow(dest_type.subtype())));
 
-  assert(subtype_typecast(src_struct, dest_struct) ||
+  ASSERT(subtype_typecast(src_struct, dest_struct) ||
          subtype_typecast(dest_struct, src_struct));
 
   expr.make_typecast(dest_type);

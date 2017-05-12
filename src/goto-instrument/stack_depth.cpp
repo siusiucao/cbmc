@@ -69,7 +69,7 @@ void stack_depth(
   const int i_depth,
   const exprt &max_depth)
 {
-  assert(!goto_program.instructions.empty());
+  ASSERT(!goto_program.instructions.empty());
 
   goto_programt::targett first=goto_program.instructions.begin();
 
@@ -91,7 +91,7 @@ void stack_depth(
   plus_ins->function=first->function;
 
   goto_programt::targett last=--goto_program.instructions.end();
-  assert(last->is_end_function());
+  ASSERT(last->is_end_function());
 
   goto_programt::instructiont minus_ins;
   minus_ins.make_assignment();
@@ -132,7 +132,7 @@ void stack_depth(
   // initialize depth to 0
   goto_functionst::function_mapt::iterator
     i_it=goto_functions.function_map.find(CPROVER_PREFIX "initialize");
-  assert(i_it!=goto_functions.function_map.end());
+  ASSERT(i_it!=goto_functions.function_map.end());
 
   goto_programt &init=i_it->second.body;
   goto_programt::targett first=init.instructions.begin();

@@ -87,7 +87,7 @@ protected:
 
   bool remove(const irep_idt &symb)
   {
-    assert(pointer_to_fun.find(symb)!=pointer_to_fun.end());
+    ASSERT(pointer_to_fun.find(symb)!=pointer_to_fun.end());
     pointer_to_fun.erase(symb);
     return true;
   }
@@ -158,7 +158,7 @@ void const_function_pointer_propagationt::dup_caller_and_inline_callee(
   const symbol_exprt &const_function,
   unsigned stack_scope)
 {
-  assert(callsite_stack.size()>0);
+  ASSERT(callsite_stack.size()>0);
 
   /* for the reconstruction of the {call,callsite}_stacks after the
      duplication */
@@ -176,7 +176,7 @@ void const_function_pointer_propagationt::dup_caller_and_inline_callee(
     message.debug() << "current_call=" << current_call << " stack_scope="
       << stack_scope << " callsite_stack.size()=" << callsite_stack.size()
       << messaget::eom;
-    assert(callsite!=callsite_stack.end());
+    ASSERT(callsite!=callsite_stack.end());
 
     message.debug() << callsite_stack.size() << messaget::eom;
 
@@ -216,7 +216,7 @@ void const_function_pointer_propagationt::dup_caller_and_inline_callee(
         it!=function_dup.body.instructions.end(); ++it)
         it->function=function_new_id;
 
-      assert(goto_functions.function_map[function_new_id].
+      ASSERT(goto_functions.function_map[function_new_id].
              body.instructions.size()>0);
 
       /* removes in definition the argument leading to the const_function */
@@ -264,9 +264,9 @@ void const_function_pointer_propagationt::dup_caller_and_inline_callee(
       {
       }
 
-      assert(it->source_location==(*callsite)->source_location);
+      ASSERT(it->source_location==(*callsite)->source_location);
       exprt &function_called=to_code_function_call(it->code).function();
-      assert(function_called.id()==ID_symbol);
+      ASSERT(function_called.id()==ID_symbol);
       symbol_exprt &symbol_fun_called=to_symbol_expr(function_called);
       symbol_fun_called.set_identifier(
         id2string(symbol_fun_called.get_identifier())+last_suffix);
@@ -319,7 +319,7 @@ void const_function_pointer_propagationt::dup_caller_and_inline_callee(
       message.debug() << "callsite targetted: " << (*callsite)->source_location
         << " function: " << const_function.get_identifier() << messaget::eom;
 
-      assert(it->source_location==(*callsite)->source_location);
+      ASSERT(it->source_location==(*callsite)->source_location);
       message.debug() << it->code.get_statement() << messaget::eom;
       to_code_function_call(it->code).function()=const_function;
 
@@ -337,7 +337,7 @@ void const_function_pointer_propagationt::dup_caller_and_inline_callee(
     it!=callsite_stack.end(); ++it)
     new_callsite_stack.push_back(*it);
 
-  assert(callsite_stack.size()==new_callsite_stack.size());
+  ASSERT(callsite_stack.size()==new_callsite_stack.size());
   callsite_stack.swap(new_callsite_stack);
 }
 
@@ -365,7 +365,7 @@ void const_function_pointer_propagationt::arg_stackt::add_args(
 
   /* retrieve the corresponding parameters expressions in the
      function definition */
-  assert(cfpp.goto_functions.function_map.find(
+  ASSERT(cfpp.goto_functions.function_map.find(
     const_function.get_identifier())!=cfpp.goto_functions.function_map.end());
 
   goto_functionst::goto_functiont &cor_function=
@@ -378,7 +378,7 @@ void const_function_pointer_propagationt::arg_stackt::add_args(
     arg_it!=arg.end();
     ++arg_it, ++cor_arg_it)
   {
-    assert(cor_arg_it!=cor_function.type.parameters().end());
+    ASSERT(cor_arg_it!=cor_function.type.parameters().end());
 
     if(arg_it->id()!=ID_symbol && arg_it->id()!=ID_address_of)
       continue;
@@ -389,7 +389,7 @@ void const_function_pointer_propagationt::arg_stackt::add_args(
         continue;
 
       const exprt &arg_expr=to_address_of_expr(*arg_it).object();
-      assert(arg_expr.id()==ID_symbol);
+      ASSERT(arg_expr.id()==ID_symbol);
       const symbol_exprt &arg_symbol_expr=to_symbol_expr(arg_expr);
 
       // const symbolt &arg_symbol=

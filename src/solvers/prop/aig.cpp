@@ -85,7 +85,7 @@ const aigt::terminal_sett &aigt::get_terminals_rec(
   if(it!=terminals.end())
     return it->second; // already done
 
-  assert(n<nodes.size());
+  ASSERT(n<nodes.size());
   const aig_nodet &node=nodes[n];
 
   terminal_sett &t=terminals[n];

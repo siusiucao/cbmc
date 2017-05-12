@@ -46,7 +46,7 @@ static std::string type2name_symbol(
   if(ns.lookup(identifier, symbol))
     return "SYM#"+id2string(identifier)+"#";
 
-  assert(symbol && symbol->is_type);
+  ASSERT(symbol && symbol->is_type);
 
   if(symbol->type.id()!=ID_struct &&
      symbol->type.id()!=ID_union)
@@ -206,7 +206,7 @@ static std::string type2name(
   else if(type.id()==ID_struct ||
           type.id()==ID_union)
   {
-    assert(parent_is_sym_check);
+    ASSERT(parent_is_sym_check);
     parent_is_sym_check=false;
     if(type.id()==ID_struct)
       result+="ST";

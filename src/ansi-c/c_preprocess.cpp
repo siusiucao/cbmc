@@ -117,7 +117,7 @@ static std::string type_max(const typet &src)
     return integer2string(
       power(2, to_unsignedbv_type(src).get_width()-1)-1);
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -889,7 +889,7 @@ bool c_preprocess_gcc_clang(
     else if(config.ansi_c.wchar_t_width==config.ansi_c.char_width)
       command+=" -D__WCHAR_TYPE__=\""+sig+" char\"";
     else
-      assert(false);
+      ASSERT(false);
   }
 
   if(config.ansi_c.char_is_unsigned)
@@ -927,7 +927,7 @@ bool c_preprocess_gcc_clang(
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 
   // Standard Defines, ANSI9899 6.10.8

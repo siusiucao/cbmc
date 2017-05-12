@@ -120,7 +120,7 @@ void irept::detach()
     remove_ref(old_data);
   }
 
-  assert(data->ref_count==1);
+  ASSERT(data->ref_count==1);
 
   #ifdef IREP_DEBUG
   std::cout << "DETACH2: " << data << std::endl;
@@ -150,7 +150,7 @@ void irept::remove_ref(dt *old_data)
   nonrecursive_destructor(old_data);
   #else
 
-  assert(old_data->ref_count!=0);
+  ASSERT(old_data->ref_count!=0);
 
   #ifdef IREP_DEBUG
   std::cout << "R: " << old_data << " " << old_data->ref_count << std::endl;
@@ -203,7 +203,7 @@ void irept::nonrecursive_destructor(dt *old_data)
     if(d==&empty_d)
       continue;
 
-    assert(d->ref_count!=0);
+    ASSERT(d->ref_count!=0);
     d->ref_count--;
 
     if(d->ref_count==0)
@@ -703,7 +703,7 @@ bool irept::ordering(const irept &other) const
         return false;
     }
 
-    assert(it1==X.sub.end() && it2==Y.sub.end());
+    ASSERT(it1==X.sub.end() && it2==Y.sub.end());
   }
 
   if(X.named_sub.size()<Y.named_sub.size())
@@ -731,7 +731,7 @@ bool irept::ordering(const irept &other) const
         return false;
     }
 
-    assert(it1==X.named_sub.end() && it2==Y.named_sub.end());
+    ASSERT(it1==X.named_sub.end() && it2==Y.named_sub.end());
   }
 
   return false;
@@ -779,7 +779,7 @@ int irept::compare(const irept &i) const
         return r;
     }
 
-    assert(it1==get_sub().end() && it2==i.get_sub().end());
+    ASSERT(it1==get_sub().end() && it2==i.get_sub().end());
   }
 
   const named_subt::size_type n_size=get_named_sub().size(),
@@ -807,7 +807,7 @@ int irept::compare(const irept &i) const
         return r;
     }
 
-    assert(it1==get_named_sub().end() &&
+    ASSERT(it1==get_named_sub().end() &&
            it2==i.get_named_sub().end());
   }
 

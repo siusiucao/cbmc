@@ -30,13 +30,13 @@ public:
 
   cpp_declarationt &get_declaration()
   {
-    assert(is_declaration());
+    ASSERT(is_declaration());
     return (cpp_declarationt &)*this;
   }
 
   const cpp_declarationt &get_declaration() const
   {
-    assert(is_declaration());
+    ASSERT(is_declaration());
     return (const cpp_declarationt &)*this;
   }
 
@@ -55,13 +55,13 @@ public:
 
   cpp_linkage_spect &get_linkage_spec()
   {
-    assert(is_linkage_spec());
+    ASSERT(is_linkage_spec());
     return (cpp_linkage_spect &)*this;
   }
 
   const cpp_linkage_spect &get_linkage_spec() const
   {
-    assert(is_linkage_spec());
+    ASSERT(is_linkage_spec());
     return (const cpp_linkage_spect &)*this;
   }
 
@@ -80,13 +80,13 @@ public:
 
   cpp_namespace_spect &get_namespace_spec()
   {
-    assert(is_namespace_spec());
+    ASSERT(is_namespace_spec());
     return (cpp_namespace_spect &)*this;
   }
 
   const cpp_namespace_spect &get_namespace_spec() const
   {
-    assert(is_namespace_spec());
+    ASSERT(is_namespace_spec());
     return (const cpp_namespace_spect &)*this;
   }
 
@@ -105,13 +105,13 @@ public:
 
   cpp_usingt &get_using()
   {
-     assert(is_using());
+     ASSERT(is_using());
     return (cpp_usingt &)*this;
   }
 
   const cpp_usingt &get_using() const
   {
-    assert(is_using());
+    ASSERT(is_using());
     return (const cpp_usingt &)*this;
   }
 
@@ -130,7 +130,7 @@ public:
 
   cpp_static_assertt &get_static_assert()
   {
-    assert(is_static_assert());
+    ASSERT(is_static_assert());
     return (cpp_static_assertt &)*this;
   }
 

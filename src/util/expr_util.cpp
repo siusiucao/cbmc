@@ -94,7 +94,7 @@ Function: make_with_expr
 with_exprt make_with_expr(const update_exprt &src)
 {
   const exprt::operandst &designator=src.designator();
-  assert(!designator.empty());
+  ASSERT(!designator.empty());
 
   with_exprt result;
   exprt *dest=&result;
@@ -113,7 +113,7 @@ with_exprt make_with_expr(const update_exprt &src)
       //  to_member_designator(*it).get_component_name();
     }
     else
-      assert(false);
+      ASSERT(false);
 
     *dest=tmp;
     dest=&to_with_expr(*dest).new_value();
@@ -155,7 +155,7 @@ exprt is_not_zero(
     src_type.id()==ID_floatbv?ID_ieee_float_notequal:ID_notequal;
 
   exprt zero=from_integer(0, src_type);
-  assert(zero.is_not_nil());
+  ASSERT(zero.is_not_nil());
 
   binary_exprt comparison(src, id, zero, bool_typet());
   comparison.add_source_location()=src.source_location();
@@ -225,8 +225,8 @@ Function: lift_if
 
 if_exprt lift_if(const exprt &src, std::size_t operand_number)
 {
-  assert(operand_number<src.operands().size());
-  assert(src.operands()[operand_number].id()==ID_if);
+  ASSERT(operand_number<src.operands().size());
+  ASSERT(src.operands()[operand_number].id()==ID_if);
 
   const if_exprt if_expr=to_if_expr(src.operands()[operand_number]);
   const exprt true_case=if_expr.true_case();

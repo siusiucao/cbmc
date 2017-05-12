@@ -149,7 +149,7 @@ void expr2ct::get_shorthands(const exprt &expr)
     ns_collision[symbol->location.get_function()].insert(sh);
 
     if(!shorthands.insert(std::make_pair(*it, sh)).second)
-      assert(false);
+      ASSERT(false);
   }
 
   for(find_symbols_sett::const_iterator
@@ -759,7 +759,7 @@ std::string expr2ct::convert_struct_type(
   // Either we are including the body (in which case it makes sense to include
   // or exclude the parameters) or there is no body so therefore we definitely
   // shouldn't be including the parameters
-  assert(inc_struct_body || !inc_padding_components);
+  ASSERT(inc_struct_body || !inc_padding_components);
 
   const struct_typet &struct_type=to_struct_type(src);
 
@@ -1056,7 +1056,7 @@ std::string expr2ct::convert_with(
       const struct_union_typet::componentt &comp_expr=
         struct_union_type.get_component(component_name);
 
-      assert(comp_expr.is_not_nil());
+      ASSERT(comp_expr.is_not_nil());
 
       irep_idt display_component_name;
 
@@ -2094,7 +2094,7 @@ std::string expr2ct::convert_symbol(
       get_shorthands(src);
 
       entry=shorthands.find(id);
-      assert(entry!=shorthands.end());
+      ASSERT(entry!=shorthands.end());
     }
 
     dest=id2string(entry->second);
@@ -2782,7 +2782,7 @@ std::string expr2ct::convert_array(
       if(it==--src.operands().end())
         break;
 
-      assert(it->is_constant());
+      ASSERT(it->is_constant());
       mp_integer i;
       to_integer(*it, i);
       unsigned int ch=integer2unsigned(i);
@@ -3630,7 +3630,7 @@ std::string expr2ct::convert_code_block(
   const code_blockt &src,
   unsigned indent)
 {
-  assert(indent>=0);
+  ASSERT(indent>=0);
   std::string dest=indent_str(indent);
   dest+="{\n";
 
@@ -3666,7 +3666,7 @@ std::string expr2ct::convert_code_decl_block(
   const codet &src,
   unsigned indent)
 {
-  assert(indent>=0);
+  ASSERT(indent>=0);
   std::string dest;
 
   forall_operands(it, src)
@@ -4421,7 +4421,7 @@ std::string expr2ct::convert_Hoare(const exprt &src)
   if(!assertion.is_nil())
   {
     std::string assertion_str=convert(assertion);
-    dest+="    assert(";
+    dest+="    ASSERT(";
     dest+=assertion_str;
     dest+=");\n";
   }

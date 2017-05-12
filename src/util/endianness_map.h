@@ -38,9 +38,9 @@ public:
 
   size_t map_bit(size_t bit) const
   {
-    assert(bit<map.size());
+    ASSERT(bit<map.size());
     size_t result=map[bit];
-    assert(result<map.size());
+    ASSERT(result<map.size());
     return result;
   }
 

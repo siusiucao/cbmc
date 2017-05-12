@@ -27,7 +27,7 @@ void substitute(
   const std::string &what,
   const std::string &by)
 {
-  assert(!what.empty());
+  ASSERT(!what.empty());
 
   while(true)
   {

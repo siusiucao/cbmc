@@ -96,11 +96,11 @@ public:
     // operator[] is the only way to insert something!
     std::pair<iterator, bool> insert(const std::pair<unsigned, objectt>&)
     {
-      assert(false);
+      ASSERT(false);
     }
     iterator insert(iterator, const std::pair<unsigned, objectt>&)
     {
-      assert(false);
+      ASSERT(false);
     }
 
     class validity_ranget

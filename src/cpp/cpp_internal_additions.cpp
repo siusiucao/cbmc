@@ -89,7 +89,7 @@ void cpp_internal_additions(std::ostream &out)
   out << "typedef __typeof__(sizeof(int)) __CPROVER_size_t;" << '\n';
 
   // assume/assert
-  out << "extern \"C\" void assert(bool assertion);" << '\n';
+  out << "extern \"C\" void ASSERT(bool assertion);" << '\n';
   out << "extern \"C\" void __CPROVER_assume(bool assumption);" << '\n';
   out << "extern \"C\" void __CPROVER_assert("
          "bool assertion, const char *description);" << '\n';

@@ -87,7 +87,7 @@ bvt boolbvt::convert_cond(const exprt &expr)
     // functional version -- go backwards
     for(std::size_t i=expr.operands().size(); i!=0; i-=2)
     {
-      assert(i>=2);
+      ASSERT(i>=2);
       const exprt &cond=expr.operands()[i-2];
       const exprt &value=expr.operands()[i-1];
 

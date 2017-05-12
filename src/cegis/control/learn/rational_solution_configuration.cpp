@@ -35,7 +35,7 @@ const struct_exprt &find_solution(const goto_tracet &trace)
     if (CEGIS_CONTROL_SOLUTION_VAR_NAME != id) continue;
     return to_struct_expr(step.full_lhs_value);
   }
-  assert(!"Control solution not found in trace.");
+  ASSERT(!"Control solution not found in trace.");
 }
 }
 

@@ -32,7 +32,7 @@ namespace
 bool instanceof(const typet &lhs, const typet &rhs, const namespacet &ns)
 {
   if (type_eq(lhs, rhs, ns)) return true;
-  assert(ID_class == lhs.id());
+  ASSERT(ID_class == lhs.id());
   const class_typet &lhs_class=to_class_type(lhs);
   const class_typet::basest &bases=lhs_class.bases();
   for(const exprt &base : bases)

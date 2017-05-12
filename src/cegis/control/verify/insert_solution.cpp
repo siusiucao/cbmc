@@ -32,7 +32,7 @@ exprt &get_comp(struct_exprt::operandst &ops, const struct_typet &struct_type,
   size_t offset=0;
   for (offset=0; offset < comps_size; ++offset)
     if (id2string(comps[offset].get_name()) == comp) break;
-  assert(offset < comps_size);
+  ASSERT(offset < comps_size);
   return ops[offset];
 }
 
@@ -101,6 +101,6 @@ void insert_solution(control_programt &program,
   const goto_programt::targett end(instrs.end());
   const is_assignment_tot pred(CEGIS_CONTROL_VECTOR_SOLUTION_VAR_NAME);
   const goto_programt::targett it=std::find_if(instrs.begin(), end, pred);
-  assert(end != it);
+  ASSERT(end != it);
   to_code_assign(it->code).rhs()=solution.K;
 }

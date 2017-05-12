@@ -230,7 +230,7 @@ string_exprt string_constraint_generatort::add_axioms_from_bool(
   string_exprt res=fresh_string(ref_type);
   const typet &char_type=ref_type.get_char_type();
 
-  assert(b.type()==bool_typet() || b.type().id()==ID_c_bool);
+  ASSERT(b.type()==bool_typet() || b.type().id()==ID_c_bool);
 
   typecast_exprt eq(b, bool_typet());
 
@@ -302,7 +302,7 @@ string_exprt string_constraint_generatort::add_axioms_from_int(
 {
   string_exprt res=fresh_string(ref_type);
   const typet &type=i.type();
-  assert(type.id()==ID_signedbv);
+  ASSERT(type.id()==ID_signedbv);
   exprt ten=from_integer(10, type);
   const typet &char_type=ref_type.get_char_type();
   const typet &index_type=ref_type.get_index_type();
@@ -453,7 +453,7 @@ string_exprt string_constraint_generatort::add_axioms_from_int_hex(
 {
   string_exprt res=fresh_string(ref_type);
   const typet &type=i.type();
-  assert(type.id()==ID_signedbv);
+  ASSERT(type.id()==ID_signedbv);
   const typet &index_type=ref_type.get_index_type();
   const typet &char_type=ref_type.get_char_type();
   exprt sixteen=from_integer(16, index_type);
@@ -602,7 +602,7 @@ string_exprt string_constraint_generatort::add_axioms_for_value_of(
   }
   else
   {
-    assert(args.size()==1);
+    ASSERT(args.size()==1);
     return add_axioms_for_java_char_array(args[0]);
   }
 }
@@ -694,7 +694,7 @@ exprt string_constraint_generatort::add_axioms_for_parse_int(
   exprt zero_char=constant_char('0', char_type);
   exprt minus_char=constant_char('-', char_type);
   exprt plus_char=constant_char('+', char_type);
-  assert(type.id()==ID_signedbv);
+  ASSERT(type.id()==ID_signedbv);
   exprt ten=from_integer(10, type);
 
   exprt chr=str[0];

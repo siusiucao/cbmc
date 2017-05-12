@@ -33,7 +33,7 @@ Function: rd_range_domaint::populate_cache
 
 void rd_range_domaint::populate_cache(const irep_idt &identifier) const
 {
-  assert(bv_container);
+  ASSERT(bv_container);
 
   valuest::const_iterator v_entry=values.find(identifier);
   if(v_entry==values.end() ||
@@ -71,9 +71,9 @@ void rd_range_domaint::transform(
 {
   reaching_definitions_analysist *rd=
     dynamic_cast<reaching_definitions_analysist*>(&ai);
-  assert(rd!=0);
+  ASSERT(rd!=0);
 
-  assert(bv_container);
+  ASSERT(bv_container);
 
   // kill values
   if(from->is_dead())
@@ -113,7 +113,7 @@ void rd_range_domaint::transform(
         const symbolt *symbol_ptr;
         if(ns.lookup(identifier, symbol_ptr))
           continue;
-        assert(symbol_ptr!=0);
+        ASSERT(symbol_ptr!=0);
 
         const range_domaint &ranges=rw_set.get_ranges(it);
 
@@ -342,7 +342,7 @@ void rd_range_domaint::transform_end_function(
 #if 0
     rd_range_domaint *rd_state=
       dynamic_cast<rd_range_domaint*>(&(rd.get_state(call)));
-    assert(rd_state!=0);
+    ASSERT(rd_state!=0);
     rd_state->
 #endif
       transform_assign(ns, from, call, rd);
@@ -378,7 +378,7 @@ void rd_range_domaint::transform_assign(
     const symbolt *symbol_ptr;
     if(ns.lookup(identifier, symbol_ptr))
       continue;
-    assert(symbol_ptr!=0);
+    ASSERT(symbol_ptr!=0);
 
     const range_domaint &ranges=rw_set.get_ranges(it);
 
@@ -411,7 +411,7 @@ void rd_range_domaint::kill(
   const range_spect &range_start,
   const range_spect &range_end)
 {
-  assert(range_start>=0);
+  ASSERT(range_start>=0);
   // -1 for objects of infinite/unknown size
   if(range_end==-1)
   {
@@ -419,7 +419,7 @@ void rd_range_domaint::kill(
     return;
   }
 
-  assert(range_end>range_start);
+  ASSERT(range_end>range_start);
 
   valuest::iterator entry=values.find(identifier);
   if(entry==values.end())
@@ -500,7 +500,7 @@ void rd_range_domaint::kill(
     }
     else if(it!=entry->second.end())
     {
-      assert(*it==id);
+      ASSERT(*it==id);
       ++it;
     }
   }
@@ -522,7 +522,7 @@ void rd_range_domaint::kill_inf(
   const irep_idt &identifier,
   const range_spect &range_start)
 {
-  assert(range_start>=0);
+  ASSERT(range_start>=0);
 
 #if 0
   valuest::iterator entry=values.find(identifier);
@@ -574,10 +574,10 @@ bool rd_range_domaint::gen(
   if(range_start==0 && range_end==0)
     return false;
 
-  assert(range_start>=0);
+  ASSERT(range_start>=0);
 
   // -1 for objects of infinite/unknown size
-  assert(range_end>range_start || range_end==-1);
+  ASSERT(range_end>range_start || range_end==-1);
 
   reaching_definitiont v;
   v.identifier=identifier;
@@ -718,7 +718,7 @@ bool rd_range_domaint::merge_inner(
     }
     else if(itr!=it->second.end())
     {
-      assert(itr->first==o.first);
+      ASSERT(itr->first==o.first);
 
       for(const auto &o_range : o.second)
         more=gen(itr->second, o_range.first, o_range.second) ||
@@ -740,7 +740,7 @@ bool rd_range_domaint::merge_inner(
     }
     else if(itr!=dest.end())
     {
-      assert(*itr==id);
+      ASSERT(*itr==id);
       ++itr;
     }
   }
@@ -781,7 +781,7 @@ bool rd_range_domaint::merge(
     }
     else if(it!=values.end())
     {
-      assert(it->first==value.first);
+      ASSERT(it->first==value.first);
 
       if(merge_inner(it->second, value.second))
       {
@@ -818,7 +818,7 @@ bool rd_range_domaint::merge_shared(
 #if 0
   reaching_definitions_analysist *rd=
     dynamic_cast<reaching_definitions_analysist*>(&ai);
-  assert(rd!=0);
+  ASSERT(rd!=0);
 #endif
 
   bool changed=has_values.is_false();
@@ -842,7 +842,7 @@ bool rd_range_domaint::merge_shared(
     }
     else if(it!=values.end())
     {
-      assert(it->first==value.first);
+      ASSERT(it->first==value.first);
 
       if(merge_inner(it->second, value.second))
       {

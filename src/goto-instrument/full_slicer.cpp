@@ -62,15 +62,15 @@ void full_slicert::add_function_calls(
 {
   goto_functionst::function_mapt::const_iterator f_it=
     goto_functions.function_map.find(node.PC->function);
-  assert(f_it!=goto_functions.function_map.end());
+  ASSERT(f_it!=goto_functions.function_map.end());
 
-  assert(!f_it->second.body.instructions.empty());
+  ASSERT(!f_it->second.body.instructions.empty());
   goto_programt::const_targett begin_function=
     f_it->second.body.instructions.begin();
 
   cfgt::entry_mapt::const_iterator entry=
     cfg.entry_map.find(begin_function);
-  assert(entry!=cfg.entry_map.end());
+  ASSERT(entry!=cfg.entry_map.end());
 
   for(cfgt::edgest::const_iterator
       it=cfg[entry->second].in.begin();
@@ -183,7 +183,7 @@ void full_slicert::add_jumps(
     {
       cfgt::entry_mapt::const_iterator entry=
         cfg.entry_map.find(lex_succ);
-      assert(entry!=cfg.entry_map.end());
+      ASSERT(entry!=cfg.entry_map.end());
 
       if(cfg[entry->second].node_required)
         break;
@@ -200,7 +200,7 @@ void full_slicert::add_jumps(
     cfg_post_dominatorst::cfgt::entry_mapt::const_iterator e=
       pd.cfg.entry_map.find(j.PC);
 
-    assert(e!=pd.cfg.entry_map.end());
+    ASSERT(e!=pd.cfg.entry_map.end());
 
     const cfg_post_dominatorst::cfgt::nodet &n=
       pd.cfg[e->second];
@@ -224,17 +224,17 @@ void full_slicert::add_jumps(
       {
         cfgt::entry_mapt::const_iterator entry=
           cfg.entry_map.find(*d_it);
-        assert(entry!=cfg.entry_map.end());
+        ASSERT(entry!=cfg.entry_map.end());
 
         if(cfg[entry->second].node_required)
         {
           const irep_idt id2=goto_programt::get_function_id(*d_it);
-          assert(id==id2);
+          ASSERT(id==id2);
 
           cfg_post_dominatorst::cfgt::entry_mapt::const_iterator e2=
             pd.cfg.entry_map.find(*d_it);
 
-          assert(e2!=pd.cfg.entry_map.end());
+          ASSERT(e2!=pd.cfg.entry_map.end());
 
           const cfg_post_dominatorst::cfgt::nodet &n2=
             pd.cfg[e2->second];
@@ -282,7 +282,7 @@ void full_slicert::fixedpoint(
   {
     cfgt::entry_mapt::const_iterator entry=
       cfg.entry_map.find(dep_graph[i].PC);
-    assert(entry!=cfg.entry_map.end());
+    ASSERT(entry!=cfg.entry_map.end());
 
     dep_node_to_cfg.push_back(entry->second);
   }

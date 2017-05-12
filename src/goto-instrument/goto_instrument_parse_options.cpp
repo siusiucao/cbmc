@@ -1119,7 +1119,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
   if(cmdline.isset("function-inline"))
   {
     std::string function=cmdline.get_value("function-inline");
-    assert(!function.empty());
+    ASSERT(!function.empty());
 
     bool caching=!cmdline.isset("no-caching");
 

@@ -36,7 +36,7 @@ public:
     const irep_idt &new_scope_name,
     cpp_idt::id_classt id_class)
   {
-    assert(!new_scope_name.empty());
+    ASSERT(!new_scope_name.empty());
     cpp_scopet &n=current_scope_ptr->new_scope(new_scope_name);
     n.id_class=id_class;
     id_map[n.identifier]=&n;
@@ -78,7 +78,7 @@ public:
   cpp_scopet &get_scope(const irep_idt &identifier)
   {
     cpp_idt &n=get_id(identifier);
-    assert(n.is_scope);
+    ASSERT(n.is_scope);
     return (cpp_scopet &)n;
   }
 
@@ -100,7 +100,7 @@ public:
 
   void go_to(cpp_idt &id)
   {
-    assert(id.is_scope);
+    ASSERT(id.is_scope);
     current_scope_ptr=static_cast<cpp_scopet*>(&id);
   }
 

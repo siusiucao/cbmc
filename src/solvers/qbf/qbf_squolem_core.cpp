@@ -378,7 +378,7 @@ const exprt qbf_squolem_coret::f_get(literalt l)
 {
   if(squolem->isUniversal(l.var_no()))
   {
-    assert(l.var_no()!=0);
+    ASSERT(l.var_no()!=0);
     variable_mapt::const_iterator it=variable_map.find(l.var_no());
 
     if(it==variable_map.end())

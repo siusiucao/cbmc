@@ -865,7 +865,7 @@ void compilet::convert_symbols(goto_functionst &dest)
         ++it)
     {
       symbol_tablet::symbolst::iterator s_it=symbol_table.symbols.find(*it);
-      assert(s_it!=symbol_table.symbols.end());
+      ASSERT(s_it!=symbol_table.symbols.end());
 
       if(s_it->second.type.id()==ID_code &&
          !s_it->second.is_macro &&

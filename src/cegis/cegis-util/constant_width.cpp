@@ -16,7 +16,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 size_t get_min_word_width(const exprt &expr)
 {
-  assert(ID_constant == expr.id());
+  ASSERT(ID_constant == expr.id());
   const std::string &value=id2string(to_constant_expr(expr).get_value());
   if (value.empty()) return MIN_WORD_WIDTH;
   const bool is_neg_if_signed=value[0] == '1';

@@ -74,7 +74,7 @@ void safety_learn_configt::process(const size_t max_solution_size)
   // TODO: Implement for multiple loops (change constraint, instrumentation)
   const safety_programt &prog=original_program;
   const invariant_programt::const_invariant_loopst loops=prog.get_loops();
-  assert(!loops.empty());
+  ASSERT(!loops.empty());
   // XXX: We might have to handle skolem choices explicitly at some point
   for (const goto_programt::targett &skolem_choice : loops.front()->skolem_choices)
     x.insert(std::make_pair(get_affected_variable(*skolem_choice), zero));

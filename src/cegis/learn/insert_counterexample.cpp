@@ -58,9 +58,9 @@ void normalise(const std::set<irep_idt> &ce_keys, const zero_valuest &zv,
         values=ce.insert(std::make_pair(loc, no_values)).first;
       size=std::max(size, values->second.size());
     }
-    assert(ce.size() == zv.size());
+    ASSERT(ce.size() == zv.size());
   }
-  assert(sizes.size() == zv.size());
+  ASSERT(sizes.size() == zv.size());
   for (labelled_counterexamplest::value_type &ce : ces)
     for (labelled_counterexamplest::value_type::value_type &ass : ce)
     {
@@ -68,17 +68,17 @@ void normalise(const std::set<irep_idt> &ce_keys, const zero_valuest &zv,
       const size_t current_size=values.size();
       const irep_idt &lbl=ass.first;
       const std::map<const irep_idt, size_t>::const_iterator it=sizes.find(lbl);
-      assert(sizes.end() != it);
+      ASSERT(sizes.end() != it);
       const size_t target_size=it->second;
-      assert(current_size <= target_size);
+      ASSERT(current_size <= target_size);
       const size_t missing=target_size - current_size;
       if (missing)
       {
         const std::map<const irep_idt, exprt>::const_iterator it=zv.find(lbl);
-        assert(zv.end() != it);
+        ASSERT(zv.end() != it);
         std::fill_n(std::back_inserter(values), missing, it->second);
       }
-      assert(target_size == values.size());
+      ASSERT(target_size == values.size());
     }
 }
 
@@ -95,7 +95,7 @@ std::set<irep_idt> get_all_keys(const zero_valuest &zv)
 
 array_exprt to_values(const exprt::operandst &ops)
 {
-  assert(!ops.empty());
+  ASSERT(!ops.empty());
   const typet sz_type(signed_int_type());
   const constant_exprt sz_expr(from_integer(ops.size(), sz_type));
   const array_typet array_type(ops.front().type(), sz_expr);
@@ -152,11 +152,11 @@ void add_array_declarations(symbol_tablet &st, goto_functionst &gf,
   {
     const labelled_assignmentst::value_type::first_type loc_id=value.first;
     const array_valuest::const_iterator array_val=array_values.find(loc_id);
-    assert(array_values.end() != array_val);
+    ASSERT(array_values.end() != array_val);
     const array_exprt &array_expr=array_val->second;
     const std::string base_name(get_ce_array_name(loc_id));
     pos=declare_cegis_meta_variable(st, gf, pos, base_name, array_expr.type());
-    assert(array_expr.operands().size() == ces.size());
+    ASSERT(array_expr.operands().size() == ces.size());
     pos=assign_cegis_meta_variable(st, gf, pos, base_name, array_expr);
   }
 }
@@ -245,7 +245,7 @@ void assign_ce_values(symbol_tablet &st, goto_functionst &gf,
           st.lookup(get_affected_variable(*pos)).symbol_expr(), value);
       break;
     default:
-      assert(!"Unsupported counterexample location type.");
+      ASSERT(!"Unsupported counterexample location type.");
     }
     const std::string value_index(get_cegis_meta_name(get_ce_value_index_name(label)));
     const symbol_exprt value_index_expr(st.lookup(value_index).symbol_expr());
@@ -258,7 +258,7 @@ void assign_ce_values(symbol_tablet &st, goto_functionst &gf,
 void insert_counterexamples(symbol_tablet &st, goto_functionst &gf,
     labelled_counterexamplest ces, const goto_programt::targetst &ce_locs)
 {
-  assert(!ces.empty());
+  ASSERT(!ces.empty());
   const zero_valuest zero_values(get_zero_values(st, ce_locs));
   const std::set<irep_idt> ce_keys(get_all_keys(zero_values));
   normalise(ce_keys, zero_values, ces);

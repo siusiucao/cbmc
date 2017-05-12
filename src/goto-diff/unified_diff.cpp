@@ -114,19 +114,19 @@ void unified_difft::get_diff(
     {
       case differencet::SAME:
         dest.push_back(std::make_pair(new_it, differencet::SAME));
-        assert(old_it!=old_goto_program.instructions.end());
+        ASSERT(old_it!=old_goto_program.instructions.end());
         ++old_it;
-        assert(new_it!=new_goto_program.instructions.end());
+        ASSERT(new_it!=new_goto_program.instructions.end());
         ++new_it;
         break;
       case differencet::DELETED:
         dest.push_back(std::make_pair(old_it, differencet::DELETED));
-        assert(old_it!=old_goto_program.instructions.end());
+        ASSERT(old_it!=old_goto_program.instructions.end());
         ++old_it;
         break;
       case differencet::NEW:
         dest.push_back(std::make_pair(new_it, differencet::NEW));
-        assert(new_it!=new_goto_program.instructions.end());
+        ASSERT(new_it!=new_goto_program.instructions.end());
         ++new_it;
         break;
     }
@@ -448,7 +448,7 @@ bool unified_difft::operator()()
       unified_diff(itn->first, empty, itn->second->second.body);
     else
     {
-      assert(ito->first==itn->first);
+      ASSERT(ito->first==itn->first);
       unified_diff(
         itn->first,
         ito->second->second.body,

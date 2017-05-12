@@ -380,7 +380,7 @@ void exprt::negate()
       else
       {
         make_nil();
-        assert(false);
+        ASSERT(false);
       }
     }
     else
@@ -388,7 +388,7 @@ void exprt::negate()
       if(id()==ID_unary_minus)
       {
         exprt tmp;
-        assert(operands().size()==1);
+        ASSERT(operands().size()==1);
         tmp.swap(op0());
         swap(tmp);
       }
@@ -446,7 +446,7 @@ bool exprt::is_zero() const
     {
       rationalt rat_value;
       if(to_rational(*this, rat_value))
-        assert(false);
+        ASSERT(false);
       return rat_value.is_zero();
     }
     else if(type_id==ID_unsignedbv ||
@@ -504,7 +504,7 @@ bool exprt::is_one() const
     {
       rationalt rat_value;
       if(to_rational(*this, rat_value))
-        assert(false);
+        ASSERT(false);
       return rat_value.is_one();
     }
     else if(type_id==ID_unsignedbv || type_id==ID_signedbv)

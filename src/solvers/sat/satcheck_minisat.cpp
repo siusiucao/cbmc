@@ -90,7 +90,7 @@ Function: minisat_prooft::chain
 
 void minisat_prooft::chain(const vec<ClauseId> &cs, const vec<Var> &xs)
 {
-  assert(cs.size()==xs.size()+1);
+  ASSERT(cs.size()==xs.size()+1);
 
   resolution_proof.clauses.push_back(clauset());
   clauset &c=resolution_proof.clauses.back();
@@ -106,7 +106,7 @@ void minisat_prooft::chain(const vec<ClauseId> &cs, const vec<Var> &xs)
   for(int i=0; i<xs.size(); i++)
   {
     // must be decreasing
-    assert(cs[i]<c_id);
+    ASSERT(cs[i]<c_id);
     c.steps[i].clause_id=cs[i+1];
     c.steps[i].pivot_var_no=xs[i];
   }
@@ -133,8 +133,8 @@ tvt satcheck_minisat1_baset::l_get(literalt a) const
 
   tvt result;
 
-  assert(a.var_no()!=0);
-  assert(a.var_no()<(unsigned)solver->model.size());
+  ASSERT(a.var_no()!=0);
+  ASSERT(a.var_no()<(unsigned)solver->model.size());
 
   if(solver->model[a.var_no()]==l_True)
     result=tvt(true);
@@ -216,7 +216,7 @@ void satcheck_minisat1_baset::lcnf(const bvt &bv)
   convert(new_bv, c);
 
   for(unsigned i=0; i<new_bv.size(); i++)
-    assert(new_bv[i].var_no()<(unsigned)solver->nVars());
+    ASSERT(new_bv[i].var_no()<(unsigned)solver->nVars());
 
   solver->addClause(c);
 
@@ -237,7 +237,7 @@ Function: satcheck_minisat1_baset::prop_solve
 
 propt::resultt satcheck_minisat1_baset::prop_solve()
 {
-  assert(status!=ERROR);
+  ASSERT(status!=ERROR);
 
   {
     messaget::status() <<
@@ -345,7 +345,7 @@ void satcheck_minisat1_baset::set_assumptions(const bvt &bv)
   for(bvt::const_iterator it=assumptions.begin();
       it!=assumptions.end();
       it++)
-    assert(!it->is_constant());
+    ASSERT(!it->is_constant());
 }
 
 /*******************************************************************\

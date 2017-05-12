@@ -78,7 +78,7 @@ const char *bcc_options_with_argument[]=
 
 bool bcc_cmdlinet::parse(int argc, const char **argv)
 {
-  assert(argc>0);
+  ASSERT(argc>0);
   add_arg(argv[0]);
 
   for(int i=1; i<argc; i++)

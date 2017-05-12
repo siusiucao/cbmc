@@ -68,7 +68,7 @@ exprt flow_insensitive_abstract_domain_baset::get_return_lhs(locationt to) const
     return static_cast<const exprt &>(get_nil_irep());
 
   // must be the function call
-  assert(to->is_function_call());
+  ASSERT(to->is_function_call());
 
   const code_function_callt &code=
     to_code_function_call(to_code(to->code));
@@ -178,7 +178,7 @@ flow_insensitive_analysis_baset::locationt
 flow_insensitive_analysis_baset::get_next(
   working_sett &working_set)
 {
-  assert(!working_set.empty());
+  ASSERT(!working_set.empty());
 
 //  working_sett::iterator i=working_set.begin();
 //  locationt l=i->second;
@@ -362,7 +362,7 @@ bool flow_insensitive_analysis_baset::do_function_call(
     return new_data;
   }
 
-  assert(!goto_function.body.instructions.empty());
+  ASSERT(!goto_function.body.instructions.empty());
 
   bool new_data=false;
 
@@ -394,7 +394,7 @@ bool flow_insensitive_analysis_baset::do_function_call(
     // get location at end of procedure
     locationt l_end=--goto_function.body.instructions.end();
 
-    assert(l_end->is_end_function());
+    ASSERT(l_end->is_end_function());
 
     // do edge from end of function to instruction after call
     locationt l_next=l_call;

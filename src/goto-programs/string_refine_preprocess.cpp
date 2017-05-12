@@ -290,7 +290,7 @@ void string_refine_preprocesst::get_data_and_length_type_of_char_array(
   const exprt &expr, typet &data_type, typet &length_type)
 {
   typet object_type=ns.follow(expr.type());
-  assert(object_type.id()==ID_struct);
+  ASSERT(object_type.id()==ID_struct);
   const struct_typet &struct_type=to_struct_type(object_type);
   for(auto component : struct_type.components())
     if(component.get_name()=="length")
@@ -315,7 +315,7 @@ Function: string_refine_preprocesst::get_data_and_length_type_of_string
 void string_refine_preprocesst::get_data_and_length_type_of_string(
   const exprt &expr, typet &data_type, typet &length_type)
 {
-  assert(is_java_string_type(expr.type()) ||
+  ASSERT(is_java_string_type(expr.type()) ||
          is_java_string_builder_type(expr.type()) ||
          is_java_char_sequence_type(expr.type()));
   typet object_type=ns.follow(expr.type());
@@ -423,7 +423,7 @@ string_exprt string_refine_preprocesst::make_cprover_char_array_assign(
   const exprt &rhs,
   const source_locationt &location)
 {
-  assert(is_java_char_array_pointer_type(rhs.type()));
+  ASSERT(is_java_char_array_pointer_type(rhs.type()));
 
   // We do the following assignments:
   // deref=*(rhs->data)
@@ -433,7 +433,7 @@ string_exprt string_refine_preprocesst::make_cprover_char_array_assign(
   dereference_exprt deref(rhs, rhs.type().subtype());
   typet length_type, data_type;
   get_data_and_length_type_of_char_array(deref, data_type, length_type);
-  assert(data_type.id()==ID_pointer);
+  ASSERT(data_type.id()==ID_pointer);
   typet char_type=to_pointer_type(data_type).subtype();
 
   refined_string_typet ref_type(length_type, java_char_type());
@@ -574,7 +574,7 @@ void string_refine_preprocesst::make_string_assign(
   const source_locationt &location,
   const std::string &signature)
 {
-  assert(implements_java_char_sequence(function_type.return_type()));
+  ASSERT(implements_java_char_sequence(function_type.return_type()));
   dereference_exprt deref(lhs, lhs.type().subtype());
   typet object_type=ns.follow(deref.type());
   exprt object_size=size_of_expr(object_type, ns);
@@ -602,7 +602,7 @@ void string_refine_preprocesst::make_string_assign(
   member_exprt lhs_data(deref, "data", tmp_array.type());
 
   // lhs=malloc(String *)
-  assert(object_size.is_not_nil()); // got nil object_size
+  ASSERT(object_size.is_not_nil()); // got nil object_size
   side_effect_exprt malloc_expr(ID_malloc);
   malloc_expr.copy_to_operands(object_size);
   malloc_expr.type()=pointer_typet(object_type);
@@ -729,7 +729,7 @@ void string_refine_preprocesst::make_string_function(
   std::vector<exprt> args;
   if(assign_first_arg)
   {
-    assert(!function_call.arguments().empty());
+    ASSERT(!function_call.arguments().empty());
     rhs.type()=function_call.arguments()[0].type();
   }
   else
@@ -748,7 +748,7 @@ void string_refine_preprocesst::make_string_function(
   exprt lhs;
   if(assign_first_arg)
   {
-    assert(!function_call.arguments().empty());
+    ASSERT(!function_call.arguments().empty());
     lhs=function_call.arguments()[0];
     std::size_t size=function_call.arguments().size();
     if(signature.length()<=size)
@@ -814,7 +814,7 @@ void string_refine_preprocesst::make_string_function_side_effect(
   source_locationt loc=function_call.source_location();
   std::list<code_assignt> assignments;
   const exprt &lhs=function_call.lhs();
-  assert(!function_call.arguments().empty());
+  ASSERT(!function_call.arguments().empty());
   const exprt &s=function_call.arguments()[0];
   code_typet function_type=to_code_type(function_call.type());
 
@@ -903,9 +903,9 @@ void string_refine_preprocesst::make_to_char_array_function(
   const code_function_callt &function_call=to_code_function_call(target->code);
   source_locationt location=function_call.source_location();
 
-  assert(!function_call.arguments().empty());
+  ASSERT(!function_call.arguments().empty());
   const exprt &string_argument=function_call.arguments()[0];
-  assert(is_java_string_pointer_type(string_argument.type()));
+  ASSERT(is_java_string_pointer_type(string_argument.type()));
 
   typet deref_type=function_call.lhs().type().subtype();
   const exprt &lhs=function_call.lhs();
@@ -1085,7 +1085,7 @@ void string_refine_preprocesst::replace_string_calls(
         {
           function_application_exprt f=to_function_application_expr(new_rhs);
           const exprt &name=f.function();
-          assert(name.id()==ID_symbol);
+          ASSERT(name.id()==ID_symbol);
           const irep_idt &id=to_symbol_expr(name).get_identifier();
           auto it=c_string_functions.find(id);
           if(it!=c_string_functions.end())

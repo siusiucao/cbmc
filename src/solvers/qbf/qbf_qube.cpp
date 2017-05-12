@@ -60,7 +60,7 @@ Function: qbf_qubet::l_get
 
 tvt qbf_qubet::l_get(literalt a) const
 {
-  assert(false);
+  ASSERT(false);
   return tvt(false);
 }
 
@@ -121,7 +121,7 @@ propt::resultt qbf_qubet::prop_solve()
   // solve it
   int res=system(
     ("QuBE "+qbf_tmp_file+options+" > "+result_tmp_file).c_str());
-  assert(0==res);
+  ASSERT(0==res);
 
   bool result=false;
 

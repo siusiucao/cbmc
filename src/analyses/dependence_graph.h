@@ -95,7 +95,7 @@ public:
 
   void make_top() final
   {
-    assert(node_id!=std::numeric_limits<node_indext>::max());
+    ASSERT(node_id!=std::numeric_limits<node_indext>::max());
 
     has_values=tvt(true);
     control_deps.clear();
@@ -104,7 +104,7 @@ public:
 
   void make_bottom() final
   {
-    assert(node_id!=std::numeric_limits<node_indext>::max());
+    ASSERT(node_id!=std::numeric_limits<node_indext>::max());
 
     has_values=tvt(false);
     control_deps.clear();
@@ -123,7 +123,7 @@ public:
 
   node_indext get_node_id() const
   {
-    assert(node_id!=std::numeric_limits<node_indext>::max());
+    ASSERT(node_id!=std::numeric_limits<node_indext>::max());
     return node_id;
   }
 

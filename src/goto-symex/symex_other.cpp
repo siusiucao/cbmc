@@ -75,7 +75,7 @@ void goto_symext::symex_other(
   }
   else if(statement==ID_decl)
   {
-    assert(false); // see symex_decl.cpp
+    ASSERT(false); // see symex_decl.cpp
   }
   else if(statement==ID_nondet)
   {
@@ -87,7 +87,7 @@ void goto_symext::symex_other(
   }
   else if(statement==ID_array_copy)
   {
-    assert(code.operands().size()==2);
+    ASSERT(code.operands().size()==2);
 
     codet clean_code(code);
 
@@ -128,7 +128,7 @@ void goto_symext::symex_other(
   }
   else if(statement==ID_array_set)
   {
-    assert(code.operands().size()==2);
+    ASSERT(code.operands().size()==2);
 
     codet clean_code(code);
 

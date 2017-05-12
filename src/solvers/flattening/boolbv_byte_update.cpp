@@ -43,7 +43,7 @@ bvt boolbvt::convert_byte_update(const byte_update_exprt &expr)
   else if(expr.id()==ID_byte_update_big_endian)
     little_endian=false;
   else
-    assert(false);
+    ASSERT(false);
 
   bvt bv=convert_bv(op);
 
@@ -85,8 +85,8 @@ bvt boolbvt::convert_byte_update(const byte_update_exprt &expr)
           size_t index_op=map_op.map_bit(offset_i+i);
           size_t index_value=map_value.map_bit(i);
 
-          assert(index_op<bv.size());
-          assert(index_value<value_bv.size());
+          ASSERT(index_op<bv.size());
+          ASSERT(index_value<value_bv.size());
 
           bv[index_op]=value_bv[index_value];
         }

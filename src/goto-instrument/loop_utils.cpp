@@ -27,7 +27,7 @@ Function: get_loop_exit
 
 goto_programt::targett get_loop_exit(const loopt &loop)
 {
-  assert(!loop.empty());
+  ASSERT(!loop.empty());
 
   // find the last instruction in the loop
   std::map<unsigned, goto_programt::targett> loop_map;

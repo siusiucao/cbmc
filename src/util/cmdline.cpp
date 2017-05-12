@@ -181,7 +181,7 @@ Function: cmdlinet::get_values
 const std::list<std::string> &cmdlinet::get_values(char option) const
 {
   int i=getoptnr(option);
-  assert(i>=0);
+  ASSERT(i>=0);
   return options[i].values;
 }
 
@@ -223,7 +223,7 @@ const std::list<std::string> &cmdlinet::get_values(
   const std::string &option) const
 {
   int i=getoptnr(option);
-  assert(i>=0);
+  ASSERT(i>=0);
   return options[i].values;
 }
 

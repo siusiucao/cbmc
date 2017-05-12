@@ -40,7 +40,7 @@ public:
   // the token that is currently being read from the file
   cpp_tokent &current_token()
   {
-    assert(!tokens.empty());
+    ASSERT(!tokens.empty());
     return tokens.back();
   }
 

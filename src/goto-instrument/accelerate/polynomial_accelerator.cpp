@@ -343,7 +343,7 @@ bool polynomial_acceleratort::fit_polynomial_sliced(
   unsigned width=to_bitvector_type(var.type()).get_width();
   if(var.type().id()==ID_pointer)
     width=config.ansi_c.pointer_width;
-  assert(width>0);
+  ASSERT(width>0);
 
   for(std::vector<expr_listt>::iterator it=parameters.begin();
       it!=parameters.end();
@@ -529,7 +529,7 @@ void polynomial_acceleratort::assert_for_values(
     }
   }
 
-  assert(to_bitvector_type(expr_type).get_width()>0);
+  ASSERT(to_bitvector_type(expr_type).get_width()>0);
 
 
   // Now set the initial values of the all the variables...

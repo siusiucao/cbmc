@@ -138,7 +138,7 @@ public:
   {
     const program_individualt::instructiont::opcodet opcode=instruction.opcode;
     const instruction_sett::const_iterator instr_entry=instrset.find(opcode);
-    assert(instrset.end() != instr_entry);
+    ASSERT(instrset.end() != instr_entry);
     goto_programt::instructionst &prog=get_prog(progs, prog_type, insidx);
     const goto_programt::instructionst &instr=instr_entry->second;
     goto_programt::targett first=prog.end();
@@ -211,7 +211,7 @@ void extract_instruction_set(instruction_sett &instr_set,
   typedef goto_functionst::function_mapt function_mapt;
   const function_mapt &function_map=gf.function_map;
   const function_mapt::const_iterator it=function_map.find(DANGER_EXECUTE);
-  assert(function_map.end() != it);
+  ASSERT(function_map.end() != it);
   instr_set=extract_instruction_set(it->second.body);
 }
 }

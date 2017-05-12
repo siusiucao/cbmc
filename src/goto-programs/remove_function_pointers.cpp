@@ -353,8 +353,8 @@ void remove_function_pointerst::remove_function_pointer(
         code_typet::parametert(it->type()));
   }
 
-  assert(function.id()==ID_dereference);
-  assert(function.operands().size()==1);
+  ASSERT(function.id()==ID_dereference);
+  ASSERT(function.operands().size()==1);
 
   bool found_functions;
 

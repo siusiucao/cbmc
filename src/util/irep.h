@@ -123,7 +123,7 @@ public:
   {
     if(data!=&empty_d)
     {
-      assert(data->ref_count!=0);
+      ASSERT(data->ref_count!=0);
       data->ref_count++;
       #ifdef IREP_DEBUG
       std::cout << "COPY " << data << " " << data->ref_count << std::endl;

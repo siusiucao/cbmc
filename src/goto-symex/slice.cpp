@@ -161,7 +161,7 @@ void symex_slicet::slice(symex_target_equationt::SSA_stept &SSA_step)
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -180,7 +180,7 @@ Function: symex_slicet::slice_assignment
 void symex_slicet::slice_assignment(
   symex_target_equationt::SSA_stept &SSA_step)
 {
-  assert(SSA_step.ssa_lhs.id()==ID_symbol);
+  ASSERT(SSA_step.ssa_lhs.id()==ID_symbol);
   const irep_idt &id=SSA_step.ssa_lhs.get_identifier();
 
   if(depends.find(id)==depends.end())
@@ -207,7 +207,7 @@ Function: symex_slicet::slice_decl
 void symex_slicet::slice_decl(
   symex_target_equationt::SSA_stept &SSA_step)
 {
-  assert(SSA_step.ssa_lhs.id()==ID_symbol);
+  ASSERT(SSA_step.ssa_lhs.id()==ID_symbol);
   const irep_idt &id=SSA_step.ssa_lhs.get_identifier();
 
   if(depends.find(id)==depends.end())
@@ -285,7 +285,7 @@ void symex_slicet::collect_open_variables(
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
   }
 

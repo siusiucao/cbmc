@@ -370,7 +370,7 @@ int monomialt::compare(monomialt &other)
     }
     else
     {
-      assert(it->var==jt->var);
+      ASSERT(it->var==jt->var);
       // Variables are equal, compare exponents.
       if(e1 < e2)
       {
@@ -382,7 +382,7 @@ int monomialt::compare(monomialt &other)
       }
       else
       {
-        assert(e1==e2);
+        ASSERT(e1==e2);
         // v1==v2 && e1 == e2.  Look at the next term in the power product.
         ++it;
         ++jt;
@@ -405,7 +405,7 @@ int monomialt::compare(monomialt &other)
     return -1;
   }
 
-  assert(!"NOTREACHEDBITCHES");
+  ASSERT(!"NOTREACHEDBITCHES");
 }
 
 int polynomialt::max_degree(const exprt &var)

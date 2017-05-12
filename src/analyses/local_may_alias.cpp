@@ -150,7 +150,7 @@ std::set<exprt> local_may_aliast::get(
 {
   local_cfgt::loc_mapt::const_iterator loc_it=cfg.loc_map.find(t);
 
-  assert(loc_it!=cfg.loc_map.end());
+  ASSERT(loc_it!=cfg.loc_map.end());
 
   const loc_infot &loc_info_src=loc_infos[loc_it->second];
 
@@ -188,7 +188,7 @@ bool local_may_aliast::aliases(
 {
   local_cfgt::loc_mapt::const_iterator loc_it=cfg.loc_map.find(t);
 
-  assert(loc_it!=cfg.loc_map.end());
+  ASSERT(loc_it!=cfg.loc_map.end());
 
   const loc_infot &loc_info_src=loc_infos[loc_it->second];
 
@@ -536,7 +536,7 @@ void local_may_aliast::output(
         for(std::size_t j=0; j<loc_info.aliases.size(); j++)
           if(loc_info.aliases.find(j)==i)
           {
-            assert(j<objects.size());
+            ASSERT(j<objects.size());
             out << ' ' << from_expr(ns, "", objects[j]);
           }
 

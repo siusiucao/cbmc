@@ -96,11 +96,11 @@ const struct_typet &cpp_typecheckt::this_struct_type()
   const exprt &this_expr=
     cpp_scopes.current_scope().this_expr;
 
-  assert(this_expr.is_not_nil());
-  assert(this_expr.type().id()==ID_pointer);
+  ASSERT(this_expr.is_not_nil());
+  ASSERT(this_expr.type().id()==ID_pointer);
 
   const typet &t=follow(this_expr.type().subtype());
-  assert(t.id()==ID_struct);
+  ASSERT(t.id()==ID_struct);
   return to_struct_type(t);
 }
 
@@ -249,9 +249,9 @@ void cpp_typecheckt::static_and_dynamic_initialization()
     if(cpp_is_pod(symbol.type))
       continue;
 
-    assert(symbol.is_static_lifetime);
-    assert(!symbol.is_type);
-    assert(symbol.type.id()!=ID_code);
+    ASSERT(symbol.is_static_lifetime);
+    ASSERT(!symbol.is_type);
+    ASSERT(symbol.type.id()!=ID_code);
 
     exprt symbol_expr=cpp_symbol_expr(symbol);
 
@@ -260,7 +260,7 @@ void cpp_typecheckt::static_and_dynamic_initialization()
     {
       // This will be a constructor call,
       // which we execute.
-      assert(symbol.value.id()==ID_code);
+      ASSERT(symbol.value.id()==ID_code);
       init_block.copy_to_operands(symbol.value);
 
       // Make it nil to get zero initialization by
@@ -329,7 +329,7 @@ void cpp_typecheckt::do_not_typechecked()
       if(symbol.value.id()=="cpp_not_typechecked" &&
          symbol.value.get_bool("is_used"))
       {
-        assert(symbol.type.id()==ID_code);
+        ASSERT(symbol.type.id()==ID_code);
 
         if(symbol.base_name=="operator=")
         {
@@ -349,7 +349,7 @@ void cpp_typecheckt::do_not_typechecked()
           cont=true;
         }
         else
-          assert(0); // Don't know what to do!
+          ASSERT(0); // Don't know what to do!
       }
     }
   }

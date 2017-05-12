@@ -24,7 +24,7 @@ void extract(const jsa_programt &prog, jsa_counterexamplet &ce,
   const goto_tracet::stepst &steps=trace.steps;
   for (const goto_programt::targett &ce_loc : ce_locs)
   {
-    assert(ce_loc->labels.size() == 1u);
+    ASSERT(ce_loc->labels.size() == 1u);
     const irep_idt &id=ce_loc->labels.front();
     const goto_tracet::stepst::const_iterator it=std::find_if(steps.begin(),
         steps.end(), [&id](const goto_trace_stept &step)
@@ -34,9 +34,9 @@ void extract(const jsa_programt &prog, jsa_counterexamplet &ce,
         });
     if (steps.end() != it) ce.insert(std::make_pair(id, it->full_lhs_value));
     else
-    assert(
+    ASSERT(
         !"We need counterexample for each location."
             "Synthesiser can't differentiate base case/inductive step/entailment violation");
   }
-  assert(ce.size() == prog.counterexample_locations.size());
+  ASSERT(ce.size() == prog.counterexample_locations.size());
 }

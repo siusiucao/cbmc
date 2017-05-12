@@ -108,7 +108,7 @@ bool postconditiont::is_used_address_of(
   }
   else if(expr.id()==ID_index)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     return
       is_used_address_of(expr.op0(), identifier) ||
@@ -116,12 +116,12 @@ bool postconditiont::is_used_address_of(
   }
   else if(expr.id()==ID_member)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return is_used_address_of(expr.op0(), identifier);
   }
   else if(expr.id()==ID_dereference)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return is_used(expr.op0(), identifier);
   }
 
@@ -235,7 +235,7 @@ bool postconditiont::is_used(
   if(expr.id()==ID_address_of)
   {
     // only do index!
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return is_used_address_of(expr.op0(), identifier);
   }
   else if(expr.id()==ID_symbol &&
@@ -249,7 +249,7 @@ bool postconditiont::is_used(
   }
   else if(expr.id()==ID_dereference)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     // aliasing may happen here
 

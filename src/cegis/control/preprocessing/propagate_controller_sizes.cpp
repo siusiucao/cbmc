@@ -25,7 +25,7 @@ exprt_typet &get_comp(const namespacet &ns, struct_exprt_typet &value,
   const struct_typet::componentst &comps=type.components();
   for (size_t i=0; i < comps.size(); ++i)
     if (id2string(comps[i].get_name()) == comp) return value.operands()[i];
-  assert(!"Solution component not found.");
+  ASSERT(!"Solution component not found.");
 }
 }
 
@@ -134,7 +134,7 @@ goto_programt::targett get_solution_assignment(goto_programt &body)
   goto_programt::instructionst &i=body.instructions;
   const goto_programt::targett end(i.end());
   const goto_programt::targett pos=std::find_if(i.begin(), end, is_sol_assign);
-  assert(end != pos);
+  ASSERT(end != pos);
   return pos;
 }
 

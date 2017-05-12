@@ -44,7 +44,7 @@ public:
   extract_x0_choice(danger_goto_solutiont &result, const goto_tracet &trace) :
       result(result), trace(trace)
   {
-    assert(!trace.steps.empty());
+    ASSERT(!trace.steps.empty());
     current_step=trace.steps.begin();
   }
 
@@ -53,7 +53,7 @@ public:
     const goto_tracet::stepst::const_iterator end(trace.steps.end());
     while (end != current_step && !is_placeholder_of(x0, current_step->pc))
       ++current_step;
-    assert(end != current_step);
+    ASSERT(end != current_step);
     result.x0_choices.push_back(current_step->full_lhs_value);
   }
 };

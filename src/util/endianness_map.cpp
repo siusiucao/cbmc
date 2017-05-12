@@ -111,7 +111,7 @@ void endianness_mapt::build_big_endian(const typet &src)
   {
     // these do get re-ordered!
     mp_integer bits=pointer_offset_bits(src, ns); // error is -1
-    assert(bits>=0);
+    ASSERT(bits>=0);
 
     size_t bits_int=integer2size_t(bits), base=map.size();
 
@@ -154,7 +154,7 @@ void endianness_mapt::build_big_endian(const typet &src)
 
     mp_integer s;
     if(to_integer(vector_type.size(), s))
-      assert(false);
+      ASSERT(false);
 
     while(s>0)
     {

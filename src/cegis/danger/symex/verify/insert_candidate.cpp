@@ -49,7 +49,7 @@ void assign_x0(danger_programt &prog, const candidatet &candidate)
 {
   const candidatet::nondet_choicest &x0_values=candidate.x0_choices;
   const goto_programt::targetst &x0_choices=prog.x0_choices;
-  assert(x0_values.size() <= x0_choices.size());
+  ASSERT(x0_values.size() <= x0_choices.size());
   const assign_x0t assign(prog);
   std::for_each(x0_values.begin(), x0_values.end(), assign);
 }

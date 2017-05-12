@@ -231,7 +231,7 @@ exprt goto_symext::address_arithmetic(
        expr.get_bool(ID_C_SSA_symbol))
     {
       offset=compute_pointer_offset(expr, ns);
-      assert(offset>=0);
+      ASSERT(offset>=0);
     }
 
     if(offset>0)
@@ -252,7 +252,7 @@ exprt goto_symext::address_arithmetic(
     throw "goto_symext::address_arithmetic does not handle "+expr.id_string();
 
   const typet &expr_type=ns.follow(expr.type());
-  assert((expr_type.id()==ID_array && !keep_array) ||
+  ASSERT((expr_type.id()==ID_array && !keep_array) ||
          base_type_eq(pointer_typet(expr_type), result.type(), ns));
 
   return result;
@@ -338,7 +338,7 @@ void goto_symext::dereference_rec(
           to_index_expr(expr).array().type().id()==ID_pointer)
   {
     // old stuff, will go away
-    assert(false);
+    ASSERT(false);
   }
   else if(expr.id()==ID_address_of)
   {
@@ -403,7 +403,7 @@ void goto_symext::dereference(
   // in order to distinguish addresses of local variables
   // from different frames. Would be enough to rename
   // symbols whose address is taken.
-  assert(!state.call_stack().empty());
+  ASSERT(!state.call_stack().empty());
   state.rename(expr, ns, goto_symex_statet::L1);
 
   // start the recursion!

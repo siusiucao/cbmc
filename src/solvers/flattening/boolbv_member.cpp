@@ -72,7 +72,7 @@ bvt boolbvt::convert_member(const member_exprt &expr)
 
         bvt bv;
         bv.resize(sub_width);
-        assert(offset+sub_width<=struct_bv.size());
+        ASSERT(offset+sub_width<=struct_bv.size());
 
         for(std::size_t i=0; i<sub_width; i++)
           bv[i]=struct_bv[offset+i];

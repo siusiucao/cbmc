@@ -179,7 +179,7 @@ void uninitializedt::add_assertions(goto_programt &goto_program)
 
           if(uninitialized.find(identifier)!=uninitialized.end())
           {
-            assert(tracking.find(identifier)!=tracking.end());
+            ASSERT(tracking.find(identifier)!=tracking.end());
             const irep_idt new_identifier=id2string(identifier)+"#initialized";
 
             // insert assertion

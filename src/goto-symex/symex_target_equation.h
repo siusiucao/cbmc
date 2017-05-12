@@ -280,7 +280,7 @@ public:
     SSA_stepst::iterator it=SSA_steps.begin();
     for(; s!=0; s--)
     {
-      assert(it!=SSA_steps.end());
+      ASSERT(it!=SSA_steps.end());
       it++;
     }
     return it;

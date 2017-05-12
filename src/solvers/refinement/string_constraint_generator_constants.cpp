@@ -29,7 +29,7 @@ irep_idt string_constraint_generatort::extract_java_string(
 {
   std::string tmp=id2string(s.get_identifier());
   std::string prefix("java::java.lang.String.Literal.");
-  assert(has_prefix(tmp, prefix));
+  ASSERT(has_prefix(tmp, prefix));
   std::string value=tmp.substr(prefix.length());
   return irep_idt(value);
 }
@@ -92,8 +92,8 @@ Function: string_constraint_generatort::add_axioms_for_empty_string
 string_exprt string_constraint_generatort::add_axioms_for_empty_string(
   const function_application_exprt &f)
 {
-  assert(f.arguments().empty());
-  assert(refined_string_typet::is_refined_string_type(f.type()));
+  ASSERT(f.arguments().empty());
+  ASSERT(refined_string_typet::is_refined_string_type(f.type()));
   const refined_string_typet &ref_type=to_refined_string_type(f.type());
   exprt size=from_integer(0, ref_type.get_index_type());
   const array_typet &content_type=ref_type.get_content_type();
@@ -120,12 +120,12 @@ string_exprt string_constraint_generatort::add_axioms_from_literal(
   const function_application_exprt &f)
 {
   const function_application_exprt::argumentst &args=f.arguments();
-  assert(args.size()==1); // Bad args to string literal?
+  ASSERT(args.size()==1); // Bad args to string literal?
 
   const exprt &arg=args[0];
   irep_idt sval;
 
-  assert(arg.operands().size()==1);
+  ASSERT(arg.operands().size()==1);
   if(arg.op0().operands().size()==2 &&
      arg.op0().op0().id()==ID_string_constant)
   {
@@ -136,8 +136,8 @@ string_exprt string_constraint_generatort::add_axioms_from_literal(
   else
   {
     // Java string constant
-    assert(false); // TODO: Check if used. On the contrary, discard else.
-    assert(arg.id()==ID_symbol);
+    ASSERT(false); // TODO: Check if used. On the contrary, discard else.
+    ASSERT(arg.id()==ID_symbol);
     const exprt &s=arg.op0();
 
     // It seems the value of the string is lost,

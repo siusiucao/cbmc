@@ -142,7 +142,7 @@ void goto_convertt::convert_java_try_catch(
   const codet &code,
   goto_programt &dest)
 {
-  assert(!code.operands().empty());
+  ASSERT(!code.operands().empty());
 
   // add the CATCH instruction to 'dest'
   goto_programt::targett catch_instruction=dest.add_instruction();
@@ -209,7 +209,7 @@ void goto_convertt::convert_try_catch(
   const codet &code,
   goto_programt &dest)
 {
-  assert(code.operands().size()>=2);
+  ASSERT(code.operands().size()>=2);
 
   // add the CATCH-push instruction to 'dest'
   goto_programt::targett catch_push_instruction=dest.add_instruction();

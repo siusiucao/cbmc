@@ -178,7 +178,7 @@ Function: string_refinementt::add_symbol_to_symbol_map()
 void string_refinementt::add_symbol_to_symbol_map(
   const exprt &lhs, const exprt &rhs)
 {
-  assert(lhs.id()==ID_symbol);
+  ASSERT(lhs.id()==ID_symbol);
 
   // We insert the mapped value of the rhs, if it exists.
   auto it=symbol_resolve.find(rhs);
@@ -208,7 +208,7 @@ Function: string_refinementt::set_char_array_equality()
 void string_refinementt::set_char_array_equality(
   const exprt &lhs, const exprt &rhs)
 {
-  assert(lhs.id()==ID_symbol);
+  ASSERT(lhs.id()==ID_symbol);
 
   if(rhs.id()==ID_array && rhs.type().id()==ID_array)
   {
@@ -356,7 +356,7 @@ void string_refinementt::concretize_string(const exprt &expr)
     mp_integer found_length;
     if(!to_integer(length, found_length))
     {
-      assert(found_length.is_long());
+      ASSERT(found_length.is_long());
       if(found_length<0)
       {
         // Lengths should not be negative.
@@ -451,7 +451,7 @@ Function: string_refinementt::set_to
 
 void string_refinementt::set_to(const exprt &expr, bool value)
 {
-  assert(equality_propagation);
+  ASSERT(equality_propagation);
 
   if(expr.id()==ID_equal)
   {
@@ -513,8 +513,8 @@ void string_refinementt::set_to(const exprt &expr, bool value)
     else
     {
       // TODO: Something should also be done if value is false.
-      assert(!is_char_array(eq_expr.rhs().type()));
-      assert(!refined_string_typet::is_refined_string_type(
+      ASSERT(!is_char_array(eq_expr.rhs().type()));
+      ASSERT(!refined_string_typet::is_refined_string_type(
         eq_expr.rhs().type()));
     }
 
@@ -860,7 +860,7 @@ std::string string_refinementt::string_of_array(const array_exprt &arr)
       return std::string("");
 
   exprt size_expr=to_array_type(arr.type()).size();
-  assert(size_expr.id()==ID_constant);
+  ASSERT(size_expr.id()==ID_constant);
   to_unsigned_integer(to_constant_expr(size_expr), n);
   std::string str(n, '?');
 
@@ -872,7 +872,7 @@ std::string string_refinementt::string_of_array(const array_exprt &arr)
     // TODO: factorize with utf16_little_endian_to_ascii
     unsigned c;
     exprt arr_i=arr.operands()[i];
-    assert(arr_i.id()==ID_constant);
+    ASSERT(arr_i.id()==ID_constant);
     to_unsigned_integer(to_constant_expr(arr_i), c);
     if(c<=255 && c>=32)
       result << (unsigned char) c;
@@ -925,7 +925,7 @@ void string_refinementt::fill_model()
     }
     else
     {
-      assert(is_char_array(it.second.type()));
+      ASSERT(is_char_array(it.second.type()));
       exprt arr=it.second;
       replace_expr(symbol_resolve, arr);
       replace_expr(current_model, arr);
@@ -982,14 +982,14 @@ exprt string_refinementt::substitute_array_with_expr(
     const exprt &then_expr=with_expr.new_value();
     exprt else_expr=substitute_array_with_expr(with_expr.old(), index);
     const typet &type=then_expr.type();
-    assert(else_expr.type()==type);
+    ASSERT(else_expr.type()==type);
     return if_exprt(
       equal_exprt(index, with_expr.where()), then_expr, else_expr, type);
   }
   else
   {
     // Only handle 'with' expressions on 'array_of' expressions.
-    assert(expr.id()==ID_array_of);
+    ASSERT(expr.id()==ID_array_of);
     return to_array_of_expr(expr).what();
   }
 }
@@ -1040,10 +1040,10 @@ void string_refinementt::substitute_array_access(exprt &expr) const
       return;
     }
 
-    assert(index_expr.array().id()==ID_array);
+    ASSERT(index_expr.array().id()==ID_array);
     array_exprt &array_expr=to_array_expr(index_expr.array());
 
-    assert(!array_expr.operands().empty());
+    ASSERT(!array_expr.operands().empty());
     size_t last_index=array_expr.operands().size()-1;
 
     const typet &char_type=index_expr.array().type().subtype();
@@ -1052,7 +1052,7 @@ void string_refinementt::substitute_array_access(exprt &expr) const
     if(ite.type()!=char_type)
     {
       // We have to manualy set the type for unknown values
-      assert(ite.id()==ID_unknown);
+      ASSERT(ite.id()==ID_unknown);
       ite.type()=char_type;
     }
 
@@ -1064,7 +1064,7 @@ void string_refinementt::substitute_array_access(exprt &expr) const
       equal_exprt equals(index_expr.index(), from_integer(i, java_int_type()));
       if(op_it->type()!=char_type)
       {
-        assert(op_it->id()==ID_unknown);
+        ASSERT(op_it->id()==ID_unknown);
         op_it->type()=char_type;
       }
       ite=if_exprt(equals, *op_it, ite);
@@ -1401,14 +1401,14 @@ exprt string_refinementt::compute_inverse_function(
   bool neg=false;
 
   auto it=elems.find(qvar);
-  assert(it!=elems.end());
+  ASSERT(it!=elems.end());
   if(it->second==1 || it->second==-1)
   {
     neg=(it->second==1);
   }
   else
   {
-    assert(it->second==0);
+    ASSERT(it->second==0);
     debug() << "in string_refinementt::compute_inverse_function:"
             << " warning: occurrences of qvar canceled out " << eom;
   }
@@ -1582,7 +1582,7 @@ void string_refinementt::update_index_set(const exprt &formula)
     {
       const exprt &s=cur.op0();
       const exprt &i=cur.op1();
-      assert(s.type().id()==ID_array);
+      ASSERT(s.type().id()==ID_array);
       exprt simplified=simplify_sum(i);
       add_to_index_set(s, simplified);
     }
@@ -1763,7 +1763,7 @@ exprt string_refinementt::substitute_array_lists(exprt expr) const
 
   if(expr.id()=="array-list")
   {
-    assert(expr.operands().size()>=2);
+    ASSERT(expr.operands().size()>=2);
     typet &char_type=expr.operands()[1].type();
     array_typet arr_type(char_type, infinity_exprt(char_type));
     array_of_exprt new_arr(from_integer(0, char_type),

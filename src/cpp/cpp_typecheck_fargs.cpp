@@ -122,7 +122,7 @@ bool cpp_typecheck_fargst::match(
     // * User-defined conversion sequences
     // * Ellipsis conversion sequences
 
-    assert(it!=ops.end());
+    ASSERT(it!=ops.end());
     const exprt &operand=*it;
     typet type=parameter.type();
 
@@ -131,7 +131,7 @@ bool cpp_typecheck_fargst::match(
     if(is_reference(operand.type()))
       std::cout << "O: " << operand.pretty() << std::endl;
 
-    assert(!is_reference(operand.type()));
+    ASSERT(!is_reference(operand.type()));
     #endif
 
     // "this" is a special case -- we turn the pointer type

@@ -82,7 +82,7 @@ Function: satcheck_smvsatt::l_get
 
 tvt satcheck_smvsatt::l_get(literalt a) const
 {
-  assert(status==SAT);
+  ASSERT(status==SAT);
 
   if(a.is_true())
     return tvt(true);
@@ -337,7 +337,7 @@ void satcheck_smvsat_interpolatort::build_aig(
     bool invert=x.g<0;
     int n=invert?-x.g:x.g;
 
-    assert(n!=0);
+    ASSERT(n!=0);
 
     exprt &e=*x.e;
 

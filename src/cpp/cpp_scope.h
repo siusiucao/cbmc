@@ -100,13 +100,13 @@ public:
 
   void add_secondary_scope(cpp_scopet &other)
   {
-    assert(other.is_scope);
+    ASSERT(other.is_scope);
     secondary_scopes.push_back(&other);
   }
 
   void add_using_scope(cpp_scopet &other)
   {
-    assert(other.is_scope);
+    ASSERT(other.is_scope);
     using_scopes.push_back(&other);
   }
 

@@ -177,7 +177,7 @@ void taint_analysist::instrument(
               case taint_parse_treet::rulet::THIS:
                 if(have_this)
                 {
-                  assert(!function_call.arguments().empty());
+                  ASSERT(!function_call.arguments().empty());
                   where=function_call.arguments()[0];
                 }
                 break;

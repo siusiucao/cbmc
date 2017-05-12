@@ -74,8 +74,8 @@ protected:
     code_declt d(sym);
 
     std::string d_str=expr_to_string(d);
-    assert(!d_str.empty());
-    assert(*d_str.rbegin()==';');
+    ASSERT(!d_str.empty());
+    ASSERT(*d_str.rbegin()==';');
 
     return d_str.substr(0, d_str.size()-1);
   }

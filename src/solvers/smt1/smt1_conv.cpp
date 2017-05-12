@@ -68,7 +68,7 @@ tvt smt1_convt::l_get(literalt l) const
     return tvt(true);
   if(l.is_false())
     return tvt(false);
-  assert(l.var_no()<boolean_assignment.size());
+  ASSERT(l.var_no()<boolean_assignment.size());
   return tvt(boolean_assignment[l.var_no()]^l.sign());
 }
 
@@ -209,7 +209,7 @@ exprt smt1_convt::ce_value(
      type.id()==ID_bv ||
      type.id()==ID_fixedbv)
   {
-    assert(value.size()==boolbv_width(type));
+    ASSERT(value.size()==boolbv_width(type));
     constant_exprt c(type);
     c.set_value(value);
     return c;
@@ -223,7 +223,7 @@ exprt smt1_convt::ce_value(
   }
   else if(type.id()==ID_pointer)
   {
-    assert(value.size()==boolbv_width(type));
+    ASSERT(value.size()==boolbv_width(type));
 
     constant_exprt result(type);
     result.set_value(value);
@@ -395,7 +395,7 @@ void smt1_convt::convert_address_of_rec(
       else if(array.type().id()==ID_array)
         convert_address_of_rec(array, result_type);
       else
-        assert(false);
+        ASSERT(false);
     }
     else
     {
@@ -452,7 +452,7 @@ void smt1_convt::convert_address_of_rec(
   }
   else if(expr.id()==ID_if)
   {
-    assert(expr.operands().size()==3);
+    ASSERT(expr.operands().size()==3);
 
     out << "(ite ";
     convert_expr(expr.op0(), false);
@@ -503,7 +503,7 @@ void smt1_convt::convert_byte_update(
   const exprt &expr,
   bool bool_as_bv)
 {
-  assert(expr.operands().size()==3);
+  ASSERT(expr.operands().size()==3);
 
   // The situation: expr.op0 needs to be split in 3 parts
   // |<--- L --->|<--- M --->|<--- R --->|
@@ -590,7 +590,7 @@ Function: smt1_convt::convert
 
 literalt smt1_convt::convert(const exprt &expr)
 {
-  assert(expr.type().id()==ID_bool);
+  ASSERT(expr.type().id()==ID_bool);
 
   // Trivial cases that don't need a new handle.
 
@@ -708,7 +708,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
     const typet &type=expr.type();
 
     irep_idt id=to_symbol_expr(expr).get_identifier();
-    assert(id!="");
+    ASSERT(id!="");
 
     // boolean symbols may have to be converted
     from_bool_begin(type, bool_as_bv);
@@ -722,7 +722,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
     const typet &type=expr.type();
 
     irep_idt id=expr.get(ID_identifier);
-    assert(id!="");
+    ASSERT(id!="");
 
     // boolean symbols may have to be converted
     from_bool_begin(type, bool_as_bv);
@@ -765,7 +765,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
     convert_nary(expr, "bvnor", true);
   else if(expr.id()==ID_bitnot)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     out << "(bvnot ";
     convert_expr(expr.op0(), true);
     out << ")";
@@ -774,7 +774,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     if(type.id()==ID_rational)
     {
@@ -797,7 +797,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   }
   else if(expr.id()==ID_if)
   {
-    assert(expr.operands().size()==3);
+    ASSERT(expr.operands().size()==3);
 
     // The SMTLIB standard requires a different operator in a boolean context
     if(expr.op1().type().id()==ID_bool && !bool_as_bv)
@@ -819,8 +819,8 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
     const typet &type=expr.type();
     const exprt::operandst &operands=expr.operands();
 
-    assert(type.id()==ID_bool);
-    assert(operands.size()>=2);
+    ASSERT(type.id()==ID_bool);
+    ASSERT(operands.size()>=2);
 
     // this may have to be converted
     from_bool_begin(type, bool_as_bv);
@@ -840,8 +840,8 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(type.id()==ID_bool);
-    assert(expr.operands().size()==2);
+    ASSERT(type.id()==ID_bool);
+    ASSERT(expr.operands().size()==2);
 
     // this may have to be converted
     from_bool_begin(type, bool_as_bv);
@@ -859,7 +859,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     // this may have to be converted
     from_bool_begin(type, bool_as_bv);
@@ -876,8 +876,8 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==2);
-    assert(base_type_eq(expr.op0().type(), expr.op1().type(), ns));
+    ASSERT(expr.operands().size()==2);
+    ASSERT(base_type_eq(expr.op0().type(), expr.op1().type(), ns));
 
     // this may have to be converted
     from_bool_begin(type, bool_as_bv);
@@ -964,27 +964,27 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==1);
-    assert(type.id()==ID_pointer);
+    ASSERT(expr.operands().size()==1);
+    ASSERT(type.id()==ID_pointer);
     convert_address_of_rec(expr.op0(), to_pointer_type(type));
   }
   else if(expr.id()=="implicit_address_of" ||
           expr.id()=="reference_to")
   {
     // old stuff
-    assert(false);
+    ASSERT(false);
   }
   else if(expr.id()==ID_array_of)
   {
-    assert(expr.type().id()==ID_array);
-    assert(expr.operands().size()==1);
+    ASSERT(expr.type().id()==ID_array);
+    ASSERT(expr.operands().size()==1);
 
     // const array_typet &array_type=to_array_type(expr.type());
 
     // not really there in SMT, so we replace it
     // this is an over-approximation
     array_of_mapt::const_iterator it=array_of_map.find(expr);
-    assert(it!=array_of_map.end());
+    ASSERT(it!=array_of_map.end());
 
     out << it->second;
   }
@@ -998,7 +998,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     if(type.id()==ID_unsignedbv ||
        type.id()==ID_signedbv ||
@@ -1013,7 +1013,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
       else if(expr.id()==ID_shl)
         out << "(bvshl ";
       else
-        assert(false);
+        ASSERT(false);
 
       convert_expr(expr.op0(), true);
       out << " ";
@@ -1059,20 +1059,20 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   }
   else if(expr.id()==ID_pointer_offset)
   {
-    assert(expr.operands().size()==1);
-    assert(expr.op0().type().id()==ID_pointer);
+    ASSERT(expr.operands().size()==1);
+    ASSERT(expr.op0().type().id()==ID_pointer);
     std::size_t op_width=boolbv_width(expr.op0().type());
     out << "(zero_extend[" << BV_ADDR_BITS << "] (extract["
         << (op_width-1-BV_ADDR_BITS)
         << ":0] ";
     convert_expr(expr.op0(), true);
     out << "))";
-    assert(boolbv_width(expr.type())==op_width);
+    ASSERT(boolbv_width(expr.type())==op_width);
   }
   else if(expr.id()==ID_pointer_object)
   {
-    assert(expr.operands().size()==1);
-    assert(expr.op0().type().id()==ID_pointer);
+    ASSERT(expr.operands().size()==1);
+    ASSERT(expr.op0().type().id()==ID_pointer);
     std::size_t op_width=boolbv_width(expr.op0().type());
     signed int ext=boolbv_width(expr.type())-BV_ADDR_BITS;
 
@@ -1097,8 +1097,8 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==1);
-    assert(expr.op0().type().id()==ID_pointer);
+    ASSERT(expr.operands().size()==1);
+    ASSERT(expr.op0().type().id()==ID_pointer);
     std::size_t op_width=boolbv_width(expr.op0().type());
 
     // this may have to be converted
@@ -1118,7 +1118,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     // this may have to be converted
     from_bool_begin(type, bool_as_bv);
@@ -1132,13 +1132,13 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     exprt tmp;
     string2array_mapt::const_iterator fit=string2array_map.find(expr);
-    assert(fit!=string2array_map.end());
+    ASSERT(fit!=string2array_map.end());
 
     convert_expr(fit->second, true);
   }
   else if(expr.id()==ID_extractbit)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     if(expr.op0().type().id()==ID_unsignedbv ||
        expr.op0().type().id()==ID_signedbv)
@@ -1179,7 +1179,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   }
   else if(expr.id()==ID_replication)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     mp_integer times;
     if(to_integer(expr.op0(), times))
@@ -1220,7 +1220,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     const exprt &op0=expr.op0();
 
     std::size_t result_width=boolbv_width(type);
@@ -1255,7 +1255,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     const typet &op_type=expr.op0().type();
 
@@ -1327,7 +1327,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     const typet &type=expr.type();
 
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     bool subtract=expr.id()==ID_overflow_minus;
 
     const typet &op_type=expr.op0().type();
@@ -1372,7 +1372,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   }
   else if(expr.id()==ID_overflow_mult)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     // No better idea than to multiply with double the bits and then compare
     // with max value.
@@ -1408,7 +1408,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   {
     from_bv_begin(expr.type(), bool_as_bv);
 
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     out << "(" << expr.id() << " (";
     exprt bound=expr.op0();
     convert_expr(bound, false);
@@ -1427,7 +1427,7 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
   }
   else if(expr.id()==ID_extractbits)
   {
-    assert(expr.operands().size()==3);
+    ASSERT(expr.operands().size()==3);
 
     const typet &op_type=ns.follow(expr.op0().type());
 
@@ -1478,9 +1478,9 @@ void smt1_convt::convert_expr(const exprt &expr, bool bool_as_bv)
 
     // array constructor
     array_expr_mapt::const_iterator it=array_expr_map.find(expr);
-    assert(it!=array_expr_map.end());
+    ASSERT(it!=array_expr_map.end());
 
-    assert(!operands.empty());
+    ASSERT(!operands.empty());
 
     forall_expr(it, operands)
       out << "(store ";
@@ -1526,7 +1526,7 @@ void smt1_convt::convert_typecast(
   const typecast_exprt &expr,
   bool bool_as_bv)
 {
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
   const exprt &src=expr.op0();
 
   typet dest_type=ns.follow(expr.type());
@@ -1752,7 +1752,7 @@ void smt1_convt::convert_typecast(
       else
       {
         // too few integer bits
-        assert(from_width<to_integer_bits);
+        ASSERT(from_width<to_integer_bits);
         if(dest_type.id()==ID_unsignedbv)
         {
           out << " (zero_extend["
@@ -1804,7 +1804,7 @@ void smt1_convt::convert_typecast(
       }
       else
       {
-        assert(to_integer_bits>from_integer_bits);
+        ASSERT(to_integer_bits>from_integer_bits);
         out << "(sign_extend["
             << (to_integer_bits-from_integer_bits)
             << "] (extract["
@@ -1828,7 +1828,7 @@ void smt1_convt::convert_typecast(
       }
       else
       {
-        assert(to_fraction_bits>from_fraction_bits);
+        ASSERT(to_fraction_bits>from_fraction_bits);
         out << "(concat (extract["
             << (from_fraction_bits-1) << ":0] ";
         convert_expr(src, true);
@@ -1922,9 +1922,9 @@ void smt1_convt::convert_struct(const exprt &expr)
   const struct_typet::componentst &components=
     struct_type.components();
 
-  assert(components.size()==expr.operands().size());
+  ASSERT(components.size()==expr.operands().size());
 
-  assert(!components.empty());
+  ASSERT(!components.empty());
 
   if(components.size()==1)
   {
@@ -1985,7 +1985,7 @@ void smt1_convt::convert_union(const exprt &expr)
 {
   const union_typet &union_type=to_union_type(expr.type());
 
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
   const exprt &op=expr.op0();
 
   std::size_t total_width=boolbv_width(union_type);
@@ -2002,7 +2002,7 @@ void smt1_convt::convert_union(const exprt &expr)
   else
   {
     // we will pad with zeros, but non-det would be better
-    assert(total_width>member_width);
+    ASSERT(total_width>member_width);
     out << "(concat ";
     out << "bv0[" << (total_width-member_width) << "] ";
     convert_expr(op, true);
@@ -2071,7 +2071,7 @@ void smt1_convt::convert_constant(
 
     if(value==ID_NULL)
     {
-      assert(boolbv_width(expr.type())!=0);
+      ASSERT(boolbv_width(expr.type())!=0);
       out << "(concat"
           << " bv" << pointer_logic.get_null_object()
           << "[" << BV_ADDR_BITS << "]"
@@ -2094,7 +2094,7 @@ void smt1_convt::convert_constant(
   else if(expr.type().id()==ID_array)
   {
     // this should be the 'array' expression
-    assert(false);
+    ASSERT(false);
   }
   else if(expr.type().id()==ID_rational)
   {
@@ -2137,7 +2137,7 @@ Function: smt1_convt::convert_mod
 
 void smt1_convt::convert_mod(const mod_exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(expr.type().id()==ID_unsignedbv ||
      expr.type().id()==ID_signedbv)
@@ -2175,8 +2175,8 @@ void smt1_convt::convert_is_dynamic_object(
   std::vector<std::size_t> dynamic_objects;
   pointer_logic.get_dynamic_objects(dynamic_objects);
 
-  assert(expr.operands().size()==1);
-  assert(expr.op0().type().id()==ID_pointer);
+  ASSERT(expr.operands().size()==1);
+  ASSERT(expr.op0().type().id()==ID_pointer);
   std::size_t op_width=boolbv_width(expr.op0().type());
 
   // this may have to be converted
@@ -2231,7 +2231,7 @@ Function: smt1_convt::convert_relation
 
 void smt1_convt::convert_relation(const exprt &expr, bool bool_as_bv)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   // this may have to be converted
   from_bool_begin(expr.type(), bool_as_bv);
@@ -2308,7 +2308,7 @@ Function: smt1_convt::convert_plus
 
 void smt1_convt::convert_plus(const plus_exprt &expr)
 {
-  assert(expr.operands().size()>=2);
+  ASSERT(expr.operands().size()>=2);
 
   if(expr.type().id()==ID_unsignedbv ||
      expr.type().id()==ID_signedbv ||
@@ -2400,8 +2400,8 @@ Function: smt1_convt::convert_floatbv_plus
 
 void smt1_convt::convert_floatbv_plus(const exprt &expr)
 {
-  assert(expr.operands().size()==3);
-  assert(expr.type().id()==ID_floatbv);
+  ASSERT(expr.operands().size()==3);
+  ASSERT(expr.type().id()==ID_floatbv);
 
   throw "todo: floatbv_plus";
 }
@@ -2420,7 +2420,7 @@ Function: smt1_convt::convert_minus
 
 void smt1_convt::convert_minus(const minus_exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(expr.type().id()==ID_unsignedbv ||
      expr.type().id()==ID_signedbv ||
@@ -2471,8 +2471,8 @@ Function: smt1_convt::convert_floatbv_minus
 
 void smt1_convt::convert_floatbv_minus(const exprt &expr)
 {
-  assert(expr.operands().size()==3);
-  assert(expr.type().id()==ID_floatbv);
+  ASSERT(expr.operands().size()==3);
+  ASSERT(expr.type().id()==ID_floatbv);
 
   throw "todo: floatbv_minus";
 }
@@ -2491,7 +2491,7 @@ Function: smt1_convt::convert_div
 
 void smt1_convt::convert_div(const div_exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(expr.type().id()==ID_unsignedbv ||
      expr.type().id()==ID_signedbv)
@@ -2542,8 +2542,8 @@ Function: smt1_convt::convert_floatbv_div
 
 void smt1_convt::convert_floatbv_div(const exprt &expr)
 {
-  assert(expr.operands().size()==3);
-  assert(expr.type().id()==ID_floatbv);
+  ASSERT(expr.operands().size()==3);
+  ASSERT(expr.type().id()==ID_floatbv);
 
   throw "todo: floatbv_div";
 }
@@ -2562,7 +2562,7 @@ Function: smt1_convt::convert_mult
 
 void smt1_convt::convert_mult(const mult_exprt &expr)
 {
-  assert(expr.operands().size()>=2);
+  ASSERT(expr.operands().size()>=2);
 
   // re-write to binary if needed
   if(expr.operands().size()>2)
@@ -2575,7 +2575,7 @@ void smt1_convt::convert_mult(const mult_exprt &expr)
     return convert_mult(mult_exprt(tmp, expr.operands().back()));
   }
 
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(expr.type().id()==ID_unsignedbv ||
      expr.type().id()==ID_signedbv)
@@ -2637,8 +2637,8 @@ Function: smt1_convt::convert_floatbv_mult
 
 void smt1_convt::convert_floatbv_mult(const exprt &expr)
 {
-  assert(expr.operands().size()==3);
-  assert(expr.type().id()==ID_floatbv);
+  ASSERT(expr.operands().size()==3);
+  ASSERT(expr.type().id()==ID_floatbv);
 
   throw "todo: floatbv_mult";
 }
@@ -2659,7 +2659,7 @@ void smt1_convt::convert_with(const exprt &expr)
 {
   // get rid of "with" that has more than three operands
 
-  assert(expr.operands().size()>=3);
+  ASSERT(expr.operands().size()>=3);
 
   if(expr.operands().size()>3)
   {
@@ -2670,7 +2670,7 @@ void smt1_convt::convert_with(const exprt &expr)
     tmp.operands().resize(s-2);
 
     with_exprt new_with_expr;
-    assert(new_with_expr.operands().size()==3);
+    ASSERT(new_with_expr.operands().size()==3);
     new_with_expr.type()=expr.type();
     new_with_expr.old()=tmp;
     new_with_expr.where()=expr.operands()[s-2];
@@ -2726,7 +2726,7 @@ void smt1_convt::convert_with(const exprt &expr)
 
       std::size_t array_bits=(offset+width) - offset;
 
-      assert(expr.operands().size()==3);
+      ASSERT(expr.operands().size()==3);
       const exprt &index=expr.operands()[1];
       const exprt &value=expr.operands()[2];
       typecast_exprt index_tc(index, array_index_type());
@@ -2795,7 +2795,7 @@ void smt1_convt::convert_with(const exprt &expr)
       if(elem_width==0)
         throw "failed to get array element width";
 
-      assert(expr.operands().size()==3);
+      ASSERT(expr.operands().size()==3);
       const exprt &index_2nd=expr.operands()[1];
       const exprt &value=expr.operands()[2];
       typecast_exprt index_tc(index_2nd, array_index_type());
@@ -2928,7 +2928,7 @@ void smt1_convt::convert_with(const exprt &expr)
       convert_expr(value, true);
     else
     {
-      assert(total_width>member_width);
+      ASSERT(total_width>member_width);
       out << "(concat ";
       out << "(extract["
           << (total_width-1)
@@ -2950,7 +2950,7 @@ void smt1_convt::convert_with(const exprt &expr)
     if(total_width==0)
       throw "failed to get total width";
 
-    assert(expr.operands().size()==3);
+    ASSERT(expr.operands().size()==3);
     const exprt &index=expr.operands()[1];
     const exprt &value=expr.operands()[2];
 
@@ -3009,7 +3009,7 @@ Function: smt1_convt::convert_update
 
 void smt1_convt::convert_update(const exprt &expr)
 {
-  assert(expr.operands().size()==3);
+  ASSERT(expr.operands().size()==3);
 
   // todo
   throw "smt1_convt::convert_update to be implemented";
@@ -3029,7 +3029,7 @@ Function: smt1_convt::convert_index
 
 void smt1_convt::convert_index(const index_exprt &expr, bool bool_as_bv)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(expr.array().id()==ID_member ||
      expr.array().id()==ID_index)
@@ -3092,7 +3092,7 @@ Function: smt1_convt::convert_member
 
 void smt1_convt::convert_member(const member_exprt &expr, bool bool_as_bv)
 {
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
 
   const member_exprt &member_expr=to_member_expr(expr);
   const exprt &struct_op=member_expr.struct_op();
@@ -3134,7 +3134,7 @@ void smt1_convt::convert_member(const member_exprt &expr, bool bool_as_bv)
     out << ")";
   }
   else
-    assert(false);
+    ASSERT(false);
 
   // Booleans pulled out of structs may have to be converted
   from_bv_end(expr.type(), bool_as_bv);
@@ -3179,7 +3179,7 @@ void smt1_convt::set_to(const exprt &expr, bool value)
 
   if(expr.id()==ID_not)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return set_to(expr.op0(), !value);
   }
 
@@ -3196,7 +3196,7 @@ void smt1_convt::set_to(const exprt &expr, bool value)
       << (value?"true":"false") << "\n"
       << " ";
 
-  assert(expr.type().id()==ID_bool);
+  ASSERT(expr.type().id()==ID_bool);
 
   if(!value)
   {
@@ -3229,8 +3229,8 @@ void smt1_convt::find_symbols(const exprt &expr)
 
   if(expr.id()==ID_forall || expr.id()==ID_exists)
   {
-    assert(expr.operands().size()==2);
-    assert(expr.op0().id()==ID_symbol);
+    ASSERT(expr.operands().size()==2);
+    ASSERT(expr.op0().id()==ID_symbol);
 
     const irep_idt &ident=expr.op0().get(ID_identifier);
     quantified_symbols.insert(ident);
@@ -3689,7 +3689,7 @@ exprt smt1_convt::binary2union(
 
   const typet &sub_type=ns.follow(components[component_nr].type());
   std::size_t comp_width=boolbv_width(sub_type);
-  assert(comp_width<=total_width);
+  ASSERT(comp_width<=total_width);
 
   std::string cval=binary.substr(total_width-comp_width, comp_width);
   e.op()=ce_value(sub_type, "", cval, true);
@@ -3775,7 +3775,7 @@ void smt1_convt::convert_nary(
 {
   std::size_t num_ops=expr.operands().size();
 
-  assert(num_ops>0);
+  ASSERT(num_ops>0);
 
   if(num_ops==1)
     convert_expr(expr.op0(), bool_as_bv);

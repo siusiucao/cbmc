@@ -54,7 +54,7 @@ literalt boolbvt::convert_extractbit(const extractbit_exprt &expr)
      operands[0].type().id()==ID_verilog_unsignedbv)
   {
     // TODO
-    assert(false);
+    ASSERT(false);
   }
   else
   {

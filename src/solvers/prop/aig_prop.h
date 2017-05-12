@@ -30,7 +30,7 @@ public:
   literalt lor(literalt a, literalt b) override;
   literalt land(const bvt &bv) override;
   literalt lor(const bvt &bv) override;
-  void lcnf(const bvt &clause) override { assert(false); }
+  void lcnf(const bvt &clause) override { ASSERT(false); }
   literalt lxor(literalt a, literalt b) override;
   literalt lxor(const bvt &bv) override;
   literalt lnand(literalt a, literalt b) override;
@@ -40,7 +40,7 @@ public:
   literalt lselect(literalt a, literalt b, literalt c) override; // a?b:c
   void set_equal(literalt a, literalt b) override;
 
-  void l_set_to(literalt a, bool value) override { assert(false); }
+  void l_set_to(literalt a, bool value) override { ASSERT(false); }
 
   literalt new_variable() override
   {
@@ -54,10 +54,10 @@ public:
   { return "conversion into and-inverter graph"; }
 
   tvt l_get(literalt a) const override
-  { assert(0); return tvt::unknown(); }
+  { ASSERT(0); return tvt::unknown(); }
 
   resultt prop_solve() override
-  { assert(0); return P_ERROR; }
+  { ASSERT(0); return P_ERROR; }
 
 protected:
   aigt &dest;

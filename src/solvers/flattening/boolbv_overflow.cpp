@@ -71,7 +71,7 @@ literalt boolbvt::convert_overflow(const exprt &expr)
     if(operands[0].type()!=operands[1].type())
       throw "operand type mismatch on overflow-*";
 
-    assert(bv0.size()==bv1.size());
+    ASSERT(bv0.size()==bv1.size());
     std::size_t old_size=bv0.size();
     std::size_t new_size=old_size*2;
 
@@ -98,7 +98,7 @@ literalt boolbvt::convert_overflow(const exprt &expr)
       bv_overflow.reserve(old_size);
 
       // get top result bits, plus one more
-      assert(old_size!=0);
+      ASSERT(old_size!=0);
       for(std::size_t i=old_size-1; i<result.size(); i++)
         bv_overflow.push_back(result[i]);
 

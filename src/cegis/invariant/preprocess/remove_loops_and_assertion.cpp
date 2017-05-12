@@ -22,7 +22,7 @@ bool handle_assertion_removal(invariant_programt &program,
   const goto_programt::instructiont &instr=*target;
   if (goto_program_instruction_typet::ASSERT != instr.type) return false;
   const namespacet ns(program.st);
-  assert(program.assertion.id().empty());
+  ASSERT(program.assertion.id().empty());
   program.assertion=instr.guard;
   goto_programt::targett &end=program.invariant_range.end;
   end=target;
@@ -61,7 +61,7 @@ void invariant_remove_loop(const symbol_tablet &st,
     const goto_programt::targett end=instrs.end();
     while (end != guard_instr && guard_instr->guard.is_true())
       ++guard_instr;
-    assert(end != guard_instr);
+    ASSERT(end != guard_instr);
     if (ID_not == guard.id()) guard=to_not_expr(guard_instr->guard).op();
     else guard=simplify_expr(not_exprt(guard_instr->guard), ns);
     body_begin=std::next(guard_instr);
@@ -71,7 +71,7 @@ void invariant_remove_loop(const symbol_tablet &st,
     guard=simplify_expr(instr.guard, ns);
     body_begin=goto_target;
   }
-  assert(!guard.id().empty());
+  ASSERT(!guard.id().empty());
   body_end=std::prev(target);
   erase_target(instrs, target);
   ++body_end;

@@ -26,7 +26,7 @@ void positional_assign(invariant_programt &prog,
   {
     const irep_idt &id=get_affected_variable(*x0);
     const counterexamplet::const_iterator it=ce_template.find(id);
-    assert(ce_template.end() != it);
+    ASSERT(ce_template.end() != it);
     counterexamplet tmp;
     tmp.insert(std::make_pair(id, it->second));
     invariant_assign_ce_values(prog, tmp, values.size(), pre, x0, false);
@@ -46,7 +46,7 @@ void safety_add_learned_counterexamples(safety_programt &prog,
   counterexamplest first_loop_only;
   std::transform(ces.begin(), ces.end(), std::back_inserter(first_loop_only),
       [](const safety_goto_cet &ce)
-      { assert(!ce.x.empty()); return ce.x.front();});
+      { ASSERT(!ce.x.empty()); return ce.x.front();});
   const std::string x0_pre(X0_CHOICE_PREFIX);
   const std::string x_pre(X_CHOICE_PREFIX);
   invariant_declare_x_choice_arrays(prog, x0s, x0_pre);
@@ -59,7 +59,7 @@ void safety_add_learned_counterexamples(safety_programt &prog,
     const irep_idt &id=get_affected_variable(*x0);
     const counterexamplet &ce_template=x0s.front();
     const counterexamplet::const_iterator it=ce_template.find(id);
-    assert(ce_template.end() != it);
+    ASSERT(ce_template.end() != it);
     counterexamplet tmp;
     tmp.insert(std::make_pair(id, it->second));
     invariant_assign_ce_values(prog, tmp, x0s.size(), x0_pre, x0, false);

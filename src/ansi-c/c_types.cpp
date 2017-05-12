@@ -149,7 +149,7 @@ typet size_type()
   else if(config.ansi_c.pointer_width==config.ansi_c.long_long_int_width)
     return unsigned_long_long_int_type();
   else
-    assert(false); // aaah!
+    ASSERT(false); // aaah!
 }
 
 /*******************************************************************\
@@ -519,7 +519,7 @@ typet long_double_type()
       // not quite right. The extra bits beyond 80 are usually padded.
     }
     else
-      assert(false);
+      ASSERT(false);
   }
 
   result.set(ID_C_c_type, ID_long_double);
@@ -585,7 +585,7 @@ typet pointer_diff_type()
   else if(config.ansi_c.pointer_width==config.ansi_c.long_long_int_width)
     return signed_long_long_int_type();
   else
-    assert(false); // aaah!
+    ASSERT(false); // aaah!
 }
 
 /*******************************************************************\

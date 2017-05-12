@@ -48,7 +48,7 @@ void instrument_program_ops(goto_programt &body, goto_programt::targett pos,
     const std::function<bool(const typet &)> predicate)
 {
   // TODO: Implement
-  assert(false);
+  ASSERT(false);
 }
 
 namespace

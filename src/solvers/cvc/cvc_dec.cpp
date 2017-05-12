@@ -99,7 +99,7 @@ decision_proceduret::resultt cvc_dect::dec_solve()
     "cvcl "+temp_out_filename+" > "+temp_result_filename+" 2>&1";
 
   int res=system(command.c_str());
-  assert(0==res);
+  ASSERT(0==res);
 
   status() << "Reading result from CVCL" << eom;
 
@@ -171,8 +171,8 @@ void cvc_dect::read_assert(std::istream &in, std::string &line)
     if(line[0]=='l')
     {
       unsigned number=unsafe_string2unsigned(line.substr(1));
-      assert(number<no_boolean_variables);
-      assert(no_boolean_variables==boolean_assignment.size());
+      ASSERT(number<no_boolean_variables);
+      ASSERT(no_boolean_variables==boolean_assignment.size());
       boolean_assignment[number]=value;
     }
   }

@@ -29,7 +29,7 @@ class sparse_bitvector_analysist
 public:
   const V &get(const std::size_t value_index) const
   {
-    assert(value_index<values.size());
+    ASSERT(value_index<values.size());
     return values[value_index]->first;
   }
 
@@ -87,7 +87,7 @@ inline bool operator<(
 
   // we do not expect comparison of unrelated definitions
   // as this operator< is only used in sparse_bitvector_analysist
-  assert(a.identifier==b.identifier);
+  ASSERT(a.identifier==b.identifier);
 
   return false;
 }
@@ -255,7 +255,7 @@ public:
     statet &s=concurrency_aware_ait<rd_range_domaint>::get_state(l);
 
     rd_range_domaint *rd_state=dynamic_cast<rd_range_domaint*>(&s);
-    assert(rd_state!=0);
+    ASSERT(rd_state!=0);
 
     rd_state->set_bitvector_container(*this);
 
@@ -264,19 +264,19 @@ public:
 
   value_setst &get_value_sets() const
   {
-    assert(value_sets);
+    ASSERT(value_sets);
     return *value_sets;
   }
 
   const is_threadedt &get_is_threaded() const
   {
-    assert(is_threaded);
+    ASSERT(is_threaded);
     return *is_threaded;
   }
 
   const dirtyt &get_is_dirty() const
   {
-    assert(is_dirty);
+    ASSERT(is_dirty);
     return *is_dirty;
   }
 

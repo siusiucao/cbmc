@@ -30,7 +30,7 @@ Function: map_bv
 
 bvt map_bv(const endianness_mapt &map, const bvt &src)
 {
-  assert(map.number_of_bits()==src.size());
+  ASSERT(map.number_of_bits()==src.size());
 
   bvt result;
   result.resize(src.size(), const_literal(false));
@@ -38,7 +38,7 @@ bvt map_bv(const endianness_mapt &map, const bvt &src)
   for(std::size_t i=0; i<src.size(); i++)
   {
     size_t mapped_index=map.map_bit(i);
-    assert(mapped_index<src.size());
+    ASSERT(mapped_index<src.size());
     result[i]=src[mapped_index];
   }
 
@@ -102,7 +102,7 @@ bvt boolbvt::convert_byte_extract(const byte_extract_exprt &expr)
   else
   {
     little_endian=false;
-    assert(false);
+    ASSERT(false);
   }
 
   // first do op0

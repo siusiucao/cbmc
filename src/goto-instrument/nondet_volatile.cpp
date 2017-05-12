@@ -36,7 +36,7 @@ bool is_volatile(
   {
     symbol_tablet::symbolst::const_iterator s_it=
       symbol_table.symbols.find(to_symbol_type(src).get_identifier());
-    assert(s_it!=symbol_table.symbols.end());
+    ASSERT(s_it!=symbol_table.symbols.end());
     return is_volatile(symbol_table, s_it->second.type);
   }
 

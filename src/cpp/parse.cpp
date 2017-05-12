@@ -384,7 +384,7 @@ protected:
     {
       if(p->id()==ID_merged_type)
       {
-        assert(!p->subtypes().empty());
+        ASSERT(!p->subtypes().empty());
         p=&p->subtypes().back();
       }
       else
@@ -1258,7 +1258,7 @@ bool Parser::rTemplateDecl(cpp_declarationt &decl)
     break;
 
    default:
-    assert(0);
+    ASSERT(0);
     break;
   }
 
@@ -2032,7 +2032,7 @@ bool Parser::rOtherDeclaration(
     std::cout << std::string(__indent, ' ') << "Parser::rOtherDeclaration 4\n";
     #endif
 
-    assert(!type_name.get_sub().empty());
+    ASSERT(!type_name.get_sub().empty());
 
     for(unsigned i=0; i < type_name.get_sub().size(); i++)
     {
@@ -2070,7 +2070,7 @@ bool Parser::rOtherDeclaration(
     std::cout << std::string(__indent, ' ') << "Parser::rOtherDeclaration 6\n";
     #endif
 
-    assert(!type_name.get_sub().empty());
+    ASSERT(!type_name.get_sub().empty());
 
     bool is_destructor=false;
     forall_irep(it, type_name.get_sub())
@@ -2317,7 +2317,7 @@ bool Parser::optMemberSpec(cpp_member_spect &member_spec)
     case TOK_VIRTUAL:  member_spec.set_virtual(true); break;
     case TOK_FRIEND:   member_spec.set_friend(true); break;
     case TOK_EXPLICIT: member_spec.set_explicit(true); break;
-    default: assert(false);
+    default: ASSERT(false);
     }
 
     t=lex.LookAhead(0);
@@ -2366,7 +2366,7 @@ bool Parser::optStorageSpec(cpp_storage_spect &storage_spec)
     case TOK_MUTABLE: storage_spec.set_mutable(); break;
     case TOK_GCC_ASM: storage_spec.set_asm(); break;
     case TOK_THREAD_LOCAL: storage_spec.set_thread_local(); break;
-    default: assert(false);
+    default: ASSERT(false);
     }
 
     set_location(storage_spec, tk);
@@ -2448,7 +2448,7 @@ bool Parser::optCvQualify(typet &cv)
         break;
 
       default:
-        assert(false);
+        ASSERT(false);
         break;
       }
     }
@@ -3633,12 +3633,12 @@ bool Parser::optPtrOperator(typet &ptrs)
   {
     if(it->id()==ID_merged_type)
     {
-      assert(!it->subtypes().empty());
+      ASSERT(!it->subtypes().empty());
       it->subtypes().back().subtype().swap(ptrs);
     }
     else
     {
-      assert(it->is_not_nil());
+      ASSERT(it->is_not_nil());
       it->subtype().swap(ptrs);
     }
 
@@ -4049,7 +4049,7 @@ bool Parser::rOperatorName(irept &name)
     return rCastOperatorName(name);
   }
 
-  assert(operator_id!=irep_idt());
+  ASSERT(operator_id!=irep_idt());
   lex.get_token(tk);
   name=irept(operator_id);
   set_location(name, tk);
@@ -4362,8 +4362,8 @@ bool Parser::rTemplateArgs(irept &template_args)
       tk2.text='>';
       lex.Replace(tk2);
       lex.Insert(tk2);
-      assert(lex.LookAhead(0)=='>');
-      assert(lex.LookAhead(1)=='>');
+      ASSERT(lex.LookAhead(0)=='>');
+      ASSERT(lex.LookAhead(1)=='>');
       return true;
 
     default:
@@ -4917,7 +4917,7 @@ bool Parser::rClassSpec(typet &spec)
   else if(t==TOK_UNION)
     spec=typet(ID_union);
   else
-    assert(false);
+    ASSERT(false);
 
   set_location(spec, tk);
 
@@ -5038,7 +5038,7 @@ bool Parser::rBaseSpecifiers(irept &bases)
         break;
 
        default:
-        assert(0);
+        ASSERT(0);
       }
 
       t=lex.LookAhead(0);
@@ -5186,7 +5186,7 @@ bool Parser::rClassMember(cpp_itemt &member)
       break;
 
     default:
-      assert(0);
+      ASSERT(0);
     }
 
     set_location(member, tk1);
@@ -6463,7 +6463,7 @@ bool Parser::rUnaryExpr(exprt &exp)
       break;
 
     default:
-      assert(0);
+      ASSERT(0);
     }
 
     exp.move_to_operands(right);
@@ -7537,7 +7537,7 @@ bool Parser::rTypePredicate(exprt &expr)
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 
   return true;
@@ -8865,7 +8865,7 @@ bool Parser::rTryStatement(codet &statement)
         return false;
 
       // No name in the declarator? Make one.
-      assert(declaration.declarators().size()==1);
+      ASSERT(declaration.declarators().size()==1);
 
       if(declaration.declarators().front().name().is_nil())
       {
@@ -8891,7 +8891,7 @@ bool Parser::rTryStatement(codet &statement)
     if(!rCompoundStatement(body))
       return false;
 
-    assert(body.get_statement()==ID_block);
+    ASSERT(body.get_statement()==ID_block);
 
     body.operands().insert(body.operands().begin(), catch_op);
 

@@ -72,7 +72,7 @@ void show_properties(
       break;
 
     case ui_message_handlert::JSON_UI:
-      assert(false);
+      ASSERT(false);
       break;
 
     case ui_message_handlert::PLAIN:
@@ -87,7 +87,7 @@ void show_properties(
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
   }
 }

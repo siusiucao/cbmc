@@ -76,7 +76,7 @@ void bv_refinementt::arrays_overapproximated()
     if(current.id()==ID_implies)
     {
       implies_exprt imp=to_implies_expr(current);
-      assert(imp.operands().size()==2);
+      ASSERT(imp.operands().size()==2);
       exprt implies_simplified=get(imp.op0());
       if(implies_simplified==false_exprt())
       {
@@ -88,7 +88,7 @@ void bv_refinementt::arrays_overapproximated()
     if(current.id()==ID_or)
     {
       or_exprt orexp=to_or_expr(current);
-      assert(orexp.operands().size()==2);
+      ASSERT(orexp.operands().size()==2);
       exprt o1=get(orexp.op0());
       exprt o2=get(orexp.op1());
       if(o1==true_exprt() || o2 == true_exprt())
@@ -112,7 +112,7 @@ void bv_refinementt::arrays_overapproximated()
       lazy_array_constraints.erase(it++);
       break;
     default:
-      assert(false);
+      ASSERT(false);
     }
   }
 

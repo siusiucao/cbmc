@@ -60,7 +60,7 @@ protected:
   virtual void close_expression()
   {
     // done with sub-irep
-    assert(!stack.empty()); // unexpected )
+    ASSERT(!stack.empty()); // unexpected )
 
     irept tmp=stack.top();
     stack.pop();

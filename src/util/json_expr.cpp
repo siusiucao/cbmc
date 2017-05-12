@@ -328,7 +328,7 @@ json_objectt json(
       {
         const irep_idt &ptr_id=to_symbol_expr(simpl_expr).get_identifier();
         identifiert identifier(id2string(ptr_id));
-        assert(!identifier.components.empty());
+        ASSERT(!identifier.components.empty());
         result["data"]=json_stringt(identifier.components.back());
       }
     }
@@ -376,7 +376,7 @@ json_objectt json(
     {
       const struct_typet &struct_type=to_struct_type(type);
       const struct_typet::componentst &components=struct_type.components();
-      assert(components.size()==expr.operands().size());
+      ASSERT(components.size()==expr.operands().size());
 
       json_arrayt &members=result["members"].make_array();
       for(unsigned m=0; m<expr.operands().size(); m++)
@@ -391,7 +391,7 @@ json_objectt json(
   {
     result["name"]=json_stringt("union");
 
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     json_objectt &e=result["member"].make_object();
     e["value"]=json(expr.op0(), ns);

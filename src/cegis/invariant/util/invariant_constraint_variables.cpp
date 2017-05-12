@@ -87,7 +87,7 @@ void collect_counterexample_variables(invariant_symbol_set &vars,
   const symbol_tablet &st=program.st;
   std::for_each(st.symbols.begin(), st.symbols.end(), collector);
   const invariant_programt::const_invariant_loopst loops(program.get_loops());
-  assert(!loops.empty());
+  ASSERT(!loops.empty());
   const goto_programt::targett Ix=loops.front()->meta_variables.Ix;
   std::for_each(program.invariant_range.begin, Ix, collector);
 }

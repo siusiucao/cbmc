@@ -75,13 +75,13 @@ size_t get_match_fitness(const match_selectt::test_case_datat &data,
     const contestantt &mother)
 {
   const match_selectt::test_case_datat::const_iterator f=data.find(&*father);
-  assert(data.end() != f);
+  ASSERT(data.end() != f);
   const match_selectt::test_case_datat::const_iterator m=data.find(&*mother);
-  assert(data.end() != m);
+  ASSERT(data.end() != m);
   const std::list<bool> &f_dt=f->second;
   const std::list<bool> &m_dt=m->second;
   const size_t f_data_size=f_dt.size();
-  assert(f_data_size == m_dt.size());
+  ASSERT(f_data_size == m_dt.size());
   size_t match_value=mother->fitness;
   typedef std::list<bool>::const_iterator itert;
   for (itert fv=f_dt.begin(), mv=m_dt.begin(); fv != f_dt.end(); ++fv, ++mv)
@@ -142,12 +142,12 @@ match_selectt::selectiont match_selectt::select(populationt &pop)
   }
   selectiont selection;
   selection.parents.push_back(father);
-  assert(no_contestant != father);
+  ASSERT(no_contestant != father);
   selection.parents.push_back(mother);
-  assert(no_contestant != mother);
+  ASSERT(no_contestant != mother);
   selection.children.push_back(son);
-  assert(no_contestant != son);
+  ASSERT(no_contestant != son);
   selection.children.push_back(daughter);
-  assert(no_contestant != daughter);
+  ASSERT(no_contestant != daughter);
   return selection;
 }

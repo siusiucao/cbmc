@@ -52,10 +52,10 @@ typedef int range_spect;
 
 inline range_spect to_range_spect(const mp_integer &size)
 {
-  assert(size.is_long());
+  ASSERT(size.is_long());
   mp_integer::llong_t ll=size.to_long();
-  assert(ll<=std::numeric_limits<range_spect>::max());
-  assert(ll>=std::numeric_limits<range_spect>::min());
+  ASSERT(ll<=std::numeric_limits<range_spect>::max());
+  ASSERT(ll>=std::numeric_limits<range_spect>::min());
   return (range_spect)ll;
 }
 
@@ -107,7 +107,7 @@ public:
 
   const range_domaint &get_ranges(objectst::const_iterator it) const
   {
-    assert(dynamic_cast<range_domaint*>(it->second)!=0);
+    ASSERT(dynamic_cast<range_domaint*>(it->second)!=0);
     return *static_cast<range_domaint*>(it->second);
   }
 
@@ -276,7 +276,7 @@ public:
 
   const guarded_range_domaint &get_ranges(objectst::const_iterator it) const
   {
-    assert(dynamic_cast<guarded_range_domaint*>(it->second)!=0);
+    ASSERT(dynamic_cast<guarded_range_domaint*>(it->second)!=0);
     return *static_cast<guarded_range_domaint*>(it->second);
   }
 

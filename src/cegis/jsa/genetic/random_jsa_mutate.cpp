@@ -39,11 +39,11 @@ void random_jsa_mutatet::operator()(individualt &lhs,
     case 1: instr.op1=tmp.op1; return;
     case 2: instr.opcode=tmp.opcode; return;
     case 3: instr.result_op=tmp.result_op; return;
-    default: assert(!"Invalid predicate mutation index");
+    default: ASSERT(!"Invalid predicate mutation index");
     }
   }
   individualt::queryt &query=lhs.query;
-  assert(mutation_index < query.size() * OPERANDS_PER_JSA_QUERY_INSTRUCTION);
+  ASSERT(mutation_index < query.size() * OPERANDS_PER_JSA_QUERY_INSTRUCTION);
   const size_t query_index=mutation_index / OPERANDS_PER_JSA_QUERY_INSTRUCTION;
   individualt::queryt::value_type &instr=query[query_index];
   individualt::queryt::value_type tmp(instr);
@@ -53,7 +53,7 @@ void random_jsa_mutatet::operator()(individualt &lhs,
   case 0: instr.op0=tmp.op0; break;
   case 1: instr.op1=tmp.op1; break;
   case 2: instr.opcode=tmp.opcode; break;
-  default: assert(!"Invalid query mutation index");
+  default: ASSERT(!"Invalid query mutation index");
   }
 }
 

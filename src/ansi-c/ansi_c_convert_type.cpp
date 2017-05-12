@@ -112,7 +112,7 @@ void ansi_c_convert_typet::read_rec(const typet &type)
   {
     const exprt &as_expr=
       static_cast<const exprt &>(static_cast<const irept &>(type));
-    assert(as_expr.operands().size()==1);
+    ASSERT(as_expr.operands().size()==1);
     msc_based=as_expr.op0();
   }
   else if(type.id()==ID_custom_bv)
@@ -218,7 +218,7 @@ void ansi_c_convert_typet::read_rec(const typet &type)
         c_storage_spec.is_thread_local=true;
       else if(id=="align")
       {
-        assert(it->operands().size()==1);
+        ASSERT(it->operands().size()==1);
         aligned=true;
         alignment=it->op0();
       }
@@ -472,7 +472,7 @@ void ansi_c_convert_typet::write(typet &type)
         type=
           is_signed?signed_long_long_int_type():unsigned_long_long_int_type();
       else
-        assert(false);
+        ASSERT(false);
     }
     else if(gcc_int128_cnt)
     {

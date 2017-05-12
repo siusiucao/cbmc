@@ -64,15 +64,15 @@ bool model_argc_argv(
 
   goto_functionst::function_mapt::iterator init_entry=
     goto_functions.function_map.find(CPROVER_PREFIX "initialize");
-  assert(
+  ASSERT(
     init_entry!=goto_functions.function_map.end() &&
     init_entry->second.body_available());
 
   goto_programt &init=init_entry->second.body;
   goto_programt::targett init_end=init.instructions.end();
   --init_end;
-  assert(init_end->is_end_function());
-  assert(init_end!=init.instructions.begin());
+  ASSERT(init_end->is_end_function());
+  ASSERT(init_end!=init.instructions.begin());
   --init_end;
 
   const symbolt &main_symbol=
@@ -145,10 +145,10 @@ bool model_argc_argv(
     else if(has_prefix(id2string(it->first),
                        CPROVER_PREFIX "initialize::") &&
             symbol_table.add(it->second))
-      assert(false);
+      ASSERT(false);
   }
 
-  assert(value.is_not_nil());
+  ASSERT(value.is_not_nil());
   goto_convert(
     to_code(value),
     symbol_table,

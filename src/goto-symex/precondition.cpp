@@ -109,18 +109,18 @@ void preconditiont::compute_address_of(exprt &dest)
   }
   else if(dest.id()==ID_index)
   {
-    assert(dest.operands().size()==2);
+    ASSERT(dest.operands().size()==2);
     compute_address_of(dest.op0());
     compute(dest.op1());
   }
   else if(dest.id()==ID_member)
   {
-    assert(dest.operands().size()==1);
+    ASSERT(dest.operands().size()==1);
     compute_address_of(dest.op0());
   }
   else if(dest.id()==ID_dereference)
   {
-    assert(dest.operands().size()==1);
+    ASSERT(dest.operands().size()==1);
     compute(dest.op0());
   }
 }
@@ -159,12 +159,12 @@ void preconditiont::compute_rec(exprt &dest)
   if(dest.id()==ID_address_of)
   {
     // only do index!
-    assert(dest.operands().size()==1);
+    ASSERT(dest.operands().size()==1);
     compute_address_of(dest.op0());
   }
   else if(dest.id()==ID_dereference)
   {
-    assert(dest.operands().size()==1);
+    ASSERT(dest.operands().size()==1);
 
     const irep_idt &lhs_identifier=SSA_step.ssa_lhs.get_object_name();
 

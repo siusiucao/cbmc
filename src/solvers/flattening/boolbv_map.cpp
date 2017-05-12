@@ -90,7 +90,7 @@ boolbv_mapt::map_entryt &boolbv_mapt::get_map_entry(
     map_entry.literal_map.resize(map_entry.width);
   }
 
-  assert(map_entry.literal_map.size()==map_entry.width);
+  ASSERT(map_entry.literal_map.size()==map_entry.width);
 
   return map_entry;
 }
@@ -136,15 +136,15 @@ void boolbv_mapt::get_literals(
 {
   map_entryt &map_entry=get_map_entry(identifier, type);
 
-  assert(literals.size()==width);
-  assert(map_entry.literal_map.size()==width);
+  ASSERT(literals.size()==width);
+  ASSERT(map_entry.literal_map.size()==width);
 
   Forall_literals(it, literals)
   {
     literalt &l=*it;
     const std::size_t bit=it-literals.begin();
 
-    assert(bit<map_entry.literal_map.size());
+    ASSERT(bit<map_entry.literal_map.size());
     map_bitt &mb=map_entry.literal_map[bit];
 
     if(mb.is_set)
@@ -189,10 +189,10 @@ void boolbv_mapt::set_literals(
     const literalt &literal=*it;
     const std::size_t bit=it-literals.begin();
 
-    assert(literal.is_constant() ||
+    ASSERT(literal.is_constant() ||
            literal.var_no()<prop.no_variables());
 
-    assert(bit<map_entry.literal_map.size());
+    ASSERT(bit<map_entry.literal_map.size());
     map_bitt &mb=map_entry.literal_map[bit];
 
     if(mb.is_set)

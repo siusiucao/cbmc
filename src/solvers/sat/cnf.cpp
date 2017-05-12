@@ -634,10 +634,10 @@ bool cnft::process_clause(const bvt &bv, bvt &dest)
   for(const auto l : bv)
   {
     // we never use index 0
-    assert(l.var_no()!=0);
+    ASSERT(l.var_no()!=0);
 
     // we never use 'unused_var_no'
-    assert(l.var_no()!=literalt::unused_var_no());
+    ASSERT(l.var_no()!=literalt::unused_var_no());
 
     if(l.is_true())
       return true; // clause satisfied
@@ -649,7 +649,7 @@ bool cnft::process_clause(const bvt &bv, bvt &dest)
       std::cout << "l.var_no()=" << l.var_no()
                 << " _no_variables=" << _no_variables << std::endl;
 
-    assert(l.var_no()<_no_variables);
+    ASSERT(l.var_no()<_no_variables);
   }
 
   // now copy

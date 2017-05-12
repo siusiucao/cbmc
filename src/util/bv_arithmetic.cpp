@@ -89,7 +89,7 @@ void bv_spect::from_type(const typet &type)
   else if(type.id()==ID_signedbv)
     is_signed=true;
   else
-    assert(0);
+    ASSERT(0);
 
   width=unsafe_string2unsigned(type.get_string(ID_width));
 }
@@ -223,7 +223,7 @@ Function: operator /=
 
 bv_arithmetict &bv_arithmetict::operator/=(const bv_arithmetict &other)
 {
-  assert(other.spec==spec);
+  ASSERT(other.spec==spec);
 
   if(other.value==0)
     value=0;
@@ -247,7 +247,7 @@ Function: operator *=
 
 bv_arithmetict &bv_arithmetict::operator*=(const bv_arithmetict &other)
 {
-  assert(other.spec==spec);
+  ASSERT(other.spec==spec);
 
   value*=other.value;
   adjust();
@@ -269,7 +269,7 @@ Function: operator +=
 
 bv_arithmetict &bv_arithmetict::operator+=(const bv_arithmetict &other)
 {
-  assert(other.spec==spec);
+  ASSERT(other.spec==spec);
 
   value+=other.value;
   adjust();
@@ -291,7 +291,7 @@ Function: operator -=
 
 bv_arithmetict &bv_arithmetict::operator -= (const bv_arithmetict &other)
 {
-  assert(other.spec==spec);
+  ASSERT(other.spec==spec);
 
   value-=other.value;
   adjust();
@@ -313,7 +313,7 @@ Function: operator %=
 
 bv_arithmetict &bv_arithmetict::operator%=(const bv_arithmetict &other)
 {
-  assert(other.spec==spec);
+  ASSERT(other.spec==spec);
 
   value%=other.value;
   adjust();
@@ -472,7 +472,7 @@ Function: bv_arithmetict::from_expr
 
 void bv_arithmetict::from_expr(const exprt &expr)
 {
-  assert(expr.is_constant());
+  ASSERT(expr.is_constant());
   spec=bv_spect(expr.type());
   value=binary2integer(expr.get_string(ID_value), spec.is_signed);
 }

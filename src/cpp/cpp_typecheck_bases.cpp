@@ -230,7 +230,7 @@ void cpp_typecheckt::add_base_components(
         component.set_access(ID_private);
     }
     else
-      assert(false);
+      ASSERT(false);
 
     // put into scope
   }

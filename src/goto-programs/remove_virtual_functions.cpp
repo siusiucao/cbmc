@@ -110,8 +110,8 @@ void remove_virtual_functionst::remove_virtual_function(
   const auto &vcall_source_loc=target->source_location;
 
   const exprt &function=code.function();
-  assert(function.id()==ID_virtual_function);
-  assert(!code.arguments().empty());
+  ASSERT(function.id()==ID_virtual_function);
+  ASSERT(!code.arguments().empty());
 
   functionst functions;
   get_functions(function, functions);
@@ -125,7 +125,7 @@ void remove_virtual_functionst::remove_virtual_function(
   // only one option?
   if(functions.size()==1)
   {
-    assert(target->is_function_call());
+    ASSERT(target->is_function_call());
     if(functions.begin()->symbol_expr==symbol_exprt())
       target->make_skip();
     else
@@ -308,7 +308,7 @@ void remove_virtual_functionst::get_functions(
 {
   const irep_idt class_id=function.get(ID_C_class);
   const irep_idt component_name=function.get(ID_component_name);
-  assert(!class_id.empty());
+  ASSERT(!class_id.empty());
   functiont root_function;
 
   // Start from current class, go to parents until something

@@ -223,11 +223,11 @@ void goto_program_dereferencet::dereference_rec(
     // turn &*p to p
     // this has *no* side effect!
 
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     if(expr.op0().id()==ID_dereference)
     {
-      assert(expr.op0().operands().size()==1);
+      ASSERT(expr.op0().operands().size()==1);
 
       exprt tmp;
       tmp.swap(expr.op0().op0());

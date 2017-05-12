@@ -447,7 +447,7 @@ bool constant_propagator_domaint::valuest::set_to_top(const irep_idt &id)
 
   if(r_it != replace_const.expr_map.end())
   {
-    assert(!is_bottom);
+    ASSERT(!is_bottom);
     replace_const.expr_map.erase(r_it);
     result = true;
   }

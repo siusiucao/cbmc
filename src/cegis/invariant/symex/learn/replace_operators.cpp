@@ -64,7 +64,7 @@ public:
     const invariant_variable_namest &names=is_res ? rnames : this->names;
     const size_t op=is_res ? instr_idx : is_op0 ? op0 : is_op1 ? op1 : op2;
     const invariant_variable_namest::const_iterator name=names.find(op);
-    assert(names.end() != name);
+    ASSERT(names.end() != name);
     const symbol_exprt symbol(st.lookup(name->second).symbol_expr());
     const typet danger_type(cegis_default_integer_type());
     if (type_eq(danger_type, symbol.type(), ns)) expr=symbol;

@@ -197,7 +197,7 @@ decision_proceduret::resultt smt2_dect::dec_solve()
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 
   #if defined(__linux__) || defined(__APPLE__)

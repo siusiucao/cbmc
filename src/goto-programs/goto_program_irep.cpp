@@ -131,7 +131,7 @@ Function: convert
 
 void convert(const irept &irep, goto_programt &program)
 {
-  assert(irep.id()=="goto-program");
+  ASSERT(irep.id()=="goto-program");
 
   program.instructions.clear();
 

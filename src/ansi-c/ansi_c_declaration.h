@@ -55,13 +55,13 @@ public:
 
 inline ansi_c_declaratort &to_ansi_c_declarator(exprt &expr)
 {
-  assert(expr.id()==ID_declarator);
+  ASSERT(expr.id()==ID_declarator);
   return static_cast<ansi_c_declaratort &>(expr);
 }
 
 inline const ansi_c_declaratort &to_ansi_c_declarator(const exprt &expr)
 {
-  assert(expr.id()==ID_declarator);
+  ASSERT(expr.id()==ID_declarator);
   return static_cast<const ansi_c_declaratort &>(expr);
 }
 
@@ -213,13 +213,13 @@ public:
   // special case of a declaration with exactly one declarator
   const ansi_c_declaratort &declarator() const
   {
-    assert(declarators().size()==1);
+    ASSERT(declarators().size()==1);
     return declarators()[0];
   }
 
   ansi_c_declaratort &declarator()
   {
-    assert(declarators().size()==1);
+    ASSERT(declarators().size()==1);
     return declarators()[0];
   }
 
@@ -227,20 +227,20 @@ public:
 
   void add_initializer(exprt &value)
   {
-    assert(!declarators().empty());
+    ASSERT(!declarators().empty());
     declarators().back().value().swap(value);
   }
 };
 
 inline ansi_c_declarationt &to_ansi_c_declaration(exprt &expr)
 {
-  assert(expr.id()==ID_declaration);
+  ASSERT(expr.id()==ID_declaration);
   return static_cast<ansi_c_declarationt &>(expr);
 }
 
 inline const ansi_c_declarationt &to_ansi_c_declaration(const exprt &expr)
 {
-  assert(expr.id()==ID_declaration);
+  ASSERT(expr.id()==ID_declaration);
   return static_cast<const ansi_c_declarationt &>(expr);
 }
 

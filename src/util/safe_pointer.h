@@ -19,7 +19,7 @@ template<class T> class safe_pointer
 
   T *get() const
   {
-    assert(ptr && "dereferenced a null safe pointer");
+    ASSERT(ptr && "dereferenced a null safe pointer");
     return ptr;
   }
 
@@ -41,7 +41,7 @@ template<class T> class safe_pointer
   static safe_pointer<T> create_non_null(
     T *target)
   {
-    assert(target && "initialized safe pointer with null");
+    ASSERT(target && "initialized safe pointer with null");
     return safe_pointer(target);
   }
 

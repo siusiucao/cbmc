@@ -53,7 +53,7 @@ void cpp_typecheckt::convert_parameter(
   symbol.is_state_var=true;
   symbol.is_lvalue=!is_reference(symbol.type);
 
-  assert(!symbol.base_name.empty());
+  ASSERT(!symbol.base_name.empty());
 
   symbolt *new_symbol;
 
@@ -121,8 +121,8 @@ void cpp_typecheckt::convert_function(symbolt &symbol)
   {
     const symbolt &msymb=lookup(symbol.type.get(ID_C_member_name));
 
-    assert(symbol.value.id()==ID_code);
-    assert(symbol.value.get(ID_statement)==ID_block);
+    ASSERT(symbol.value.id()==ID_code);
+    ASSERT(symbol.value.get(ID_statement)==ID_block);
 
     symbol.value.copy_to_operands(dtor(msymb));
   }
@@ -142,7 +142,7 @@ void cpp_typecheckt::convert_function(symbolt &symbol)
      !function_scope.is_static_member)
   {
     code_typet::parameterst &parameters=function_type.parameters();
-    assert(parameters.size()>=1);
+    ASSERT(parameters.size()>=1);
     code_typet::parametert &this_parameter_expr=parameters.front();
     function_scope.this_expr=exprt(ID_symbol, this_parameter_expr.type());
     function_scope.this_expr.set(

@@ -33,7 +33,7 @@ exprt flatten_byte_extract(
   const byte_extract_exprt &src,
   const namespacet &ns)
 {
-  assert(src.operands().size()==2);
+  ASSERT(src.operands().size()==2);
 
   bool little_endian;
 
@@ -42,7 +42,7 @@ exprt flatten_byte_extract(
   else if(src.id()==ID_byte_extract_big_endian)
     little_endian=false;
   else
-    assert(false);
+    ASSERT(false);
 
   mp_integer size_bits=pointer_offset_bits(src.type(), ns);
   if(size_bits<0)
@@ -101,13 +101,13 @@ exprt flatten_byte_extract(
       // element boundaries and could thus stretch over extra elements
       ++num_elements;
 
-      assert(element_width!=0);
+      ASSERT(element_width!=0);
 
       // compute new root and offset
       concatenation_exprt concat(
         unsignedbv_typet(integer2unsigned(element_width*num_elements)));
 
-      assert(element_width%8==0);
+      ASSERT(element_width%8==0);
       exprt first_index=
         div_exprt(offset, from_integer(element_width/8, offset_type));
 
@@ -193,7 +193,7 @@ exprt flatten_byte_update(
   const namespacet &ns,
   bool negative_offset)
 {
-  assert(src.operands().size()==3);
+  ASSERT(src.operands().size()==3);
 
   mp_integer element_size=
     pointer_offset_size(src.op2().type(), ns);
@@ -380,7 +380,7 @@ exprt flatten_byte_update(
     // do a shift, mask and OR
     std::size_t width=integer2size_t(pointer_offset_size(t, ns)*8);
 
-    assert(width!=0);
+    ASSERT(width!=0);
 
     if(element_size*8>width)
       throw "flatten_byte_update to update element that is too large";

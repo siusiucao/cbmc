@@ -27,7 +27,7 @@ Function: cpp_token_buffert::LookAhead
 
 int cpp_token_buffert::LookAhead(unsigned offset)
 {
-  assert(current_pos<=token_vector.size());
+  ASSERT(current_pos<=token_vector.size());
 
   offset+=current_pos;
 
@@ -51,7 +51,7 @@ Function: cpp_token_buffert::get_token
 
 int cpp_token_buffert::get_token(cpp_tokent &token)
 {
-  assert(current_pos<=token_vector.size());
+  ASSERT(current_pos<=token_vector.size());
 
   if(token_vector.size()==current_pos)
     read_token();
@@ -77,7 +77,7 @@ Function: cpp_token_buffert::get_token
 
 int cpp_token_buffert::get_token()
 {
-  assert(current_pos<=token_vector.size());
+  ASSERT(current_pos<=token_vector.size());
 
   if(token_vector.size()==current_pos)
     read_token();
@@ -103,7 +103,7 @@ Function: cpp_token_buffert::LookAhead
 
 int cpp_token_buffert::LookAhead(unsigned offset, cpp_tokent &token)
 {
-  assert(current_pos<=token_vector.size());
+  ASSERT(current_pos<=token_vector.size());
 
   offset+=current_pos;
 
@@ -203,7 +203,7 @@ Function: cpp_token_buffert::Replace
 
 void cpp_token_buffert::Replace(const cpp_tokent &token)
 {
-  assert(current_pos<=token_vector.size());
+  ASSERT(current_pos<=token_vector.size());
 
   if(token_vector.size()==current_pos)
     read_token();
@@ -225,7 +225,7 @@ Function: cpp_token_buffert::Replace
 
 void cpp_token_buffert::Insert(const cpp_tokent &token)
 {
-  assert(current_pos<=token_vector.size());
+  ASSERT(current_pos<=token_vector.size());
 
   tokens.push_back(token);
 

@@ -31,8 +31,8 @@ const goto_programt &get_execute_body(const goto_functionst &gf)
   typedef goto_functionst::function_mapt function_mapt;
   const function_mapt &function_map=gf.function_map;
   const function_mapt::const_iterator it=function_map.find(DANGER_EXECUTE);
-  assert(function_map.end() != it);
-  assert(it->second.body_available());
+  ASSERT(function_map.end() != it);
+  ASSERT(it->second.body_available());
   return it->second.body;
 }
 
@@ -73,7 +73,7 @@ void extract_program(goto_programt::instructionst &prog,
   {
     const program_individualt::instructiont::opcodet opcode=instr.opcode;
     const instruction_sett::const_iterator instr_entry=instr_set.find(opcode);
-    assert(instr_set.end() != instr_entry);
+    ASSERT(instr_set.end() != instr_entry);
     copy_instructions(prog, st, var_names, result_var_names, instr,
         instr_entry->second, instr_idx++);
   }
@@ -118,7 +118,7 @@ void create_safety_solution(safety_goto_solutiont &solution,
   invariant_variable_namest var_names;
   reverse_invariant_var_ids(var_names, var_ids);
   invariant_variable_namest result_var_names;
-  assert(max_sz > 0);
+  ASSERT(max_sz > 0);
   const size_t idx=create_temps(result_var_names, max_sz - 1);
   size_t loop_idx=0;
   for (const goto_trace_stept &step : trace.steps)

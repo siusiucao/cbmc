@@ -37,6 +37,6 @@ void initialize_string_container()
   {
     unsigned x;
     x=string_container[irep_ids_table[i]];
-    assert(x==i); // sanity check
+    ASSERT(x==i); // sanity check
   }
 }

@@ -40,20 +40,20 @@ inline T str2number(const char *str, int base, bool safe)
 
   if(safe)
   {
-    assert(0 == errno);
+    ASSERT(0 == errno);
     errno=errno_bak;
-    assert(endptr!=str);
+    ASSERT(endptr!=str);
     if(std::numeric_limits<T>::min()==0)
     {
       // unsigned
-      assert(val >= 0);
-      assert((T)val <= std::numeric_limits<T>::max());
+      ASSERT(val >= 0);
+      ASSERT((T)val <= std::numeric_limits<T>::max());
     }
     else
     {
       // signed
-      assert(val <= (long long)std::numeric_limits<T>::max());
-      assert(val >= (long long)std::numeric_limits<T>::min());
+      ASSERT(val <= (long long)std::numeric_limits<T>::max());
+      ASSERT(val >= (long long)std::numeric_limits<T>::min());
     }
   }
 

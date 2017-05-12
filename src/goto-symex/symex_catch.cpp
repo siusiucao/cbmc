@@ -47,7 +47,7 @@ void goto_symext::symex_catch(statet &state)
     const irept::subt &exception_list=
       instruction.code.find(ID_exception_list).get_sub();
 
-    assert(exception_list.size()==instruction.targets.size());
+    ASSERT(exception_list.size()==instruction.targets.size());
 
     unsigned i=0;
 

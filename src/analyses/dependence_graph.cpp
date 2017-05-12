@@ -116,7 +116,7 @@ void dep_graph_domaint::control_dependencies(
     cfg_post_dominatorst::cfgt::entry_mapt::const_iterator e=
       pd.cfg.entry_map.find(*it);
 
-    assert(e!=pd.cfg.entry_map.end());
+    ASSERT(e!=pd.cfg.entry_map.end());
 
     const cfg_post_dominatorst::cfgt::nodet &m=
       pd.cfg[e->second];
@@ -162,8 +162,8 @@ static bool may_be_def_use_pair(
   const mp_integer &r_start,
   const mp_integer &r_end)
 {
-  assert(w_start>=0);
-  assert(r_start>=0);
+  ASSERT(w_start>=0);
+  ASSERT(r_start>=0);
 
   if((w_end!=-1 && w_end <= r_start) || // we < rs
      (r_end!=-1 && w_start >= r_end)) // re < we
@@ -257,7 +257,7 @@ void dep_graph_domaint::transform(
   const namespacet &ns)
 {
   dependence_grapht *dep_graph=dynamic_cast<dependence_grapht*>(&ai);
-  assert(dep_graph!=nullptr);
+  ASSERT(dep_graph!=nullptr);
 
   // propagate control dependencies across function calls
   if(from->is_function_call())
@@ -275,7 +275,7 @@ void dep_graph_domaint::transform(
 
       dep_graph_domaint *s=
         dynamic_cast<dep_graph_domaint*>(&(dep_graph->get_state(next)));
-      assert(s!=nullptr);
+      ASSERT(s!=nullptr);
 
       depst::iterator it=s->control_deps.begin();
       for(const auto &c_dep : control_deps)
@@ -363,9 +363,9 @@ void dependence_grapht::add_dep(
   goto_programt::const_targett to)
 {
   const node_indext n_from=state_map[from].get_node_id();
-  assert(n_from<size());
+  ASSERT(n_from<size());
   const node_indext n_to=state_map[to].get_node_id();
-  assert(n_to<size());
+  ASSERT(n_to<size());
 
   // add_edge is redundant as the subsequent operations also insert
   // entries into the edge maps (implicitly)

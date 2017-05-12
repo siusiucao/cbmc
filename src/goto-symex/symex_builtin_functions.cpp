@@ -109,10 +109,10 @@ void goto_symext::symex_malloc(
           if(s.is_constant())
           {
             s=tmp_size.op1();
-            assert(c_sizeof_type_rec(tmp_size.op0())==tmp_type);
+            ASSERT(c_sizeof_type_rec(tmp_size.op0())==tmp_type);
           }
           else
-            assert(c_sizeof_type_rec(tmp_size.op1())==tmp_type);
+            ASSERT(c_sizeof_type_rec(tmp_size.op1())==tmp_type);
 
           object_type=array_typet(tmp_type, s);
         }
@@ -287,15 +287,15 @@ irep_idt get_string_argument_rec(const exprt &src)
 {
   if(src.id()==ID_typecast)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     return get_string_argument_rec(src.op0());
   }
   else if(src.id()==ID_address_of)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     if(src.op0().id()==ID_index)
     {
-      assert(src.op0().operands().size()==2);
+      ASSERT(src.op0().operands().size()==2);
 
       if(src.op0().op0().id()==ID_string_constant &&
          src.op0().op1().is_zero())

@@ -182,7 +182,7 @@ std::ostream &goto_programt::output_instruction(
       unsigned i=0;
       const irept::subt &exception_list=
         instruction.code.find(ID_exception_list).get_sub();
-      assert(instruction.targets.size()==exception_list.size());
+      ASSERT(instruction.targets.size()==exception_list.size());
       for(instructiont::targetst::const_iterator
           gt_it=instruction.targets.begin();
           gt_it!=instruction.targets.end();
@@ -248,8 +248,8 @@ void goto_programt::get_decl_identifiers(
   {
     if(it->is_decl())
     {
-      assert(it->code.get_statement()==ID_decl);
-      assert(it->code.operands().size()==1);
+      ASSERT(it->code.get_statement()==ID_decl);
+      ASSERT(it->code.operands().size()==1);
       const symbol_exprt &symbol_expr=to_symbol_expr(it->code.op0());
       decl_identifiers.insert(symbol_expr.get_identifier());
     }
@@ -272,23 +272,23 @@ void parse_lhs_read(const exprt &src, std::list<exprt> &dest)
 {
   if(src.id()==ID_dereference)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     dest.push_back(src.op0());
   }
   else if(src.id()==ID_index)
   {
-    assert(src.operands().size()==2);
+    ASSERT(src.operands().size()==2);
     dest.push_back(src.op1());
     parse_lhs_read(src.op0(), dest);
   }
   else if(src.id()==ID_member)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     parse_lhs_read(src.op0(), dest);
   }
   else if(src.id()==ID_if)
   {
-    assert(src.operands().size()==3);
+    ASSERT(src.operands().size()==3);
     dest.push_back(src.op0());
     parse_lhs_read(src.op1(), dest);
     parse_lhs_read(src.op2(), dest);
@@ -417,7 +417,7 @@ void objects_read(
   else if(src.id()==ID_dereference)
   {
     // this reads what is pointed to plus the pointer
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     dest.push_back(src);
     objects_read(src.op0(), dest);
   }
@@ -471,7 +471,7 @@ void objects_written(
 {
   if(src.id()==ID_if)
   {
-    assert(src.operands().size()==3);
+    ASSERT(src.operands().size()==3);
     objects_written(src.op1(), dest);
     objects_written(src.op2(), dest);
   }

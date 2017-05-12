@@ -36,13 +36,13 @@ public:
 
 inline template_typet &to_template_type(typet &type)
 {
-  assert(type.id()==ID_template);
+  ASSERT(type.id()==ID_template);
   return static_cast<template_typet &>(type);
 }
 
 inline const template_typet &to_template_type(const typet &type)
 {
-  assert(type.id()==ID_template);
+  ASSERT(type.id()==ID_template);
   return static_cast<const template_typet &>(type);
 }
 

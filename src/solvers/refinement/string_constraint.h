@@ -96,13 +96,13 @@ public:
 
 extern inline const string_constraintt &to_string_constraint(const exprt &expr)
 {
-  assert(expr.id()==ID_string_constraint && expr.operands().size()==5);
+  ASSERT(expr.id()==ID_string_constraint && expr.operands().size()==5);
   return static_cast<const string_constraintt &>(expr);
 }
 
 extern inline string_constraintt &to_string_constraint(exprt &expr)
 {
-  assert(expr.id()==ID_string_constraint && expr.operands().size()==5);
+  ASSERT(expr.id()==ID_string_constraint && expr.operands().size()==5);
   return static_cast<string_constraintt &>(expr);
 }
 
@@ -166,16 +166,16 @@ public:
 inline const string_not_contains_constraintt
 &to_string_not_contains_constraint(const exprt &expr)
 {
-  assert(expr.id()==ID_string_not_contains_constraint);
-  assert(expr.operands().size()==7);
+  ASSERT(expr.id()==ID_string_not_contains_constraint);
+  ASSERT(expr.operands().size()==7);
   return static_cast<const string_not_contains_constraintt &>(expr);
 }
 
 inline string_not_contains_constraintt
 &to_string_not_contains_constraint(exprt &expr)
 {
-  assert(expr.id()==ID_string_not_contains_constraint);
-  assert(expr.operands().size()==7);
+  ASSERT(expr.id()==ID_string_not_contains_constraint);
+  ASSERT(expr.operands().size()==7);
   return static_cast<string_not_contains_constraintt &>(expr);
 }
 

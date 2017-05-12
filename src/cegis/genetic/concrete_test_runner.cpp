@@ -91,7 +91,7 @@ void prepare_executable(bool &executable_compiled,
 }
 
 #ifdef _WIN32
-#define NOT_SUPPORTED() assert(!"task_poolt not supported on Windows.")
+#define NOT_SUPPORTED() ASSERT(!"task_poolt not supported on Windows.")
 #endif
 
 class conrete_test_runner_taskt

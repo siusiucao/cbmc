@@ -83,12 +83,12 @@ std::size_t pointer_logict::add_object(const exprt &expr)
 
   if(expr.id()==ID_index)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     return add_object(expr.op0());
   }
   else if(expr.id()==ID_member)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return add_object(expr.op0());
   }
 
@@ -172,7 +172,7 @@ exprt pointer_logict::pointer_expr(
   else if(type.id()==ID_reference)
     result=exprt("reference_to", type);
   else
-    assert(0);
+    ASSERT(0);
 
   result.copy_to_operands(deep_object);
   return result;
@@ -229,7 +229,7 @@ exprt pointer_logict::object_rec(
         it!=components.end();
         it++)
     {
-      assert(offset>=current_offset);
+      ASSERT(offset>=current_offset);
 
       const typet &subtype=it->type();
 
@@ -247,9 +247,9 @@ exprt pointer_logict::object_rec(
           offset-current_offset, pointer_type, tmp);
       }
 
-      assert(new_offset<=offset);
+      ASSERT(new_offset<=offset);
       current_offset=new_offset;
-      assert(current_offset<=offset);
+      ASSERT(current_offset<=offset);
     }
 
     return src;
@@ -276,7 +276,7 @@ pointer_logict::pointer_logict(const namespacet &_ns):ns(_ns)
 {
   // add NULL
   null_object=objects.number(exprt(ID_NULL));
-  assert(null_object==0);
+  ASSERT(null_object==0);
 
   // add INVALID
   invalid_object=objects.number(exprt("INVALID"));

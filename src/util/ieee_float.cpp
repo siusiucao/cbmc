@@ -108,8 +108,8 @@ void ieee_float_spect::from_type(const floatbv_typet &type)
 {
   std::size_t width=type.get_width();
   f=type.get_f();
-  assert(f!=0);
-  assert(f<width);
+  ASSERT(f!=0);
+  ASSERT(f<width);
   e=width-f-1;
   x86_extended=type.get_bool(ID_x86_extended);
   if(x86_extended)
@@ -206,7 +206,7 @@ Function: ieee_floatt::base10_digits
 mp_integer ieee_floatt::base10_digits(const mp_integer &src)
 {
   mp_integer tmp=src;
-  assert(tmp>=0);
+  ASSERT(tmp>=0);
   mp_integer result=0;
   while(tmp!=0) { ++result; tmp/=10; }
   return result;
@@ -385,7 +385,7 @@ std::string ieee_floatt::to_string_scientific(std::size_t precision) const
 
     std::string decimals=integer2string(_fraction);
 
-    assert(!decimals.empty());
+    ASSERT(!decimals.empty());
 
     // First add top digit to result.
     result+=decimals[0];
@@ -430,8 +430,8 @@ Function: ieee_floatt::unpack
 
 void ieee_floatt::unpack(const mp_integer &i)
 {
-  assert(spec.f!=0);
-  assert(spec.e!=0);
+  ASSERT(spec.f!=0);
+  ASSERT(spec.e!=0);
 
   {
     mp_integer tmp=i;
@@ -763,15 +763,15 @@ void ieee_floatt::align()
   {
     exponent_offset-=(spec.f-lowPower2);
 
-    assert(fraction*power(2, (spec.f-lowPower2))>=f_power);
-    assert(fraction*power(2, (spec.f-lowPower2))<f_power_next);
+    ASSERT(fraction*power(2, (spec.f-lowPower2))>=f_power);
+    ASSERT(fraction*power(2, (spec.f-lowPower2))<f_power_next);
   }
   else if(lowPower2>spec.f)  // too large
   {
     exponent_offset+=(lowPower2-spec.f);
 
-    assert(fraction/power(2, (lowPower2-spec.f))>=f_power);
-    assert(fraction/power(2, (lowPower2-spec.f))<f_power_next);
+    ASSERT(fraction/power(2, (lowPower2-spec.f))>=f_power);
+    ASSERT(fraction/power(2, (lowPower2-spec.f))<f_power_next);
   }
 
   mp_integer biased_exponent=exponent+exponent_offset+spec.bias();
@@ -904,7 +904,7 @@ void ieee_floatt::divide_and_round(
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
   }
 }
@@ -942,7 +942,7 @@ Function: operator /=
 
 ieee_floatt &ieee_floatt::operator/=(const ieee_floatt &other)
 {
-  assert(other.spec.f==spec.f);
+  ASSERT(other.spec.f==spec.f);
 
   // NaN/x = NaN
   if(NaN_flag)
@@ -1028,7 +1028,7 @@ Function: operator *=
 
 ieee_floatt &ieee_floatt::operator*=(const ieee_floatt &other)
 {
-  assert(other.spec.f==spec.f);
+  ASSERT(other.spec.f==spec.f);
 
   if(other.NaN_flag)
     make_NaN();
@@ -1078,7 +1078,7 @@ ieee_floatt &ieee_floatt::operator+=(const ieee_floatt &other)
 {
   ieee_floatt _other=other;
 
-  assert(_other.spec==spec);
+  ASSERT(_other.spec==spec);
 
   if(other.NaN_flag)
     make_NaN();
@@ -1133,7 +1133,7 @@ ieee_floatt &ieee_floatt::operator+=(const ieee_floatt &other)
     _other.exponent=exponent;
   }
 
-  assert(exponent==_other.exponent);
+  ASSERT(exponent==_other.exponent);
 
   if(sign_flag)
     fraction.negate();
@@ -1361,7 +1361,7 @@ bool ieee_floatt::ieee_equal(const ieee_floatt &other) const
     return false;
   if(is_zero() && other.is_zero())
     return true;
-  assert(spec==other.spec);
+  ASSERT(spec==other.spec);
   return *this==other;
 }
 
@@ -1419,7 +1419,7 @@ bool ieee_floatt::ieee_not_equal(const ieee_floatt &other) const
     return true; // !!!
   if(is_zero() && other.is_zero())
     return false;
-  assert(spec==other.spec);
+  ASSERT(spec==other.spec);
   return *this!=other;
 }
 
@@ -1521,10 +1521,10 @@ void ieee_floatt::from_double(const double d)
 {
   spec.f=52;
   spec.e=11;
-  assert(spec.width()==64);
+  ASSERT(spec.width()==64);
 
   // we need a 64-bit integer type for this
-  assert(sizeof(double)==sizeof(long long unsigned int));
+  ASSERT(sizeof(double)==sizeof(long long unsigned int));
 
   union
   {
@@ -1553,9 +1553,9 @@ void ieee_floatt::from_float(const float f)
 {
   spec.f=23;
   spec.e=8;
-  assert(spec.width()==32);
+  ASSERT(spec.width()==32);
 
-  assert(sizeof(float)==sizeof(unsigned int));
+  ASSERT(sizeof(float)==sizeof(unsigned int));
 
   union
   {
@@ -1732,7 +1732,7 @@ double ieee_floatt::to_double() const
   }
 
   mp_integer i=pack();
-  assert(i.is_ulong());
+  ASSERT(i.is_ulong());
 
   a.i=i.to_ulong();
   return a.f;
@@ -1777,7 +1777,7 @@ float ieee_floatt::to_float() const
   }
 
   mp_integer i=pack();
-  assert(i.is_ulong());
+  ASSERT(i.is_ulong());
 
   a.i=i.to_ulong();
   return a.f;

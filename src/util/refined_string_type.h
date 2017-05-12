@@ -27,7 +27,7 @@ public:
   // Type for the content (list of characters) of a string
   const array_typet &get_content_type() const
   {
-    assert(components().size()==2);
+    ASSERT(components().size()==2);
     return to_array_type(components()[1].type());
   }
 
@@ -38,7 +38,7 @@ public:
 
   const typet &get_index_type() const
   {
-    assert(components().size()==2);
+    ASSERT(components().size()==2);
     return components()[0].type();
   }
 
@@ -53,7 +53,7 @@ public:
 extern inline const refined_string_typet &to_refined_string_type(
   const typet &type)
 {
-  assert(refined_string_typet::is_refined_string_type(type));
+  ASSERT(refined_string_typet::is_refined_string_type(type));
   return static_cast<const refined_string_typet &>(type);
 }
 

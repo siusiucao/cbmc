@@ -90,6 +90,6 @@ void *prepare_fitness_tester_library(fitness_lib_handlet &handle,
   }
   return func_result;
 #else
-  assert(!"Dynamic library loading currently not supported on Windows.");
+  ASSERT(!"Dynamic library loading currently not supported on Windows.");
 #endif
 }

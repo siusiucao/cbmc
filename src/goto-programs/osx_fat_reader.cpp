@@ -70,7 +70,7 @@ osx_fat_readert::osx_fat_readert(std::ifstream &in) :
   if(!is_osx_fat_magic(reinterpret_cast<char*>(&(fh.magic))))
     throw "OSX fat header malformed (magic)"; // NOLINT(readability/throw)
 
-  assert(sizeof(fh.nfat_arch)==4);
+  ASSERT(sizeof(fh.nfat_arch)==4);
   unsigned narch=__builtin_bswap32(fh.nfat_arch);
 
   for(unsigned i=0; !has_gb_arch && i<narch; ++i)
@@ -80,7 +80,7 @@ osx_fat_readert::osx_fat_readert(std::ifstream &in) :
     // NOLINTNEXTLINE(readability/identifiers)
     in.read(reinterpret_cast<char*>(&fa), sizeof(struct fat_arch));
 
-    assert(sizeof(fa.cputype)==4 &&
+    ASSERT(sizeof(fa.cputype)==4 &&
            sizeof(fa.cpusubtype)==4 &&
            sizeof(fa.size)==4);
     int cputype=__builtin_bswap32(fa.cputype);
@@ -110,7 +110,7 @@ bool osx_fat_readert::extract_gb(
   const std::string &source,
   const std::string &dest) const
 {
-  assert(has_gb_arch);
+  ASSERT(has_gb_arch);
 
   std::string command=
     "lipo -thin hppa7100LC -output \""+dest+"\" \""+source+"\"";

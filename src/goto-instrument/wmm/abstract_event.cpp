@@ -78,7 +78,7 @@ bool abstract_eventt::unsafe_pair_lwfence_param(const abstract_eventt &next,
     {
     }
   }
-  assert(false);
+  ASSERT(false);
   /* unknown memory model */
   return true;
 }
@@ -143,7 +143,7 @@ bool abstract_eventt::unsafe_pair_asm(const abstract_eventt &next,
     {
     }
   }
-  assert(false);
+  ASSERT(false);
   /* unknown memory model */
   return true;
 }

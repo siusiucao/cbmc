@@ -95,6 +95,6 @@ void invariant_extract_counterexample(counterexamplet &result,
     extract(*it);
   extract.finalise();
   const size_t new_entries=result.size() - existing_entries;
-  assert(new_entries == quantifiers.size());
-  assert(extract.is_done());
+  ASSERT(new_entries == quantifiers.size());
+  ASSERT(extract.is_done());
 }

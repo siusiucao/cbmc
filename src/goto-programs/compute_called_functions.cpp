@@ -33,7 +33,7 @@ void compute_address_taken_functions(
      src.type().id()==ID_pointer &&
      src.type().subtype().id()==ID_code)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     const exprt &op=src.op0();
     if(op.id()==ID_symbol)
       address_taken.insert(to_symbol_expr(op).get_identifier());

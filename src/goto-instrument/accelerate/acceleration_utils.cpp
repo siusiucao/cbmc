@@ -379,7 +379,7 @@ bool acceleration_utilst::do_assumptions(
   // ...
   //
   // assume(no overflows in above program)
-  // assert(!precondition);
+  // ASSERT(!precondition);
 
   exprt condition=precondition(path);
   scratch_programt program(symbol_table);
@@ -719,7 +719,7 @@ bool acceleration_utilst::do_arrays(
         }
         else
         {
-          assert(!"ITSALLGONEWRONG");
+          ASSERT(!"ITSALLGONEWRONG");
         }
 
         or_exprt unchanged_by_this_one(

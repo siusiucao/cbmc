@@ -114,14 +114,14 @@ public:
 
   local_may_aliast &operator()(const irep_idt &fkt)
   {
-    assert(goto_functions!=NULL);
+    ASSERT(goto_functions!=NULL);
     fkt_mapt::iterator f_it=fkt_map.find(fkt);
     if(f_it!=fkt_map.end())
       return *f_it->second;
 
     goto_functionst::function_mapt::const_iterator f_it2=
       goto_functions->function_map.find(fkt);
-    assert(f_it2!=goto_functions->function_map.end());
+    ASSERT(f_it2!=goto_functions->function_map.end());
     return *(fkt_map[fkt]=std::unique_ptr<local_may_aliast>(
               new local_may_aliast(f_it2->second)));
   }
@@ -130,7 +130,7 @@ public:
   {
     target_mapt::const_iterator t_it=
       target_map.find(t);
-    assert(t_it!=target_map.end());
+    ASSERT(t_it!=target_map.end());
     return operator()(t_it->second);
   }
 

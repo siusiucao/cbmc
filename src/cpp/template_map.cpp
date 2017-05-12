@@ -252,14 +252,14 @@ void template_mapt::build(
   }
 
   // these should have been typechecked before
-  assert(instance.size()==template_parameters.size());
+  ASSERT(instance.size()==template_parameters.size());
 
   for(cpp_template_args_tct::argumentst::const_iterator
       i_it=instance.begin();
       i_it!=instance.end();
       i_it++, t_it++)
   {
-    assert(t_it!=template_parameters.end());
+    ASSERT(t_it!=template_parameters.end());
     set(*t_it, *i_it);
   }
 }
@@ -283,7 +283,7 @@ void template_mapt::set(
   if(parameter.id()==ID_type)
   {
     if(parameter.id()!=ID_type)
-      assert(false); // typechecked before!
+      ASSERT(false); // typechecked before!
 
     typet tmp=value.type();
 
@@ -295,7 +295,7 @@ void template_mapt::set(
     // must be non-type
 
     if(value.id()==ID_type)
-      assert(false); // typechecked before!
+      ASSERT(false); // typechecked before!
 
     irep_idt identifier=parameter.get(ID_identifier);
     expr_map[identifier]=value;

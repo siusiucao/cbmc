@@ -115,39 +115,39 @@ const boolbv_widtht::entryt &boolbv_widtht::get_entry(const typet &type) const
   else if(type_id==ID_c_bool)
   {
     entry.total_width=to_c_bool_type(type).get_width();
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_signedbv)
   {
     entry.total_width=to_signedbv_type(type).get_width();
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_unsignedbv)
   {
     entry.total_width=to_unsignedbv_type(type).get_width();
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_floatbv)
   {
     entry.total_width=to_floatbv_type(type).get_width();
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_fixedbv)
   {
     entry.total_width=to_fixedbv_type(type).get_width();
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_bv)
   {
     entry.total_width=to_bv_type(type).get_width();
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_verilog_signedbv ||
           type_id==ID_verilog_unsignedbv)
   {
     // we encode with two bits
     entry.total_width=type.get_unsigned_int(ID_width)*2;
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_range)
   {
@@ -159,7 +159,7 @@ const boolbv_widtht::entryt &boolbv_widtht::get_entry(const typet &type) const
     if(size>=1)
     {
       entry.total_width=integer2unsigned(address_bits(size));
-      assert(entry.total_width!=0);
+      ASSERT(entry.total_width!=0);
     }
   }
   else if(type_id==ID_array)
@@ -217,13 +217,13 @@ const boolbv_widtht::entryt &boolbv_widtht::get_entry(const typet &type) const
     // get number of necessary bits
     std::size_t size=to_enumeration_type(type).elements().size();
     entry.total_width=integer2unsigned(address_bits(size));
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_c_enum)
   {
     // these have a subtype
     entry.total_width=type.subtype().get_unsigned_int(ID_width);
-    assert(entry.total_width!=0);
+    ASSERT(entry.total_width!=0);
   }
   else if(type_id==ID_incomplete_c_enum)
   {

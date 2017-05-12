@@ -270,8 +270,8 @@ Function: grapht::add_undirected_edge
 template<class N>
 void grapht<N>::add_undirected_edge(node_indext a, node_indext b)
 {
-  assert(a<nodes.size());
-  assert(b<nodes.size());
+  ASSERT(a<nodes.size());
+  ASSERT(b<nodes.size());
   nodet &na=nodes[a];
   nodet &nb=nodes[b];
   na.add_out(b);
@@ -455,7 +455,7 @@ void grapht<N>::shortest_path(
     path.push_front(dest);
     if(distance[dest]==0 ||
        previous[dest]==src) break; // we are there
-    assert(dest!=previous[dest]);
+    ASSERT(dest!=previous[dest]);
     dest=previous[dest];
   }
 }
@@ -597,7 +597,7 @@ void grapht<N>::tarjan(tarjant &t, node_indext v)
   {
     while(true)
     {
-      assert(!t.scc_stack.empty());
+      ASSERT(!t.scc_stack.empty());
       node_indext vp=t.scc_stack.top();
       t.scc_stack.pop();
       t.in_scc[vp]=false;

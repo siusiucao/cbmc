@@ -30,7 +30,7 @@ public:
   {
     if(d!=NULL)
     {
-      assert(d->ref_count!=0);
+      ASSERT(d->ref_count!=0);
       d->ref_count++;
       #ifdef REFERENCE_COUNTING_DEBUG
       std::cout << "COPY " << d << " " << d->ref_count << std::endl;
@@ -93,7 +93,7 @@ protected:
 
   void copy_from(const reference_counting &other)
   {
-    assert(&other!=this); // check if we assign to ourselves
+    ASSERT(&other!=this); // check if we assign to ourselves
 
     #ifdef REFERENCE_COUNTING_DEBUG
     std::cout << "COPY " << (&other) << "\n";
@@ -118,7 +118,7 @@ void reference_counting<T>::remove_ref(dt *old_d)
   if(old_d==NULL)
     return;
 
-  assert(old_d->ref_count!=0);
+  ASSERT(old_d->ref_count!=0);
 
   #ifdef REFERENCE_COUNTING_DEBUG
   std::cout << "R: " << old_d << " " << old_d->ref_count << std::endl;
@@ -169,7 +169,7 @@ void reference_counting<T>::detatch()
     remove_ref(old_d);
   }
 
-  assert(d->ref_count==1);
+  ASSERT(d->ref_count==1);
 
   #ifdef REFERENCE_COUNTING_DEBUG
   std::cout << "DETATCH2: " << d << std::endl;

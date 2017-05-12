@@ -41,7 +41,7 @@ Function: cbmc_solverst::get_smt1_solver_type
 
 smt1_dect::solvert cbmc_solverst::get_smt1_solver_type() const
 {
-  assert(options.get_bool_option("smt1"));
+  ASSERT(options.get_bool_option("smt1"));
 
   smt1_dect::solvert s=smt1_dect::GENERIC;
 
@@ -79,7 +79,7 @@ Function: cbmc_solverst::get_smt2_solver_type
 
 smt2_dect::solvert cbmc_solverst::get_smt2_solver_type() const
 {
-  assert(options.get_bool_option("smt2"));
+  ASSERT(options.get_bool_option("smt2"));
 
   smt2_dect::solvert s=smt2_dect::GENERIC;
 

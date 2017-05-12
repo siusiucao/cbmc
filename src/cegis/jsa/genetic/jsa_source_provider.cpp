@@ -81,7 +81,7 @@ void add_temp_clean(std::string &result, const symbol_tablet &st)
 {
   result+="void __CPROVER_jsa_internal__clear_temps(void)\n{\n";
   const size_t num_temps=count_tmps(st);
-  assert(num_temps >= 1);
+  ASSERT(num_temps >= 1);
   for (size_t i=1; i <= num_temps; ++i)
   {
     result+="  *" JSA_PRED_RES_OPS "[";

@@ -49,7 +49,7 @@ void jar_filet::open(
       char *filename_char=new char[filename_length+1];
       mz_uint filename_len=
         mz_zip_reader_get_filename(&zip, i, filename_char, filename_length);
-      assert(filename_length==filename_len);
+      ASSERT(filename_length==filename_len);
       std::string file_name(filename_char);
 
       // non-class files are loaded in any case
@@ -109,7 +109,7 @@ std::string jar_filet::get_entry(const irep_idt &name)
   std::string dest;
 
   auto entry=filtered_jar.find(name);
-  assert(entry!=filtered_jar.end());
+  ASSERT(entry!=filtered_jar.end());
 
   size_t real_index=entry->second;
   mz_zip_archive_file_stat file_stat;

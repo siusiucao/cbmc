@@ -349,7 +349,7 @@ void boolbvt::convert_with_union(
   }
   else
   {
-    assert(
+    ASSERT(
       config.ansi_c.endianness==configt::ansi_ct::endiannesst::IS_BIG_ENDIAN);
 
     endianness_mapt map_u(type, false, ns);

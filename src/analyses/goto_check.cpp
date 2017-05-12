@@ -545,7 +545,7 @@ void goto_checkt::integer_overflow_check(
 
   if(expr.id()==ID_div)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     // undefined for signed division INT_MIN/-1
     if(type.id()==ID_signedbv)
@@ -676,7 +676,7 @@ void goto_checkt::float_overflow_check(
   {
     // Can overflow if casting from larger
     // to smaller type.
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     if(ns.follow(expr.op0().type()).id()==ID_floatbv)
     {
@@ -712,7 +712,7 @@ void goto_checkt::float_overflow_check(
   }
   else if(expr.id()==ID_div)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     // Can overflow if dividing by something small
     unary_exprt new_inf(ID_isinf, expr, bool_typet());
@@ -769,7 +769,7 @@ void goto_checkt::float_overflow_check(
     }
     else if(expr.operands().size()>=3)
     {
-      assert(expr.id()!=ID_minus);
+      ASSERT(expr.id()!=ID_minus);
 
       // break up
       exprt tmp=make_binary(expr);
@@ -814,7 +814,7 @@ void goto_checkt::nan_check(
 
   if(expr.id()==ID_div)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     // there a two ways to get a new NaN on division:
     // 0/0 = NaN and x/inf = NaN
@@ -832,7 +832,7 @@ void goto_checkt::nan_check(
     if(expr.operands().size()>=3)
       return nan_check(make_binary(expr), guard);
 
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     // Inf * 0 is NaN
     exprt inf_times_zero=and_exprt(
@@ -850,7 +850,7 @@ void goto_checkt::nan_check(
     if(expr.operands().size()>=3)
       return nan_check(make_binary(expr), guard);
 
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     // -inf + +inf = NaN and +inf + -inf = NaN,
     // i.e., signs differ
@@ -869,7 +869,7 @@ void goto_checkt::nan_check(
   }
   else if(expr.id()==ID_minus)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     // +inf - +inf = NaN and -inf - -inf = NaN,
     // i.e., signs match
 
@@ -887,7 +887,7 @@ void goto_checkt::nan_check(
           equal_exprt(expr.op1(), minus_inf)));
   }
   else
-    assert(false);
+    ASSERT(false);
 
   isnan.make_not();
 
@@ -1006,7 +1006,7 @@ void goto_checkt::pointer_validity_check(
   const pointer_typet &pointer_type=
     to_pointer_type(ns.follow(pointer.type()));
 
-  assert(base_type_eq(pointer_type.subtype(), expr.type(), ns));
+  ASSERT(base_type_eq(pointer_type.subtype(), expr.type(), ns));
 
   local_bitvector_analysist::flagst flags=
     local_bitvector_analysis->get(t, pointer);
@@ -1201,13 +1201,13 @@ void goto_checkt::bounds_check(
         {
           exprt p_offset=pointer_offset(
             to_dereference_expr(ode.root_object()).pointer());
-          assert(p_offset.type()==effective_offset.type());
+          ASSERT(p_offset.type()==effective_offset.type());
 
           effective_offset=plus_exprt(p_offset, effective_offset);
         }
 
         exprt zero=from_integer(0, ode.offset().type());
-        assert(zero.is_not_nil());
+        ASSERT(zero.is_not_nil());
 
         // the final offset must not be negative
         binary_relation_exprt inequality(effective_offset, ID_ge, zero);
@@ -1237,8 +1237,8 @@ void goto_checkt::bounds_check(
 
     plus_exprt effective_offset(ode.offset(), pointer_offset(pointer));
 
-    assert(effective_offset.op0().type()==effective_offset.op1().type());
-    assert(effective_offset.type()==size.type());
+    ASSERT(effective_offset.op0().type()==effective_offset.op1().type());
+    ASSERT(effective_offset.type()==size.type());
 
     binary_relation_exprt inequality(effective_offset, ID_lt, size);
 
@@ -1388,12 +1388,12 @@ void goto_checkt::check_rec(
   {
     if(expr.id()==ID_dereference)
     {
-      assert(expr.operands().size()==1);
+      ASSERT(expr.operands().size()==1);
       check_rec(expr.op0(), guard, false, mode);
     }
     else if(expr.id()==ID_index)
     {
-      assert(expr.operands().size()==2);
+      ASSERT(expr.operands().size()==2);
       check_rec(expr.op0(), guard, true, mode);
       check_rec(expr.op1(), guard, false, mode);
     }
@@ -1407,7 +1407,7 @@ void goto_checkt::check_rec(
 
   if(expr.id()==ID_address_of)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     check_rec(expr.op0(), guard, true, mode);
     return;
   }
@@ -1749,7 +1749,7 @@ void goto_checkt::goto_check(
     {
       if(enable_pointer_check)
       {
-        assert(i.code.operands().size()==1);
+        ASSERT(i.code.operands().size()==1);
         const symbol_exprt &variable=to_symbol_expr(i.code.op0());
 
         // is it dirty?

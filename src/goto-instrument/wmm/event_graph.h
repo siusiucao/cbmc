@@ -179,7 +179,7 @@ public:
       {
         critical_cyclet reduced(egraph, id);
         this->hide_internals(reduced);
-        assert(reduced.size()>0);
+        ASSERT(reduced.size()>0);
         return print_name(reduced, model);
       }
       else
@@ -370,7 +370,7 @@ public:
   {
     const event_idt po_no = po_graph.add_node();
     const event_idt com_no = com_graph.add_node();
-    assert(po_no == com_no);
+    ASSERT(po_no == com_no);
     return po_no;
   }
 
@@ -416,8 +416,8 @@ public:
 
   void add_po_edge(event_idt a, event_idt b)
   {
-    assert(a!=b);
-    assert(operator[](a).thread==operator[](b).thread);
+    ASSERT(a!=b);
+    ASSERT(operator[](a).thread==operator[](b).thread);
     po_graph.add_edge(a, b);
     po_order.push_back(a);
     poUrfe_order.push_back(a);
@@ -425,8 +425,8 @@ public:
 
   void add_po_back_edge(event_idt a, event_idt b)
   {
-    assert(a!=b);
-    assert(operator[](a).thread==operator[](b).thread);
+    ASSERT(a!=b);
+    ASSERT(operator[](a).thread==operator[](b).thread);
     po_graph.add_edge(a, b);
     po_order.push_back(a);
     poUrfe_order.push_back(a);
@@ -436,14 +436,14 @@ public:
 
   void add_com_edge(event_idt a, event_idt b)
   {
-    assert(a!=b);
+    ASSERT(a!=b);
     com_graph.add_edge(a, b);
     poUrfe_order.push_back(a);
   }
 
   void add_undirected_com_edge(event_idt a, event_idt b)
   {
-    assert(a!=b);
+    ASSERT(a!=b);
     add_com_edge(a, b);
     add_com_edge(b, a);
   }

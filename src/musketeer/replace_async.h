@@ -38,7 +38,7 @@ void replace_async(
 
           if(ns.lookup(fsym.get_identifier()).base_name == "pthread_create")
           {
-            assert(fct.arguments().size()>=4);
+            ASSERT(fct.arguments().size()>=4);
             code_function_callt new_call;
             /* takes the 3rd argument (pointer to the function to call) */
             const exprt &fct_name=fct.arguments()[2];

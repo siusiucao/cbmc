@@ -300,8 +300,8 @@ void cpp_typecheckt::default_cpctor(
   const irept &bases=symbol.type.find(ID_bases);
   forall_irep(parent_it, bases.get_sub())
   {
-    assert(parent_it->id()==ID_base);
-    assert(parent_it->get(ID_type)==ID_symbol);
+    ASSERT(parent_it->id()==ID_base);
+    ASSERT(parent_it->get(ID_type)==ID_symbol);
 
     const symbolt &parsymb=
       lookup(parent_it->find(ID_type).get(ID_identifier));
@@ -356,7 +356,7 @@ void cpp_typecheckt::default_cpctor(
 
       exprt var=virtual_table_symbol_var.symbol_expr();
       address_of_exprt address(var);
-      assert(address.type()==mem_it->type());
+      ASSERT(address.type()==mem_it->type());
 
       already_typechecked(address);
 
@@ -522,8 +522,8 @@ void cpp_typecheckt::default_assignop_value(
 
   forall_irep(parent_it, bases.get_sub())
   {
-    assert(parent_it->id()==ID_base);
-    assert(parent_it->get(ID_type)==ID_symbol);
+    ASSERT(parent_it->id()==ID_base);
+    ASSERT(parent_it->get(ID_type)==ID_symbol);
 
     const symbolt &symb=
       lookup(parent_it->find(ID_type).get(ID_identifier));
@@ -560,8 +560,8 @@ void cpp_typecheckt::default_assignop_value(
 
       mp_integer size;
       bool to_int=to_integer(size_expr, size);
-      assert(!to_int);
-      assert(size>=0);
+      ASSERT(!to_int);
+      ASSERT(size>=0);
 
       exprt::operandst empty_operands;
       for(mp_integer i=0; i < size; ++i)
@@ -603,14 +603,14 @@ void cpp_typecheckt::check_member_initializers(
   const struct_typet::componentst &components,
   const irept &initializers)
 {
-  assert(initializers.id()==ID_member_initializers);
+  ASSERT(initializers.id()==ID_member_initializers);
 
   forall_irep(init_it, initializers.get_sub())
   {
     const irept &initializer=*init_it;
-    assert(initializer.is_not_nil());
+    ASSERT(initializer.is_not_nil());
 
-    assert(initializer.get(ID_member)==ID_cpp_name);
+    ASSERT(initializer.get(ID_member)==ID_cpp_name);
 
     const cpp_namet &member_name=
       to_cpp_name(initializer.find(ID_member));
@@ -627,7 +627,7 @@ void cpp_typecheckt::check_member_initializers(
       bool ok=false;
       forall_irep(parent_it, bases.get_sub())
       {
-        assert(parent_it->get(ID_type)==ID_symbol);
+        ASSERT(parent_it->get(ID_type)==ID_symbol);
 
         if(member_type.get(ID_identifier)
           ==parent_it->find(ID_type).get(ID_identifier))
@@ -681,7 +681,7 @@ void cpp_typecheckt::check_member_initializers(
         // check for a direct parent
         forall_irep(parent_it, bases.get_sub())
         {
-          assert(parent_it->get(ID_type)==ID_symbol);
+          ASSERT(parent_it->get(ID_type)==ID_symbol);
           if(symb.name==parent_it->find(ID_type).get(ID_identifier))
           {
             ok=true;
@@ -704,7 +704,7 @@ void cpp_typecheckt::check_member_initializers(
         // check for a direct parent
         forall_irep(parent_it, bases.get_sub())
         {
-          assert(parent_it->get(ID_type)==ID_symbol);
+          ASSERT(parent_it->get(ID_type)==ID_symbol);
 
           if(member_type.get(ID_identifier)==
              parent_it->find(ID_type).get(ID_identifier))
@@ -750,7 +750,7 @@ void cpp_typecheckt::full_member_initialization(
   const struct_union_typet::componentst &components=
     struct_union_type.components();
 
-  assert(initializers.id()==ID_member_initializers);
+  ASSERT(initializers.id()==ID_member_initializers);
 
   irept final_initializers(ID_member_initializers);
 
@@ -804,8 +804,8 @@ void cpp_typecheckt::full_member_initialization(
     // Subsequenlty, we need to call the non-POD parent constructors
     forall_irep(parent_it, bases.get_sub())
     {
-      assert(parent_it->id()==ID_base);
-      assert(parent_it->get(ID_type)==ID_symbol);
+      ASSERT(parent_it->id()==ID_base);
+      ASSERT(parent_it->get(ID_type)==ID_symbol);
 
       const symbolt &ctorsymb=
         lookup(parent_it->find(ID_type).get(ID_identifier));
@@ -823,7 +823,7 @@ void cpp_typecheckt::full_member_initialization(
       {
         irept initializer=*m_it;
 
-        assert(initializer.get(ID_member)==ID_cpp_name);
+        ASSERT(initializer.get(ID_member)==ID_cpp_name);
 
         const cpp_namet &member_name=
           to_cpp_name(initializer.find(ID_member));
@@ -931,7 +931,7 @@ void cpp_typecheckt::full_member_initialization(
 
       exprt var=virtual_table_symbol_var.symbol_expr();
       address_of_exprt address(var);
-      assert(address.type()==mem_it->type());
+      ASSERT(address.type()==mem_it->type());
 
       already_typechecked(address);
 

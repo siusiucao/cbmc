@@ -41,7 +41,7 @@ void fix_result_ops(random_crosst::programt::value_type &instr,
 void random_crosst::operator ()(const individualst &parents,
     const individualst &children)
 {
-  assert(parents.size() >= 2 && children.size() >= 2);
+  ASSERT(parents.size() >= 2 && children.size() >= 2);
   const populationt::value_type &father=*parents.front();
   const populationt::value_type &mother=*parents[1u];
   populationt::value_type &son=*children.front();
@@ -76,15 +76,15 @@ void random_crosst::operator ()(const individualst &parents,
   size_t mo_lower=father_offset + m_sz;
   mo_lower=mo_lower <= child_max ? 0u : mo_lower - child_max;
   const size_t mo_upper=std::min(m_sz, child_max + father_offset - f_sz);
-  assert(mo_upper >= mo_lower);
+  ASSERT(mo_upper >= mo_lower);
   const size_t mo_range=mo_upper - mo_lower + 1;
   const size_t mother_offset=
       mo_range ? mo_lower + random.rand() % mo_range : 0u;
 
   s_prog.resize(father_offset + m_sz - mother_offset);
   d_prog.resize(mother_offset + f_sz - father_offset);
-  assert(!s_prog.empty());
-  assert(!d_prog.empty());
+  ASSERT(!s_prog.empty());
+  ASSERT(!d_prog.empty());
   std::copy(f_prog.begin(), f_prog.begin() + father_offset, s_prog.begin());
   std::copy(m_prog.begin(), m_prog.begin() + mother_offset, d_prog.begin());
   const size_t num_vars=random.get_num_vars();

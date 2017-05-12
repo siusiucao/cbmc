@@ -49,7 +49,7 @@ bool find_superclass_with_type(
   const typet &target_type,
   const namespacet &ns)
 {
-  assert(ptr.type().id()==ID_pointer);
+  ASSERT(ptr.type().id()==ID_pointer);
   while(true)
   {
     const typet ptr_base=ns.follow(ptr.type().subtype());
@@ -93,7 +93,7 @@ static const exprt &look_through_casts(const exprt &in)
 {
   if(in.id()==ID_typecast)
   {
-    assert(in.type().id()==ID_pointer);
+    ASSERT(in.type().id()==ID_pointer);
     return look_through_casts(in.op0());
   }
   else
@@ -120,7 +120,7 @@ exprt make_clean_pointer_cast(
   const typet &target_type,
   const namespacet &ns)
 {
-  assert(
+  ASSERT(
     target_type.id()==ID_pointer &&
     "Non-pointer target in make_clean_pointer_cast?");
 
@@ -138,14 +138,14 @@ exprt make_clean_pointer_cast(
   exprt bare_ptr=ptr;
   while(bare_ptr.id()==ID_typecast)
   {
-    assert(
+    ASSERT(
       bare_ptr.type().id()==ID_pointer &&
       "Non-pointer in make_clean_pointer_cast?");
     if(bare_ptr.type().subtype()==empty_typet())
       bare_ptr=bare_ptr.op0();
   }
 
-  assert(
+  ASSERT(
     bare_ptr.type().id()==ID_pointer &&
     "Non-pointer in make_clean_pointer_cast?");
 

@@ -139,7 +139,7 @@ Function: natural_loops_templatet::compute_natural_loop
 template<class P, class T>
 void natural_loops_templatet<P, T>::compute_natural_loop(T m, T n)
 {
-  assert(n->location_number<=m->location_number);
+  ASSERT(n->location_number<=m->location_number);
 
   std::stack<T> stack;
 

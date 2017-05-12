@@ -291,7 +291,7 @@ void interval_domaint::assume_rec(
   // we now have lhs <  rhs or
   //             lhs <= rhs
 
-  assert(id==ID_lt || id==ID_le);
+  ASSERT(id==ID_lt || id==ID_le);
 
   #ifdef DEBUG
   std::cout << "assume_rec: "
@@ -416,7 +416,7 @@ void interval_domaint::assume_rec(
      cond.id()==ID_gt || cond.id()==ID_ge ||
      cond.id()==ID_equal || cond.id()==ID_notequal)
   {
-    assert(cond.operands().size()==2);
+    ASSERT(cond.operands().size()==2);
 
     if(negation) // !x<y  ---> x>=y
     {

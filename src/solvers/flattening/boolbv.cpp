@@ -46,7 +46,7 @@ bool boolbvt::literal(
 {
   if(expr.type().id()==ID_bool)
   {
-    assert(bit==0);
+    ASSERT(bit==0);
     return prop_conv_solvert::literal(expr, dest);
   }
   else
@@ -64,7 +64,7 @@ bool boolbvt::literal(
 
       const boolbv_mapt::map_entryt &map_entry=it_m->second;
 
-      assert(bit<map_entry.literal_map.size());
+      ASSERT(bit<map_entry.literal_map.size());
       if(!map_entry.literal_map[bit].is_set)
         return true;
 
@@ -158,7 +158,7 @@ const bvt &boolbvt::convert_bv(const exprt &expr)
     if(it->var_no()==literalt::unused_var_no())
     {
       error() << "unused_var_no: " << expr.pretty() << eom;
-      assert(false);
+      ASSERT(false);
     }
   }
 
@@ -286,7 +286,7 @@ bvt boolbvt::convert_bitvector(const exprt &expr)
     return convert_unary_minus(to_unary_expr(expr));
   else if(expr.id()==ID_unary_plus)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return convert_bitvector(expr.op0());
   }
   else if(expr.id()==ID_abs)
@@ -341,7 +341,7 @@ bvt boolbvt::convert_bitvector(const exprt &expr)
   else if(expr.id()==ID_float_debug1 ||
           expr.id()==ID_float_debug2)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     bvt bv0=convert_bitvector(expr.op0());
     bvt bv1=convert_bitvector(expr.op1());
     float_utilst float_utils(prop, to_floatbv_type(expr.type()));
@@ -485,7 +485,7 @@ bvt boolbvt::convert_symbol(const exprt &expr)
         !it->is_constant())
       {
         error() << identifier << eom;
-        assert(false);
+        ASSERT(false);
       }
   }
 

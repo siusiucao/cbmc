@@ -55,7 +55,7 @@ public:
     if (ROP == component) expr=from_integer(instr.result_op, type);
     else if (OP0 == component) expr=from_integer(instr.op0, type);
     else if (OP1 == component) expr=from_integer(instr.op1, type);
-    else assert(!"Illegal compound member");
+    else ASSERT(!"Illegal compound member");
   }
 };
 }
@@ -105,7 +105,7 @@ public:
     if (OP0 == member) expr=from_integer(instr.op0, expr.type());
     else if (OP1 == member) expr=from_integer(instr.op1, expr.type());
     else if (OPCODE == member) expr=from_integer(instr.opcode, expr.type());
-    else assert(!"Illegal compound member");
+    else ASSERT(!"Illegal compound member");
   }
 
   virtual void operator()(exprt &expr)

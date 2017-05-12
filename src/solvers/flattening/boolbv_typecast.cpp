@@ -116,7 +116,7 @@ bool boolbvt::type_conversion(
         upper,
         ns.follow(dest_type.subtype()),
         upper_res);
-      assert(lower_res.size()+upper_res.size()==dest_width);
+      ASSERT(lower_res.size()+upper_res.size()==dest_width);
       dest=lower_res;
       dest.insert(dest.end(), upper_res.begin(), upper_res.end());
       return false;
@@ -125,7 +125,7 @@ bool boolbvt::type_conversion(
 
   if(src_type.id()==ID_complex)
   {
-    assert(dest_type.id()!=ID_complex);
+    ASSERT(dest_type.id()!=ID_complex);
     if(dest_type.id()==ID_signedbv ||
        dest_type.id()==ID_unsignedbv ||
        dest_type.id()==ID_floatbv ||
@@ -210,7 +210,7 @@ bool boolbvt::type_conversion(
         return false;
 
       case IS_BV:
-        assert(src_width==dest_width);
+        ASSERT(src_width==dest_width);
         dest=src;
         return false;
 
@@ -225,7 +225,7 @@ bool boolbvt::type_conversion(
 
           dest=convert_bv(f.to_expr());
 
-          assert(src_width==1);
+          ASSERT(src_width==1);
 
           Forall_literals(it, dest)
             *it=prop.land(*it, src[0]);
@@ -268,7 +268,7 @@ bool boolbvt::type_conversion(
       {
         // position in bv
         std::size_t p=dest_fraction_bits+i;
-        assert(p<dest_width);
+        ASSERT(p<dest_width);
 
         if(i<op_int_bits)
           dest[p]=src[i+op_fraction_bits];
@@ -280,7 +280,7 @@ bool boolbvt::type_conversion(
     }
     else if(src_bvtype==IS_BV)
     {
-      assert(src_width==dest_width);
+      ASSERT(src_width==dest_width);
       dest=src;
       return false;
     }
@@ -322,7 +322,7 @@ bool boolbvt::type_conversion(
       std::size_t fraction_bits=
         to_fixedbv_type(dest_type).get_fraction_bits();
 
-      assert(src_width==1);
+      ASSERT(src_width==1);
 
       for(std::size_t i=0; i<dest_width; i++)
       {
@@ -439,7 +439,7 @@ bool boolbvt::type_conversion(
       {
         // bool to integer
 
-        assert(src_width==1);
+        ASSERT(src_width==1);
 
         for(std::size_t i=0; i<dest_width; i++)
         {
@@ -506,7 +506,7 @@ bool boolbvt::type_conversion(
     break;
 
   case IS_BV:
-    assert(src_width==dest_width);
+    ASSERT(src_width==dest_width);
     dest=src;
     return false;
 
@@ -626,7 +626,7 @@ Function: boolbvt::convert_typecast
 
 literalt boolbvt::convert_typecast(const typecast_exprt &expr)
 {
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
 
   if(expr.op0().type().id()==ID_range)
   {

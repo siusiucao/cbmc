@@ -122,7 +122,7 @@ void c_typecheck_baset::typecheck_type(typet &type)
       underlying_type=
         follow_tag(to_c_enum_tag_type(underlying_type)).subtype();
 
-      assert(underlying_type.id()==ID_signedbv ||
+      ASSERT(underlying_type.id()==ID_signedbv ||
              underlying_type.id()==ID_unsignedbv);
     }
 
@@ -151,7 +151,7 @@ void c_typecheck_baset::typecheck_type(typet &type)
           result=is_signed?signed_long_int_type():unsigned_long_int_type();
         else
         {
-          assert(config.ansi_c.long_long_int_width==64);
+          ASSERT(config.ansi_c.long_long_int_width==64);
           result=
             is_signed?signed_long_long_int_type():unsigned_long_long_int_type();
         }
@@ -181,7 +181,7 @@ void c_typecheck_baset::typecheck_type(typet &type)
 
         symbol_tablet::symbolst::iterator entry=
           symbol_table.symbols.find(tag_name);
-        assert(entry!=symbol_table.symbols.end());
+        ASSERT(entry!=symbol_table.symbols.end());
 
         entry->second.type.subtype()=result;
       }
@@ -364,7 +364,7 @@ void c_typecheck_baset::typecheck_custom_type(typet &type)
     type.set(ID_f, integer2string(f_int));
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -560,7 +560,7 @@ void c_typecheck_baset::typecheck_array_type(array_typet &type)
     {
       // not a constant and not infinity
 
-      assert(current_symbol_id!=irep_idt());
+      ASSERT(current_symbol_id!=irep_idt());
 
       const symbolt &base_symbol=lookup(current_symbol_id);
 
@@ -731,7 +731,7 @@ void c_typecheck_baset::typecheck_compound_type(struct_union_typet &type)
   if(type.find(ID_tag).is_nil())
   {
     // Anonymous? Must come with body.
-    assert(have_body);
+    ASSERT(have_body);
 
     // produce symbol
     symbolt compound_symbol;
@@ -785,7 +785,7 @@ void c_typecheck_baset::typecheck_compound_type(struct_union_typet &type)
       else if(compound_symbol.type.id()==ID_union)
         compound_symbol.type.id(ID_incomplete_union);
       else
-        assert(false);
+        ASSERT(false);
 
       symbolt *new_symbol;
       move_symbol(compound_symbol, new_symbol);
@@ -857,7 +857,7 @@ void c_typecheck_baset::typecheck_compound_body(
   for(auto &decl : old_components)
   {
     // the arguments are member declarations or static assertions
-    assert(decl.id()==ID_declaration);
+    ASSERT(decl.id()==ID_declaration);
 
     ansi_c_declarationt &declaration=
       to_ansi_c_declaration(static_cast<exprt &>(decl));
@@ -868,7 +868,7 @@ void c_typecheck_baset::typecheck_compound_body(
       new_component.id(ID_static_assert);
       new_component.add_source_location()=declaration.source_location();
       new_component.operands().swap(declaration.operands());
-      assert(new_component.operands().size()==2);
+      ASSERT(new_component.operands().size()==2);
       components.push_back(new_component);
     }
     else
@@ -996,7 +996,7 @@ void c_typecheck_baset::typecheck_compound_body(
   {
     if(it->id()==ID_static_assert)
     {
-      assert(it->operands().size()==2);
+      ASSERT(it->operands().size()==2);
       exprt &assertion=it->op0();
       typecheck_expr(assertion);
       typecheck_expr(it->op1());
@@ -1529,7 +1529,7 @@ void c_typecheck_baset::typecheck_typeof_type(typet &type)
     if(expr.id()==ID_address_of &&
        expr.get_bool(ID_C_implicit))
     {
-      assert(expr.operands().size()==1);
+      ASSERT(expr.operands().size()==1);
       exprt tmp;
       tmp.swap(expr.op0());
       expr.swap(tmp);

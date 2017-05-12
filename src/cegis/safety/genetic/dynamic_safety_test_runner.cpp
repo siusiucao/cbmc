@@ -43,14 +43,14 @@ void dynamic_safety_test_runnert::run_test(individualt &ind,
       };
   prepare_fitness_tester_library(handle, fitness_tester, source_code_provider,
       shared_library());
-  assert(ind.x0.empty());
+  ASSERT(ind.x0.empty());
   std::deque<unsigned int> args;
   // TODO: Implement for multiple loops (change constraint, instrumentation)
-  assert(ind.programs.size() == 1u);
+  ASSERT(ind.programs.size() == 1u);
   serialise(args, ind, max_prog_sz);
   serialise(args, ce.x0);
   // TODO: Implement for multiple loops (change constraint, instrumentation)
-  assert(ce.x.size() == 1u);
+  ASSERT(ce.x.size() == 1u);
   serialise(args, ce.x.front());
 
   const int argc=args.size();

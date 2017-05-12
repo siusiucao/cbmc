@@ -27,7 +27,7 @@ const typet &get_type(const goto_programt::targett &target)
   case goto_program_instruction_typet::ASSIGN:
     return to_code_assign(instr.code).lhs().type();
   default:
-    assert(!"Only DECL or ASSIGN supported.");
+    ASSERT(!"Only DECL or ASSIGN supported.");
   }
 }
 

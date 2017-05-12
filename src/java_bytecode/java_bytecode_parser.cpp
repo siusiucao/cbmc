@@ -100,7 +100,7 @@ protected:
     bytecodes.resize(256);
     for(const bytecode_infot *p=bytecode_info; p->mnemonic!=0; p++)
     {
-      assert(p->opcode<bytecodes.size());
+      ASSERT(p->opcode<bytecodes.size());
       bytecodes[p->opcode].mnemonic=p->mnemonic;
       bytecodes[p->opcode].format=p->format;
     }

@@ -456,7 +456,7 @@ void interpretert::execute_other()
   const irep_idt &statement=pc->code.get_statement();
   if(statement==ID_expression)
   {
-    assert(pc->code.operands().size()==1);
+    ASSERT(pc->code.operands().size()==1);
     mp_vectort rhs;
     evaluate(pc->code.op0(), rhs);
   }
@@ -497,7 +497,7 @@ Function: interpretert::execute_decl
 
 void interpretert::execute_decl()
 {
-  assert(pc->code.get_statement()==ID_decl);
+  ASSERT(pc->code.get_statement()==ID_decl);
 }
 
 /*******************************************************************\
@@ -646,7 +646,7 @@ exprt interpretert::get_value(
   std::size_t offset)
 {
   const typet real_type=ns.follow(type);
-  assert(!rhs.empty());
+  ASSERT(!rhs.empty());
 
   if(real_type.id()==ID_struct)
   {
@@ -997,7 +997,7 @@ void interpretert::execute_function_call()
       const code_typet::parametert &a=parameters[i];
       exprt symbol_expr(ID_symbol, a.type());
       symbol_expr.set(ID_identifier, a.get_identifier());
-      assert(i<argument_values.size());
+      ASSERT(i<argument_values.size());
       assign(evaluate_address(symbol_expr), argument_values[i]);
     }
 
@@ -1012,8 +1012,8 @@ void interpretert::execute_function_call()
     if(it!=function_input_vars.end())
     {
       mp_vectort value;
-      assert(!it->second.empty());
-      assert(!it->second.front().return_assignments.empty());
+      ASSERT(!it->second.empty());
+      ASSERT(!it->second.front().return_assignments.empty());
       evaluate(it->second.front().return_assignments.back().value, value);
       if(return_value_address>0)
       {
@@ -1258,7 +1258,7 @@ size_t interpretert::get_size(const typet &type)
       // overflow behaviour.
       exprt size_const=from_integer(i[0], size_expr.type());
       mp_integer size_mp;
-      assert(!to_integer(size_const, size_mp));
+      ASSERT(!to_integer(size_const, size_mp));
       return subtype_size*integer2unsigned(size_mp);
     }
     return subtype_size;

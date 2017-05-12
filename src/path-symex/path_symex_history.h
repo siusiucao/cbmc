@@ -43,7 +43,7 @@ public:
 
   path_symex_historyt &get_history() const
   {
-    assert(history!=0);
+    ASSERT(history!=0);
     return *history;
   }
 
@@ -151,7 +151,7 @@ public:
 
 inline void path_symex_step_reft::generate_successor()
 {
-  assert(history!=0);
+  ASSERT(history!=0);
   path_symex_step_reft old=*this;
   index=history->step_container.size();
   history->step_container.push_back(path_symex_stept());
@@ -166,8 +166,8 @@ inline path_symex_step_reft &path_symex_step_reft::operator--()
 
 inline path_symex_stept &path_symex_step_reft::get() const
 {
-  assert(history!=0);
-  assert(!is_nil());
+  ASSERT(history!=0);
+  ASSERT(!is_nil());
   return history->step_container[index];
 }
 

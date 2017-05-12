@@ -34,7 +34,7 @@ irep_idt byte_extract_id()
     return ID_byte_extract_big_endian;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -61,6 +61,6 @@ irep_idt byte_update_id()
     return ID_byte_update_big_endian;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }

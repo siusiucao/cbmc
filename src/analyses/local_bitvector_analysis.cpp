@@ -172,7 +172,7 @@ local_bitvector_analysist::flagst local_bitvector_analysist::get(
 {
   local_cfgt::loc_mapt::const_iterator loc_it=cfg.loc_map.find(t);
 
-  assert(loc_it!=cfg.loc_map.end());
+  ASSERT(loc_it!=cfg.loc_map.end());
 
   const loc_infot &loc_info_src=loc_infos[loc_it->second];
 

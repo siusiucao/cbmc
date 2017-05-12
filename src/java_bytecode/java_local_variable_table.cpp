@@ -52,7 +52,7 @@ struct procedure_local_cfg_baset<
     for(const auto &table_entry : method.exception_table)
     {
       auto findit=amap.find(table_entry.start_pc);
-      assert(findit!=amap.end() &&
+      ASSERT(findit!=amap.end() &&
              "Exception table entry doesn't point to an instruction?");
       for(; findit->first<table_entry.end_pc; ++findit)
       {
@@ -201,9 +201,9 @@ static bool is_store_to_slot(
   else
   {
     // Store shorthands, like "store_0", "store_1"
-    assert(prevstatement[6]=='_' && prevstatement.size()==8);
+    ASSERT(prevstatement[6]=='_' && prevstatement.size()==8);
     storeslot=prevstatement[7];
-    assert(isdigit(storeslot[0]));
+    ASSERT(isdigit(storeslot[0]));
   }
   auto storeslotidx=safe_string2unsigned(storeslot);
   return storeslotidx==slotidx;
@@ -227,7 +227,7 @@ static void maybe_add_hole(
   unsigned from,
   unsigned to)
 {
-  assert(to>=from);
+  ASSERT(to>=from);
   if(to!=from)
     var.holes.push_back({from, to-from});
 }
@@ -263,7 +263,7 @@ static void populate_variable_address_map(
         idx!=idxlim;
         ++idx)
     {
-      assert((!live_variable_at_address[idx]) && "Local variable table clash?");
+      ASSERT((!live_variable_at_address[idx]) && "Local variable table clash?");
       live_variable_at_address[idx]=&*it;
     }
   }
@@ -313,12 +313,12 @@ static void populate_predecessor_map(
     // Find the last instruction within the live range:
     unsigned end_pc=it->var.start_pc+it->var.length;
     auto amapit=amap.find(end_pc);
-    assert(amapit!=amap.begin());
+    ASSERT(amapit!=amap.begin());
     auto old_amapit=amapit;
     --amapit;
     if(old_amapit==amap.end())
     {
-      assert(
+      ASSERT(
         end_pc>amapit->first &&
         "Instruction live range doesn't align to instruction boundary?");
     }
@@ -344,7 +344,7 @@ static void populate_predecessor_map(
           // Check if this is an initialiser, and if so expand the live range
           // to include it, but don't check its predecessors:
           auto inst_before_this=amapit;
-          assert(inst_before_this!=amap.begin());
+          ASSERT(inst_before_this!=amap.begin());
           --inst_before_this;
           if(amapit->first!=it->var.start_pc || inst_before_this->first!=pred)
           {
@@ -415,7 +415,7 @@ static unsigned get_common_dominator(
   const std::set<local_variable_with_holest*> &merge_vars,
   const java_cfg_dominatorst &dominator_analysis)
 {
-  assert(!merge_vars.empty());
+  ASSERT(!merge_vars.empty());
 
   unsigned first_pc=UINT_MAX;
   for(auto v : merge_vars)
@@ -452,7 +452,7 @@ static unsigned get_common_dominator(
       ++domit;
       ++repeats;
     }
-    assert(repeats<=merge_vars.size());
+    ASSERT(repeats<=merge_vars.size());
     if(repeats==merge_vars.size())
       return dom;
   }
@@ -637,7 +637,7 @@ void java_bytecode_convert_methodt::find_initialisers_for_slot(
       continue;
 
     const auto &merge_vars=findit->second;
-    assert(merge_vars.size()>=2);
+    ASSERT(merge_vars.size()>=2);
 
     merge_variable_table_entries(
       *merge_into,

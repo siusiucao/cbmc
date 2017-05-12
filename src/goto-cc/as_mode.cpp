@@ -231,7 +231,7 @@ int as_modet::doit()
       {
         if(outputs>0)
         {
-          assert(!dest.empty());
+          ASSERT(!dest.empty());
           compiler.add_input_file(dest);
           os.close();
         }
@@ -260,7 +260,7 @@ int as_modet::doit()
 
     if(outputs>0)
     {
-      assert(!dest.empty());
+      ASSERT(!dest.empty());
       compiler.add_input_file(dest);
     }
     else
@@ -298,7 +298,7 @@ Function: as_modet::run_as
 
 int as_modet::run_as()
 {
-  assert(!cmdline.parsed_argv.empty());
+  ASSERT(!cmdline.parsed_argv.empty());
 
   // build new argv
   std::vector<std::string> new_argv;

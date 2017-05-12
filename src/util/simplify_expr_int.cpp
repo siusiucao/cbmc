@@ -54,7 +54,7 @@ bool simplify_exprt::simplify_bswap(exprt &expr)
     mp_integer new_value=0;
     for(std::size_t bit=0; bit<width; bit+=8)
     {
-      assert(!bytes.empty());
+      ASSERT(!bytes.empty());
       new_value+=bytes.back()<<bit;
       bytes.pop_back();
     }
@@ -152,7 +152,7 @@ bool simplify_exprt::simplify_mult(exprt &expr)
 
   if(c_sizeof_type.is_not_nil())
   {
-    assert(found);
+    ASSERT(found);
     constant->set(ID_C_c_sizeof_type, c_sizeof_type);
   }
 
@@ -398,7 +398,7 @@ bool simplify_exprt::simplify_plus(exprt &expr)
 
   exprt::operandst &operands=expr.operands();
 
-  assert(expr.id()==ID_plus);
+  ASSERT(expr.id()==ID_plus);
 
   // floating-point addition is _NOT_ associative; thus,
   // there is special case for float
@@ -472,7 +472,7 @@ bool simplify_exprt::simplify_plus(exprt &expr)
             if(!const_sum->sum(*it))
             {
               *it=from_integer(0, it->type());
-              assert(it->is_not_nil());
+              ASSERT(it->is_not_nil());
               result=false;
             }
           }
@@ -505,7 +505,7 @@ bool simplify_exprt::simplify_plus(exprt &expr)
       {
         *(itm->second)=from_integer(0, expr.type());
         *it=from_integer(0, expr.type());
-        assert(it->is_not_nil());
+        ASSERT(it->is_not_nil());
         expr_map.erase(itm);
         result=false;
       }
@@ -532,7 +532,7 @@ bool simplify_exprt::simplify_plus(exprt &expr)
   if(operands.empty())
   {
     expr=from_integer(0, expr.type());
-    assert(expr.is_not_nil());
+    ASSERT(expr.is_not_nil());
     return false;
   }
   else if(operands.size()==1)
@@ -565,7 +565,7 @@ bool simplify_exprt::simplify_minus(exprt &expr)
 
   exprt::operandst &operands=expr.operands();
 
-  assert(expr.id()==ID_minus);
+  ASSERT(expr.id()==ID_minus);
 
   if(operands.size()!=2)
     return true;
@@ -607,7 +607,7 @@ bool simplify_exprt::simplify_minus(exprt &expr)
     if(operands[0]==operands[1])
     {
       exprt zero=from_integer(0, expr.type());
-      assert(zero.is_not_nil());
+      ASSERT(zero.is_not_nil());
       expr=zero;
       return false;
     }
@@ -664,7 +664,7 @@ bool simplify_exprt::simplify_bitwise(exprt &expr)
       else if(expr.id()==ID_bitxor)
         new_expr.id(ID_xor);
       else
-        assert(false);
+        ASSERT(false);
 
       Forall_operands(it, new_expr)
       {
@@ -714,7 +714,7 @@ bool simplify_exprt::simplify_bitwise(exprt &expr)
     if(expr.op1().type()!=expr.type())
       break;
 
-    assert(a_str.size()==b_str.size());
+    ASSERT(a_str.size()==b_str.size());
 
     constant_exprt new_op(expr.type());
     std::string new_value;
@@ -819,7 +819,7 @@ bool simplify_exprt::simplify_extractbit(exprt &expr)
 
   std::size_t width=to_bitvector_type(op0_type).get_width();
 
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   mp_integer i;
 
@@ -1115,7 +1115,7 @@ Function: simplify_exprt::simplify_extractbits
 
 bool simplify_exprt::simplify_extractbits(exprt &expr)
 {
-  assert(expr.operands().size()==3);
+  ASSERT(expr.operands().size()==3);
 
   const typet &op0_type=expr.op0().type();
 
@@ -1138,7 +1138,7 @@ bool simplify_exprt::simplify_extractbits(exprt &expr)
        end<0 || end>=width)
       return true;
 
-    assert(start>=end); // is this always the case??
+    ASSERT(start>=end); // is this always the case??
 
     const irep_idt &value=expr.op0().get(ID_value);
 
@@ -1433,7 +1433,7 @@ bool simplify_exprt::simplify_inequality(exprt &expr)
       else if(expr.id()==ID_lt)
         expr.make_bool(f0<f1);
       else
-        assert(false);
+        ASSERT(false);
 
       return false;
     }
@@ -1455,7 +1455,7 @@ bool simplify_exprt::simplify_inequality(exprt &expr)
       else if(expr.id()==ID_lt)
         expr.make_bool(f0<f1);
       else
-        assert(false);
+        ASSERT(false);
 
       return false;
     }
@@ -1482,7 +1482,7 @@ bool simplify_exprt::simplify_inequality(exprt &expr)
       else if(expr.id()==ID_lt)
         expr.make_bool(r0<r1);
       else
-        assert(false);
+        ASSERT(false);
 
       return false;
     }
@@ -1509,7 +1509,7 @@ bool simplify_exprt::simplify_inequality(exprt &expr)
       else if(expr.id()==ID_lt)
         expr.make_bool(v0<v1);
       else
-        assert(false);
+        ASSERT(false);
 
       return false;
     }
@@ -1544,7 +1544,7 @@ bool simplify_exprt::simplify_inequality(exprt &expr)
     return simplify_inequality_not_constant(expr);
   }
 
-  assert(false);
+  ASSERT(false);
   return false;
 }
 
@@ -1668,7 +1668,7 @@ bool simplify_exprt::simplify_inequality_not_constant(exprt &expr)
 
   // now we only have >=, =
 
-  assert(expr.id()==ID_ge || expr.id()==ID_equal);
+  ASSERT(expr.id()==ID_ge || expr.id()==ID_equal);
 
   // syntactically equal?
 
@@ -1707,7 +1707,7 @@ bool simplify_exprt::simplify_inequality_not_constant(exprt &expr)
         else
         {
           tmp=false;
-          assert(0);
+          ASSERT(0);
         }
 
         if(first)
@@ -1761,7 +1761,7 @@ Function: simplify_exprt::simplify_inequality_constant
 bool simplify_exprt::simplify_inequality_constant(exprt &expr)
 {
   // the constant is always on the RHS
-  assert(expr.op1().is_constant());
+  ASSERT(expr.op1().is_constant());
 
   if(expr.op0().id()==ID_if && expr.op0().operands().size()==3)
   {
@@ -1865,7 +1865,7 @@ bool simplify_exprt::simplify_inequality_constant(exprt &expr)
           {
             constant+=i;
             *it=from_integer(0, it->type());
-            assert(it->is_not_nil());
+            ASSERT(it->is_not_nil());
             changed=true;
           }
         }

@@ -27,7 +27,7 @@ string_exprt string_constraint_generatort::add_axioms_for_code_point(
 {
   string_exprt res=fresh_string(ref_type);
   const typet &type=code_point.type();
-  assert(type.id()==ID_signedbv);
+  ASSERT(type.id()==ID_signedbv);
 
   // We add axioms:
   // a1 : code_point<0x010000 => |res|=1
@@ -159,7 +159,7 @@ exprt string_constraint_generatort::add_axioms_for_code_point_at(
   const function_application_exprt &f)
 {
   typet return_type=f.type();
-  assert(return_type.id()==ID_signedbv);
+  ASSERT(return_type.id()==ID_signedbv);
   string_exprt str=get_string_expr(args(f, 2)[0]);
   const exprt &pos=args(f, 2)[1];
 
@@ -196,9 +196,9 @@ exprt string_constraint_generatort::add_axioms_for_code_point_before(
   const function_application_exprt &f)
 {
   const function_application_exprt::argumentst &args=f.arguments();
-  assert(args.size()==2);
+  ASSERT(args.size()==2);
   typet return_type=f.type();
-  assert(return_type.id()==ID_signedbv);
+  ASSERT(return_type.id()==ID_signedbv);
   symbol_exprt result=fresh_symbol("char", return_type);
   string_exprt str=get_string_expr(args[0]);
 

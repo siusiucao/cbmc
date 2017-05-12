@@ -43,7 +43,7 @@ Function:
 
 void timert::start()
 {
-  assert(!started);
+  ASSERT(!started);
   started = true;
 
   _start_time = current_time();
@@ -64,7 +64,7 @@ Function:
 
 void timert::stop()
 {
-  assert(started);
+  ASSERT(started);
   started = false;
 
   _latest_time = current_time() - _start_time;

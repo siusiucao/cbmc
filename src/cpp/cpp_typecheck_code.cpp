@@ -81,7 +81,7 @@ void cpp_typecheckt::typecheck_try_catch(codet &code)
       codet &code=to_code_block(to_code(*it));
 
       // look at the catch operand
-      assert(!code.operands().empty());
+      ASSERT(!code.operands().empty());
 
       if(to_code(code.op0()).get_statement()==ID_ellipsis)
       {
@@ -94,11 +94,11 @@ void cpp_typecheckt::typecheck_try_catch(codet &code)
       {
         // turn references into non-references
         {
-          assert(to_code(code.op0()).get_statement()==ID_decl);
+          ASSERT(to_code(code.op0()).get_statement()==ID_decl);
           cpp_declarationt &cpp_declaration=
             to_cpp_declaration(to_code_decl(to_code(code.op0())).symbol());
 
-          assert(cpp_declaration.declarators().size()==1);
+          ASSERT(cpp_declaration.declarators().size()==1);
           cpp_declaratort &declarator=cpp_declaration.declarators().front();
 
           if(is_reference(declarator.type()))
@@ -110,8 +110,8 @@ void cpp_typecheckt::typecheck_try_catch(codet &code)
 
         // the declaration is now in a decl_block
 
-        assert(!code.operands().empty());
-        assert(to_code(code.op0()).get_statement()==ID_decl_block);
+        ASSERT(!code.operands().empty());
+        ASSERT(to_code(code.op0()).get_statement()==ID_decl_block);
 
         // get the declaration
         const code_declt &code_decl=
@@ -205,11 +205,11 @@ void cpp_typecheckt::typecheck_switch(code_switcht &code)
     codet decl=to_code(code.value());
     typecheck_decl(decl);
 
-    assert(decl.get_statement()==ID_decl_block);
-    assert(decl.operands().size()==1);
+    ASSERT(decl.get_statement()==ID_decl_block);
+    ASSERT(decl.operands().size()==1);
 
     // replace declaration by its symbol
-    assert(decl.op0().op0().id()==ID_symbol);
+    ASSERT(decl.op0().op0().id()==ID_symbol);
     code.value()=decl.op0().op0();
 
     c_typecheck_baset::typecheck_switch(code);
@@ -262,7 +262,7 @@ void cpp_typecheckt::typecheck_member_initializer(codet &code)
   {
     const code_typet &code_type=to_code_type(symbol_expr.type());
 
-    assert(code_type.parameters().size()>=1);
+    ASSERT(code_type.parameters().size()>=1);
 
     // It's a parent. Call the constructor that we got.
     side_effect_expr_function_callt function_call;
@@ -273,7 +273,7 @@ void cpp_typecheckt::typecheck_member_initializer(codet &code)
 
     // we have to add 'this'
     exprt this_expr = cpp_scopes.current_scope().this_expr;
-    assert(this_expr.is_not_nil());
+    ASSERT(this_expr.is_not_nil());
 
     make_ptr_typecast(
       this_expr,
@@ -291,7 +291,7 @@ void cpp_typecheckt::typecheck_member_initializer(codet &code)
     {
       irep_idt access = symbol_expr.get(ID_C_access);
 
-      assert(access==ID_private ||
+      ASSERT(access==ID_private ||
              access==ID_protected ||
              access=="noaccess");
 
@@ -434,7 +434,7 @@ void cpp_typecheckt::typecheck_decl(codet &code)
     throw 0;
   }
 
-  assert(code.op0().id()==ID_cpp_declaration);
+  ASSERT(code.op0().id()==ID_cpp_declaration);
 
   cpp_declarationt &declaration=
     to_cpp_declaration(code.op0());
@@ -444,7 +444,7 @@ void cpp_typecheckt::typecheck_decl(codet &code)
   bool is_typedef=declaration.is_typedef();
 
   typecheck_type(type);
-  assert(type.is_not_nil());
+  ASSERT(type.is_not_nil());
 
   if(declaration.declarators().empty() &&
      follow(type).get_bool(ID_C_is_anonymous))
@@ -486,7 +486,7 @@ void cpp_typecheckt::typecheck_decl(codet &code)
        symbol.value.id()!=ID_code)
     {
       decl_statement.copy_to_operands(symbol.value);
-      assert(follow(decl_statement.op1().type())==follow(symbol.type));
+      ASSERT(follow(decl_statement.op1().type())==follow(symbol.type));
     }
 
     new_code.move_to_operands(decl_statement);
@@ -494,7 +494,7 @@ void cpp_typecheckt::typecheck_decl(codet &code)
     // is there a constructor to be called?
     if(symbol.value.is_not_nil())
     {
-      assert(declarator.find("init_args").is_nil());
+      ASSERT(declarator.find("init_args").is_nil());
       if(symbol.value.id()==ID_code)
         new_code.copy_to_operands(symbol.value);
     }
