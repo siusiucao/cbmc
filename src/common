@@ -1,6 +1,10 @@
 # Build platform
 # (use one of AUTO, Unix, OSX, OSX_Universal, MSVC, Cygwin, MinGW)
 
+# Hardwire the necessary flags for GCC/GLibc
+CXXFLAGS = -g -DCPROVER_INVARIANT_PRINT_STACK_TRACE
+LINKFLAGS = -g -rdynamic
+
 ifeq ($(BUILD_ENV),AUTO)
 uname = $(shell uname)
 ifeq ($(uname),windows32)
