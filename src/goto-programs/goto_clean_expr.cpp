@@ -139,7 +139,7 @@ Function: goto_convertt::rewrite_boolean
 
 void goto_convertt::rewrite_boolean(exprt &expr)
 {
-  assert(expr.id()==ID_and || expr.id()==ID_or);
+  ASSERT(expr.id()==ID_and || expr.id()==ID_or);
 
   if(!expr.is_boolean())
   {
@@ -407,7 +407,7 @@ void goto_convertt::clean_expr(
     else if(statement==ID_assign)
     {
       // we do a special treatment for x=f(...)
-      assert(expr.operands().size()==2);
+      ASSERT(expr.operands().size()==2);
 
       if(expr.op1().id()==ID_side_effect &&
          to_side_effect_expr(expr.op1()).get_statement()==ID_function_call)
@@ -444,7 +444,7 @@ void goto_convertt::clean_expr(
   }
   else if(expr.id()==ID_forall || expr.id()==ID_exists)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     // check if there are side-effects
     goto_programt tmp;
     clean_expr(expr.op1(), tmp, true);
@@ -459,7 +459,7 @@ void goto_convertt::clean_expr(
   }
   else if(expr.id()==ID_address_of)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     clean_expr_address_of(expr.op0(), dest);
     return;
   }
@@ -476,7 +476,7 @@ void goto_convertt::clean_expr(
   else if(expr.id()==ID_compound_literal)
   {
     // This is simply replaced by the literal
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     expr=expr.op0();
   }
 }
@@ -502,7 +502,7 @@ void goto_convertt::clean_expr_address_of(
 
   if(expr.id()==ID_compound_literal)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     clean_expr(expr.op0(), dest);
     expr=make_compound_literal(expr.op0(), dest);
   }
@@ -513,13 +513,13 @@ void goto_convertt::clean_expr_address_of(
   }
   else if(expr.id()==ID_index)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     clean_expr_address_of(expr.op0(), dest);
     clean_expr(expr.op1(), dest);
   }
   else if(expr.id()==ID_dereference)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     clean_expr(expr.op0(), dest);
   }
   else if(expr.id()==ID_comma)

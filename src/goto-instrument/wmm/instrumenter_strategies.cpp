@@ -57,7 +57,7 @@ void instrumentert::instrument_with_strategy(instrumentation_strategyt strategy)
         instrument_one_write_per_cycle_inserter(set_of_cycles);
         break;
       case my_events:
-        assert(false);
+        ASSERT(false);
     }
   }
   else if(num_sccs!=0)
@@ -82,7 +82,7 @@ void instrumentert::instrument_with_strategy(instrumentation_strategyt strategy)
           instrument_one_write_per_cycle_inserter(set_of_cycles_per_SCC[i]);
           break;
         case my_events:
-          assert(false);
+          ASSERT(false);
       }
     }
   }

@@ -126,7 +126,7 @@ void adjust_float_expressions(
       if(expr.operands().size()>2)
         expr=make_binary(expr);
 
-      assert(expr.operands().size()==2);
+      ASSERT(expr.operands().size()==2);
 
       // now add rounding mode
       expr.id(expr.id()==ID_plus?ID_floatbv_plus:

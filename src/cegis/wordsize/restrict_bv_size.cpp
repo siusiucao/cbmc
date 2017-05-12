@@ -66,7 +66,7 @@ public:
     constant_exprt &constant=to_constant_expr(expr);
     const std::string &value=id2string(constant.get_value());
     if (value.empty()) return;
-    assert(width_in_bits < value.size());
+    ASSERT(width_in_bits < value.size());
     std::string new_value(value.substr(value.size() - width_in_bits));
     // XXX: Restrict positive constant from being turned negative. Sensible?
     if (ID_signedbv == type.id()) new_value[0]=value[0];

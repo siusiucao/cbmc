@@ -93,11 +93,11 @@ static void output_dead_plain(
   const dead_mapt &dead_map,
   std::ostream &os)
 {
-  assert(!goto_program.instructions.empty());
+  ASSERT(!goto_program.instructions.empty());
   goto_programt::const_targett end_function=
     goto_program.instructions.end();
   --end_function;
-  assert(end_function->is_end_function());
+  ASSERT(end_function->is_end_function());
 
   os << "\n*** " << end_function->function << " ***\n";
 
@@ -127,11 +127,11 @@ static void add_to_json(
 {
   json_objectt &entry=dest.push_back().make_object();
 
-  assert(!goto_program.instructions.empty());
+  ASSERT(!goto_program.instructions.empty());
   goto_programt::const_targett end_function=
     goto_program.instructions.end();
   --end_function;
-  assert(end_function->is_end_function());
+  ASSERT(end_function->is_end_function());
 
   entry["function"]=json_stringt(id2string(end_function->function));
   entry["fileName"]=
@@ -150,12 +150,12 @@ static void add_to_json(
     std::string s=oss.str();
 
     std::string::size_type n=s.find('\n');
-    assert(n!=std::string::npos);
+    ASSERT(n!=std::string::npos);
     s.erase(0, n+1);
     n=s.find_first_not_of(' ');
-    assert(n!=std::string::npos);
+    ASSERT(n!=std::string::npos);
     s.erase(0, n);
-    assert(!s.empty());
+    ASSERT(!s.empty());
     s.erase(s.size()-1);
 
     // print info for file actually with full path

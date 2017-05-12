@@ -29,7 +29,7 @@ size_t collect_counterexample_locations(goto_programt::targetst &locs,
   for (goto_programt::targett instr=body.begin(); instr != end; ++instr)
     if (is_nondet(instr, end) && !is_meta(instr))
     {
-      assert(instr->labels.empty());
+      ASSERT(instr->labels.empty());
       instr->labels.push_back(marker_prefix + std::to_string(marker_index++));
       locs.push_back(instr);
     }
@@ -151,6 +151,6 @@ const irep_idt &get_counterexample_marker(
 {
   const labelst &l=pos->labels;
   const labelst::const_iterator it=std::find_if(l.begin(), l.end(), is_marker);
-  assert(l.end() != it);
+  ASSERT(l.end() != it);
   return *it;
 }

@@ -44,8 +44,8 @@ void goto_inlinet::parameter_assignments(
   const exprt::operandst &arguments, // arguments of call
   goto_programt &dest)
 {
-  assert(is_call(target));
-  assert(dest.empty());
+  ASSERT(is_call(target));
+  ASSERT(dest.empty());
 
   const source_locationt &source_location=target->source_location;
 
@@ -187,8 +187,8 @@ void goto_inlinet::parameter_destruction(
   const code_typet &code_type, // type of called function
   goto_programt &dest)
 {
-  assert(is_call(target));
-  assert(dest.empty());
+  ASSERT(is_call(target));
+  ASSERT(dest.empty());
 
   const source_locationt &source_location=target->source_location;
 
@@ -429,9 +429,9 @@ void goto_inlinet::insert_function_body(
   const exprt::operandst &arguments,
   const exprt &constrain)
 {
-  assert(is_call(target));
-  assert(!dest.empty());
-  assert(goto_function.body_available());
+  ASSERT(is_call(target));
+  ASSERT(!dest.empty());
+  ASSERT(goto_function.body_available());
 
   const irep_idt identifier=function.get_identifier();
 
@@ -440,7 +440,7 @@ void goto_inlinet::insert_function_body(
   inline_log.copy_from(goto_function.body, body);
 
   goto_programt::instructiont &end=body.instructions.back();
-  assert(end.is_end_function());
+  ASSERT(end.is_end_function());
   end.type=LOCATION;
 
   if(adjust_function)
@@ -469,7 +469,7 @@ void goto_inlinet::insert_function_body(
   t_it=goto_function.body.instructions.begin();
   unsigned begin_location_number=t_it->location_number;
   t_it=--goto_function.body.instructions.end();
-  assert(t_it->is_end_function());
+  ASSERT(t_it->is_end_function());
   unsigned end_location_number=t_it->location_number;
 
   unsigned call_location_number=target->location_number;
@@ -540,8 +540,8 @@ void goto_inlinet::insert_function_nobody(
   const symbol_exprt &function,
   const exprt::operandst &arguments)
 {
-  assert(is_call(target));
-  assert(!dest.empty());
+  ASSERT(is_call(target));
+  ASSERT(!dest.empty());
 
   const irep_idt identifier=function.get_identifier();
 
@@ -605,9 +605,9 @@ void goto_inlinet::expand_function_call(
   const bool force_full,
   goto_programt::targett target)
 {
-  assert(is_call(target));
-  assert(!dest.empty());
-  assert(!transitive || inline_map.empty());
+  ASSERT(is_call(target));
+  ASSERT(!dest.empty());
+  ASSERT(!transitive || inline_map.empty());
 
 #ifdef DEBUG
   std::cout << "Expanding call:" << std::endl;
@@ -742,7 +742,7 @@ void goto_inlinet::get_call(
   exprt::operandst &arguments,
   exprt &constrain)
 {
-  assert(is_call(it));
+  ASSERT(is_call(it));
 
   if(it->is_function_call())
   {
@@ -755,7 +755,7 @@ void goto_inlinet::get_call(
   }
   else
   {
-    assert(is_bp_call(it));
+    ASSERT(is_bp_call(it));
 
     lhs=it->code.op0().op0();
     function=to_symbol_expr(it->code.op0().op1().op0());
@@ -820,12 +820,12 @@ void goto_inlinet::goto_inline(
   const inline_mapt &inline_map,
   const bool force_full)
 {
-  assert(check_inline_map(inline_map));
+  ASSERT(check_inline_map(inline_map));
 
   Forall_goto_functions(f_it, goto_functions)
   {
     const irep_idt identifier=f_it->first;
-    assert(!identifier.empty());
+    ASSERT(!identifier.empty());
     goto_functiont &goto_function=f_it->second;
 
     if(!goto_function.body_available())
@@ -880,14 +880,14 @@ void goto_inlinet::goto_inline_nontransitive(
   const inline_mapt &inline_map,
   const bool force_full)
 {
-  assert(goto_function.body_available());
+  ASSERT(goto_function.body_available());
 
   finished_sett::const_iterator f_it=finished_set.find(identifier);
 
   if(f_it!=finished_set.end())
     return;
 
-  assert(check_inline_map(identifier, inline_map));
+  ASSERT(check_inline_map(identifier, inline_map));
 
   goto_programt &goto_program=goto_function.body;
 
@@ -945,19 +945,19 @@ const goto_inlinet::goto_functiont &goto_inlinet::goto_inline_transitive(
   const goto_functiont &goto_function,
   const bool force_full)
 {
-  assert(goto_function.body_available());
+  ASSERT(goto_function.body_available());
 
   cachet::const_iterator c_it=cache.find(identifier);
 
   if(c_it!=cache.end())
   {
     const goto_functiont &cached=c_it->second;
-    assert(cached.body_available());
+    ASSERT(cached.body_available());
     return cached;
   }
 
   goto_functiont &cached=cache[identifier];
-  assert(cached.body.empty());
+  ASSERT(cached.body.empty());
 
   progress() << "Creating copy of " << identifier << eom;
   progress() << "Number of instructions: "
@@ -1043,7 +1043,7 @@ bool goto_inlinet::check_inline_map(
   goto_functionst::function_mapt::const_iterator f_it=
     goto_functions.function_map.find(identifier);
 
-  assert(f_it!=goto_functions.function_map.end());
+  ASSERT(f_it!=goto_functions.function_map.end());
 
   inline_mapt::const_iterator im_it=inline_map.find(identifier);
 
@@ -1121,7 +1121,7 @@ void goto_inlinet::output_inline_map(
   std::ostream &out,
   const inline_mapt &inline_map)
 {
-  assert(check_inline_map(inline_map));
+  ASSERT(check_inline_map(inline_map));
 
   for(inline_mapt::const_iterator it=inline_map.begin();
       it!=inline_map.end(); it++)
@@ -1140,7 +1140,7 @@ void goto_inlinet::output_inline_map(
        !call_list.empty())
     {
       const goto_functiont &goto_function=f_it->second;
-      assert(goto_function.body_available());
+      ASSERT(goto_function.body_available());
 
       const goto_programt &goto_program=goto_function.body;
 
@@ -1252,12 +1252,12 @@ void goto_inlinet::goto_inline_logt::add_segment(
   const unsigned call_location_number,
   const irep_idt function)
 {
-  assert(!goto_program.empty());
-  assert(!function.empty());
-  assert(end_location_number>=begin_location_number);
+  ASSERT(!goto_program.empty());
+  ASSERT(!function.empty());
+  ASSERT(end_location_number>=begin_location_number);
 
   goto_programt::const_targett start=goto_program.instructions.begin();
-  assert(log_map.find(start)==log_map.end());
+  ASSERT(log_map.find(start)==log_map.end());
 
   goto_programt::const_targett end=goto_program.instructions.end();
   end--;
@@ -1288,21 +1288,21 @@ void goto_inlinet::goto_inline_logt::copy_from(
   const goto_programt &from,
   const goto_programt &to)
 {
-  assert(from.instructions.size()==to.instructions.size());
+  ASSERT(from.instructions.size()==to.instructions.size());
 
   goto_programt::const_targett it1=from.instructions.begin();
   goto_programt::const_targett it2=to.instructions.begin();
 
   for(; it1!=from.instructions.end(); it1++, it2++)
   {
-    assert(it2!=to.instructions.end());
-    assert(it1->location_number==it2->location_number);
+    ASSERT(it2!=to.instructions.end());
+    ASSERT(it1->location_number==it2->location_number);
 
     log_mapt::const_iterator l_it=log_map.find(it1);
     if(l_it!=log_map.end()) // a segment starts here
     {
       // as 'to' is a fresh copy
-      assert(log_map.find(it2)==log_map.end());
+      ASSERT(log_map.find(it2)==log_map.end());
 
       goto_inline_log_infot info=l_it->second;
       goto_programt::const_targett end=info.end;
@@ -1350,7 +1350,7 @@ jsont goto_inlinet::goto_inline_logt::output_inline_log_json() const
     const goto_inline_log_infot &info=it->second;
     goto_programt::const_targett end=info.end;
 
-    assert(start->location_number<=end->location_number);
+    ASSERT(start->location_number<=end->location_number);
 
     object["call"]=json_numbert(std::to_string(info.call_location_number));
     object["function"]=json_stringt(info.function.c_str());

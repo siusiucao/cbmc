@@ -79,7 +79,7 @@ void java_bytecode_languaget::get_language_options(const cmdlinet &cmd)
       // add jars from JSON config file to classpath
       for(const jsont &file_entry : include_files.array)
       {
-        assert(file_entry.is_string() && has_suffix(file_entry.value, ".jar"));
+        ASSERT(file_entry.is_string() && has_suffix(file_entry.value, ".jar"));
         config.java.classpath.push_back(file_entry.value);
       }
     }
@@ -195,7 +195,7 @@ bool java_bytecode_languaget::parse(
       java_class_loader.add_jar_file(path);
   }
   else
-    assert(false);
+    ASSERT(false);
 
   if(!main_class.empty())
   {
@@ -272,12 +272,12 @@ static void get_virtual_method_targets(
   const class_hierarchyt &class_hierarchy)
 {
   const auto &called_function=c.function();
-  assert(called_function.id()==ID_virtual_function);
+  ASSERT(called_function.id()==ID_virtual_function);
 
   const auto &call_class=called_function.get(ID_C_class);
-  assert(call_class!=irep_idt());
+  ASSERT(call_class!=irep_idt());
   const auto &call_basename=called_function.get(ID_component_name);
-  assert(call_basename!=irep_idt());
+  ASSERT(call_basename!=irep_idt());
 
   auto old_size=needed_methods.size();
 

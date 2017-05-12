@@ -111,7 +111,7 @@ Function: smt1_dect::dec_solve
 decision_proceduret::resultt smt1_dect::dec_solve()
 {
   // SMT1 is really not incremental
-  assert(!dec_solve_was_called);
+  ASSERT(!dec_solve_was_called);
   dec_solve_was_called=true;
 
   // this closes the SMT benchmark
@@ -179,7 +179,7 @@ decision_proceduret::resultt smt1_dect::dec_solve()
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 
   #if defined(__linux__) || defined(__APPLE__)
@@ -614,7 +614,7 @@ bool smt1_dect::string_to_expr_z3(
     size_t p1=value.rfind(' ')+1;
     size_t p2=value.rfind(' ', p1-2)+1;
 
-    assert(p1!=std::string::npos && p2!=std::string::npos);
+    ASSERT(p1!=std::string::npos && p2!=std::string::npos);
 
     std::string elem = value.substr(p1, value.size()-p1-1);
     std::string inx = value.substr(p2, p1-p2-1);
@@ -713,7 +713,7 @@ decision_proceduret::resultt smt1_dect::read_result_cvc3(std::istream &in)
     }
     else
     {
-      assert(line.substr(0, 13)=="  :assumption");
+      ASSERT(line.substr(0, 13)=="  :assumption");
       std::size_t pos=line.find('(');
 
       if(pos!=std::string::npos)
@@ -746,7 +746,7 @@ decision_proceduret::resultt smt1_dect::read_result_cvc3(std::istream &in)
         else
         {
           var = line.substr(pos+1, line.length()-pos-2);
-          assert(var.find(' ')==std::string::npos);
+          ASSERT(var.find(' ')==std::string::npos);
           val = "true";
         }
 

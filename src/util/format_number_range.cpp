@@ -117,6 +117,6 @@ std::string format_number_ranget::operator()(std::vector<unsigned> &numbers)
       }
     }
   }
-  assert(!number_range.empty());
+  ASSERT(!number_range.empty());
   return number_range;
 }

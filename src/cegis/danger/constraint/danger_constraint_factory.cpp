@@ -35,7 +35,7 @@ constant_exprt get_min_value()
 
 exprt create_danger_constraint(const size_t number_of_loops, const bool use_ranking)
 {
-  assert(number_of_loops >= 1 && "At least one loop required.");
+  ASSERT(number_of_loops >= 1 && "At least one loop required.");
   const constant_exprt min(get_min_value());
   and_exprt root;
   root.copy_to_operands(as_bool(get_Dx0()));

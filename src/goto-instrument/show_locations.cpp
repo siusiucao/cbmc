@@ -66,7 +66,7 @@ void show_locations(
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
   }
 }

@@ -38,7 +38,7 @@ void java_bytecode_typecheckt::typecheck_type(typet &type)
       throw 0;
     }
 
-    assert(s_it->second.is_type);
+    ASSERT(s_it->second.is_type);
   }
   else if(type.id()==ID_pointer)
   {
@@ -76,7 +76,7 @@ Function: java_bytecode_typecheckt::typecheck_type_symbol
 
 void java_bytecode_typecheckt::typecheck_type_symbol(symbolt &symbol)
 {
-  assert(symbol.is_type);
+  ASSERT(symbol.is_type);
 
   typecheck_type(symbol.type);
 }

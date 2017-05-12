@@ -79,7 +79,7 @@ void read_element(__CPROVER_jsa_concrete_nodet &e, const exprt &value)
 {
   if (ID_struct != value.id()) return make_zero(e);
   const struct_exprt::operandst &ops=to_struct_expr(value).operands();
-  assert(ops.size() > VALUE_COMP_INDEX);
+  ASSERT(ops.size() > VALUE_COMP_INDEX);
   e.next=to_integer(ops[NEXT_COMP_INDEX]);
   e.previous=to_integer(ops[PREV_COMP_INDEX]);
   e.list=to_integer(ops[LIST_COMP_INDEX]);
@@ -90,7 +90,7 @@ void read_element(__CPROVER_jsa_abstract_nodet &e, const exprt &value)
 {
   if (ID_struct != value.id()) return make_zero(e);
   const struct_exprt::operandst &ops=to_struct_expr(value).operands();
-  assert(ops.size() > VALUE_COMP_INDEX);
+  ASSERT(ops.size() > VALUE_COMP_INDEX);
   e.next=to_integer(ops[NEXT_COMP_INDEX]);
   e.previous=to_integer(ops[PREV_COMP_INDEX]);
   e.list=to_integer(ops[LIST_COMP_INDEX]);
@@ -101,7 +101,7 @@ void read_element(__CPROVER_jsa_abstract_ranget &e, const exprt &value)
 {
   if (ID_struct != value.id()) return make_zero(e);
   const struct_exprt::operandst &ops=to_struct_expr(value).operands();
-  assert(ops.size() > SIZE_COMP_INDEX);
+  ASSERT(ops.size() > SIZE_COMP_INDEX);
   e.min=to_integer(ops[MIN_COMP_INDEX]);
   e.max=to_integer(ops[MAX_COMP_INDEX]);
   e.size=to_integer(ops[SIZE_COMP_INDEX]);
@@ -111,7 +111,7 @@ void read_element(__CPROVER_jsa_iteratort &e, const exprt &value)
 {
   if (ID_struct != value.id()) return make_zero(e);
   const struct_exprt::operandst &ops=to_struct_expr(value).operands();
-  assert(ops.size() > ITERATOR_LIST_COMP_INDEX);
+  ASSERT(ops.size() > ITERATOR_LIST_COMP_INDEX);
   e.node_id=to_integer(ops[NODE_COMP_INDEX]);
   e.previous_node_id=to_integer(ops[PREV_NODE_COMP_INDEX]);
   e.index=to_integer(ops[ITERATOR_INDEX_COMP_INDEX]);
@@ -121,7 +121,7 @@ void read_element(__CPROVER_jsa_iteratort &e, const exprt &value)
 
 void fill_null(__CPROVER_jsa_concrete_nodet *array, size_t count)
 {
-  assert(__CPROVER_JSA_MAX_CONCRETE_NODES >= count);
+  ASSERT(__CPROVER_JSA_MAX_CONCRETE_NODES >= count);
   const __CPROVER_jsa_concrete_nodet null_node={ __CPROVER_jsa_null,
       __CPROVER_jsa_null, __CPROVER_jsa_null, __CPROVER_jsa_null };
   while (count < __CPROVER_JSA_MAX_CONCRETE_NODES)
@@ -130,19 +130,19 @@ void fill_null(__CPROVER_jsa_concrete_nodet *array, size_t count)
 
 void fill_null(__CPROVER_jsa_abstract_nodet *array, const size_t count)
 {
-  assert(__CPROVER_JSA_MAX_ABSTRACT_NODES >= count);
-  assert(count == 0);
+  ASSERT(__CPROVER_JSA_MAX_ABSTRACT_NODES >= count);
+  ASSERT(count == 0);
 }
 
 void fill_null(__CPROVER_jsa_abstract_ranget *array, const size_t count)
 {
-  assert(__CPROVER_JSA_MAX_ABSTRACT_RANGES >= count);
-  assert(count == 0);
+  ASSERT(__CPROVER_JSA_MAX_ABSTRACT_RANGES >= count);
+  ASSERT(count == 0);
 }
 
 void fill_null(__CPROVER_jsa_iteratort *array, size_t count)
 {
-  assert(__CPROVER_JSA_MAX_ITERATORS >= count);
+  ASSERT(__CPROVER_JSA_MAX_ITERATORS >= count);
   const __CPROVER_jsa_iteratort null_it={ __CPROVER_jsa_null,
       __CPROVER_jsa_null, 0, 0, __CPROVER_jsa_null };
   while (count < __CPROVER_JSA_MAX_ITERATORS)
@@ -151,7 +151,7 @@ void fill_null(__CPROVER_jsa_iteratort *array, size_t count)
 
 void fill_null(__CPROVER_jsa_node_id_t *array, size_t count)
 {
-  assert(__CPROVER_JSA_MAX_LISTS >= count);
+  ASSERT(__CPROVER_JSA_MAX_LISTS >= count);
   while (count < __CPROVER_JSA_MAX_LISTS)
     array[count++]=__CPROVER_jsa_null;
 }
@@ -169,9 +169,9 @@ void read_array(wordt *data, const exprt &value)
 
 void remove_padding(struct_exprt::operandst &ops, const typet &type)
 {
-  assert(!ops.empty());
+  ASSERT(!ops.empty());
   const struct_typet::componentst &comps=to_struct_type(type).components();
-  assert(comps.size() == ops.size());
+  ASSERT(comps.size() == ops.size());
   for (int i=ops.size() - 1; i >= 0; --i)
     if (comps[i].get_bool(ID_C_is_padding))
       ops.erase(std::next(ops.begin(), i));
@@ -181,7 +181,7 @@ void remove_padding(struct_exprt::operandst &ops, const typet &type)
 void retrieve_heaps(const jsa_counterexamplet &ce,
     __CPROVER_jsa_abstract_heapt *heaps)
 {
-  assert(std::is_sorted(ce.begin(), ce.end(), compare_assignment));
+  ASSERT(std::is_sorted(ce.begin(), ce.end(), compare_assignment));
   size_t index=0;
   for (const jsa_counterexamplet::value_type &assignment : ce)
     if (is_heap(assignment))
@@ -190,7 +190,7 @@ void retrieve_heaps(const jsa_counterexamplet &ce,
       __CPROVER_jsa_abstract_heapt &heap=heaps[index++];
       struct_exprt::operandst ops(value.operands());
       remove_padding(ops, value.type());
-      assert(NUM_ABSTRACT_HEAP_MEMBERS == ops.size());
+      ASSERT(NUM_ABSTRACT_HEAP_MEMBERS == ops.size());
       read_array(heap.concrete_nodes, ops[CONCRETE_NODES_COMP_INDEX]);
       read_array(heap.abstract_nodes, ops[ABSTRACT_NODES_COMP_INDEX]);
       read_array(heap.abstract_ranges, ops[ABSTRACT_RANGES_COMP_INDEX]);
@@ -216,7 +216,7 @@ size_t count_words(const jsa_counterexamplet &ce)
 
 void retrieve_words(const jsa_counterexamplet &ce, __CPROVER_jsa_word_t *words)
 {
-  assert(std::is_sorted(ce.begin(), ce.end(), compare_assignment));
+  ASSERT(std::is_sorted(ce.begin(), ce.end(), compare_assignment));
   size_t index=0;
   for (const jsa_counterexamplet::value_type &assignment : ce)
     if (is_word(assignment)) words[index++]=to_integer(assignment.second);

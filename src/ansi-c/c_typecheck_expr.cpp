@@ -44,7 +44,7 @@ void c_typecheck_baset::typecheck_expr(exprt &expr)
 {
   if(expr.id()==ID_already_typechecked)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     exprt tmp;
     tmp.swap(expr.op0());
     expr.swap(tmp);
@@ -97,7 +97,7 @@ void c_typecheck_baset::add_rounding_mode(exprt &expr)
       else if(expr.id()==ID_minus)
         expr.id(ID_floatbv_minus);
       else
-        assert(false);
+        ASSERT(false);
 
       expr.op2()=from_integer(0, unsigned_int_type());
     }
@@ -278,7 +278,7 @@ void c_typecheck_baset::typecheck_expr_main(exprt &expr)
   {
     expr.type()=bool_typet();
     typet::subtypest &subtypes=((typet &)(expr.add(ID_type_arg))).subtypes();
-    assert(subtypes.size()==2);
+    ASSERT(subtypes.size()==2);
     typecheck_type(subtypes[0]);
     typecheck_type(subtypes[1]);
     source_locationt source_location=expr.source_location();
@@ -313,7 +313,7 @@ void c_typecheck_baset::typecheck_expr_main(exprt &expr)
     {
       if(it->id()==ID_index)
       {
-        assert(it->operands().size()==1);
+        ASSERT(it->operands().size()==1);
         typecheck_expr(it->op0()); // still needs typechecking
       }
     }
@@ -328,7 +328,7 @@ void c_typecheck_baset::typecheck_expr_main(exprt &expr)
   {
     // op0 is a declaration,
     // op1 the bound expression
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     expr.type()=bool_typet();
 
     if(expr.op0().get(ID_statement)!=ID_decl)
@@ -359,7 +359,7 @@ void c_typecheck_baset::typecheck_expr_main(exprt &expr)
           expr.id()==ID_complex_imag)
   {
     // get the subtype
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     const typet &op_type=follow(expr.op0().type());
     if(op_type.id()!=ID_complex)
     {
@@ -517,7 +517,7 @@ void c_typecheck_baset::typecheck_expr_builtin_va_arg(exprt &expr)
   new_type.parameters().resize(1);
   new_type.parameters()[0].type()=pointer_type(void_type());
 
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
   exprt arg=expr.op0();
 
   implicit_typecast(arg, pointer_type(void_type()));
@@ -627,7 +627,7 @@ void c_typecheck_baset::typecheck_expr_builtin_offsetof(exprt &expr)
 
       while(!found)
       {
-        assert(type.id()==ID_union || type.id()==ID_struct);
+        ASSERT(type.id()==ID_union || type.id()==ID_struct);
 
         const struct_union_typet &struct_union_type=
           to_struct_union_type(type);
@@ -698,7 +698,7 @@ void c_typecheck_baset::typecheck_expr_builtin_offsetof(exprt &expr)
 
                 typet tmp=follow(c_it->type());
                 type=tmp;
-                assert(type.id()==ID_union || type.id()==ID_struct);
+                ASSERT(type.id()==ID_union || type.id()==ID_struct);
                 found2=true;
                 break; // we run into another iteration of the outer loop
               }
@@ -718,7 +718,7 @@ void c_typecheck_baset::typecheck_expr_builtin_offsetof(exprt &expr)
     }
     else if(m_it->id()==ID_index)
     {
-      assert(m_it->operands().size()==1);
+      ASSERT(m_it->operands().size()==1);
 
       if(type.id()!=ID_array)
       {
@@ -768,7 +768,7 @@ void c_typecheck_baset::typecheck_expr_operands(exprt &expr)
      expr.get(ID_statement)==ID_function_call)
   {
     // don't do function operand
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     typecheck_expr(expr.op1()); // arguments
   }
@@ -779,7 +779,7 @@ void c_typecheck_baset::typecheck_expr_operands(exprt &expr)
   }
   else if(expr.id()==ID_forall || expr.id()==ID_exists)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     ansi_c_declarationt &declaration=
       to_ansi_c_declaration(expr.op0());
@@ -983,7 +983,7 @@ void c_typecheck_baset::typecheck_side_effect_statement_expression(
 
   if(last_statement==ID_expression)
   {
-    assert(last.operands().size()==1);
+    ASSERT(last.operands().size()==1);
     exprt &op=last.op0();
 
     // arrays here turn into pointers (array decay)
@@ -995,7 +995,7 @@ void c_typecheck_baset::typecheck_side_effect_statement_expression(
   else if(last_statement==ID_function_call)
   {
     // this is suspected to be dead
-    assert(false);
+    ASSERT(false);
 
     // make the last statement an expression
 
@@ -1454,7 +1454,7 @@ Function: c_typecheck_baset::adjust_float_rel
 void c_typecheck_baset::adjust_float_rel(exprt &expr)
 {
   // equality and disequality on float is not mathematical equality!
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(follow(expr.op0().type()).id()==ID_floatbv)
   {
@@ -1792,7 +1792,7 @@ void c_typecheck_baset::typecheck_expr_trinary(if_exprt &expr)
 {
   exprt::operandst &operands=expr.operands();
 
-  assert(operands.size()==3);
+  ASSERT(operands.size()==3);
 
   // copy (save) original types
   const typet o_type0=operands[0].type();
@@ -2037,7 +2037,7 @@ void c_typecheck_baset::typecheck_expr_dereference(exprt &expr)
     expr.id(ID_index);
     expr.type()=op_type.subtype();
     expr.copy_to_operands(from_integer(0, index_type()));
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
   }
   else if(op_type.id()==ID_pointer)
   {
@@ -3257,7 +3257,7 @@ void c_typecheck_baset::typecheck_expr_binary_arithmetic(exprt &expr)
         else if(expr.id()==ID_bitxor)
           expr.id(ID_xor);
         else
-          assert(false);
+          ASSERT(false);
         expr.type()=type0;
         return;
       }
@@ -3286,7 +3286,7 @@ Function: c_typecheck_baset::typecheck_expr_shifts
 
 void c_typecheck_baset::typecheck_expr_shifts(shift_exprt &expr)
 {
-  assert(expr.id()==ID_shl || expr.id()==ID_shr);
+  ASSERT(expr.id()==ID_shl || expr.id()==ID_shr);
 
   exprt &op0=expr.op0();
   exprt &op1=expr.op1();
@@ -3368,7 +3368,7 @@ Function: c_typecheck_baset::typecheck_arithmetic_pointer
 void c_typecheck_baset::typecheck_arithmetic_pointer(const exprt &expr)
 {
   const typet &type=expr.type();
-  assert(type.id()==ID_pointer);
+  ASSERT(type.id()==ID_pointer);
 
   typet subtype=type.subtype();
 
@@ -3397,7 +3397,7 @@ Function: c_typecheck_baset::typecheck_expr_pointer_arithmetic
 
 void c_typecheck_baset::typecheck_expr_pointer_arithmetic(exprt &expr)
 {
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   exprt &op0=expr.op0();
   exprt &op1=expr.op1();
@@ -3451,7 +3451,7 @@ void c_typecheck_baset::typecheck_expr_pointer_arithmetic(exprt &expr)
     else
     {
       p_op=int_op=nullptr;
-      assert(false);
+      ASSERT(false);
     }
 
     const typet &int_op_type=follow(int_op->type());

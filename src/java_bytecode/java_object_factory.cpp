@@ -128,7 +128,7 @@ exprt java_object_factoryt::allocate_object(
 
     if(allocate_type.id()!=ID_empty)
     {
-      assert(!object_size.is_nil() && "size of Java objects should be known");
+      ASSERT(!object_size.is_nil() && "size of Java objects should be known");
       // malloc expression
       exprt malloc_expr=side_effect_exprt(ID_malloc);
       malloc_expr.copy_to_operands(object_size);
@@ -219,7 +219,7 @@ void java_object_factoryt::gen_pointer_target_init(
   bool create_dynamic_objects,
   update_in_placet update_in_place)
 {
-  assert(update_in_place!=MAY_UPDATE_IN_PLACE);
+  ASSERT(update_in_place!=MAY_UPDATE_IN_PLACE);
 
   if(target_type.id()==ID_struct &&
      has_prefix(
@@ -404,7 +404,7 @@ void java_object_factoryt::gen_nondet_init(
       class_identifier=struct_tag;
 
     recursion_set.insert(struct_tag);
-    assert(!recursion_set.empty());
+    ASSERT(!recursion_set.empty());
 
     for(const auto &component : components)
     {
@@ -434,7 +434,7 @@ void java_object_factoryt::gen_nondet_init(
       }
       else
       {
-        assert(!name.empty());
+        ASSERT(!name.empty());
 
         bool _is_sub=name[0]=='@';
 #if 0
@@ -493,12 +493,12 @@ void java_object_factoryt::gen_nondet_array_init(
   const exprt &expr,
   update_in_placet update_in_place)
 {
-  assert(update_in_place!=MAY_UPDATE_IN_PLACE);
-  assert(expr.type().id()==ID_pointer);
+  ASSERT(update_in_place!=MAY_UPDATE_IN_PLACE);
+  ASSERT(expr.type().id()==ID_pointer);
 
   const typet &type=ns.follow(expr.type().subtype());
   const struct_typet &struct_type=to_struct_type(type);
-  assert(expr.type().subtype().id()==ID_symbol);
+  ASSERT(expr.type().subtype().id()==ID_symbol);
   const typet &element_type=
     static_cast<const typet &>(expr.type().subtype().find(ID_C_element_type));
 

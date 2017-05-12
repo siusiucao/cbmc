@@ -44,14 +44,14 @@ class cpp_template_args_non_tct:public cpp_template_args_baset
 inline cpp_template_args_non_tct &to_cpp_template_args_non_tc(
   irept &irep)
 {
-  assert(irep.id()==ID_template_args);
+  ASSERT(irep.id()==ID_template_args);
   return static_cast<cpp_template_args_non_tct &>(irep);
 }
 
 inline const cpp_template_args_non_tct &to_cpp_template_args_non_tc(
   const irept &irep)
 {
-  assert(irep.id()==ID_template_args);
+  ASSERT(irep.id()==ID_template_args);
   return static_cast<const cpp_template_args_non_tct &>(irep);
 }
 
@@ -77,13 +77,13 @@ public:
 
 inline cpp_template_args_tct &to_cpp_template_args_tc(irept &irep)
 {
-  assert(irep.id()==ID_template_args);
+  ASSERT(irep.id()==ID_template_args);
   return static_cast<cpp_template_args_tct &>(irep);
 }
 
 inline const cpp_template_args_tct &to_cpp_template_args_tc(const irept &irep)
 {
-  assert(irep.id()==ID_template_args);
+  ASSERT(irep.id()==ID_template_args);
   return static_cast<const cpp_template_args_tct &>(irep);
 }
 

@@ -95,7 +95,7 @@ public:
   // copy constructor, don't use me!
   goto_functions_templatet(const goto_functions_templatet<bodyT> &src)
   {
-    assert(src.function_map.empty());
+    ASSERT(src.function_map.empty());
   }
 
   void clear()

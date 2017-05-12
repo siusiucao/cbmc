@@ -22,7 +22,7 @@ void serialise(std::deque<unsigned int> &stream,
   {
     if (max_prog_sz(i) == 0u) continue;
     const program_individualt::programt &prog=progs[i];
-    assert(!prog.empty());
+    ASSERT(!prog.empty());
     stream.push_back(static_cast<unsigned int>(prog.size()));
     for (const program_individualt::instructiont &instr : prog)
     {

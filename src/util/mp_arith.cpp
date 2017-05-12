@@ -281,7 +281,7 @@ Function: integer2ulong
 
 mp_integer::ullong_t integer2ulong(const mp_integer &n)
 {
-  assert(n.is_ulong());
+  ASSERT(n.is_ulong());
   return n.to_ulong();
 }
 
@@ -299,9 +299,9 @@ Function: integer2size_t
 
 std::size_t integer2size_t(const mp_integer &n)
 {
-  assert(n>=0);
+  ASSERT(n>=0);
   mp_integer::ullong_t ull=integer2ulong(n);
-  assert(ull <= std::numeric_limits<std::size_t>::max());
+  ASSERT(ull <= std::numeric_limits<std::size_t>::max());
   return (std::size_t)ull;
 }
 
@@ -319,9 +319,9 @@ Function: integer2unsigned
 
 unsigned integer2unsigned(const mp_integer &n)
 {
-  assert(n>=0);
+  ASSERT(n>=0);
   mp_integer::ullong_t ull=integer2ulong(n);
-  assert(ull <= std::numeric_limits<unsigned>::max());
+  ASSERT(ull <= std::numeric_limits<unsigned>::max());
   return (unsigned)ull;
 }
 

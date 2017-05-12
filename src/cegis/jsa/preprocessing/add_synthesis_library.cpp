@@ -48,7 +48,7 @@ std::string get_array_size(const typet &type)
     const bv_arithmetict bv(to_array_type(type).size());
     return std::to_string(bv.to_integer().to_ulong());
   }
-  assert(ID_pointer == type_id);
+  ASSERT(ID_pointer == type_id);
   return "0u";
 }
 
@@ -88,9 +88,9 @@ void zero_new_global_vars(const symbol_tablet &st, goto_functionst &gf)
 {
   goto_functionst::function_mapt &fm=gf.function_map;
   const goto_functionst::function_mapt::iterator it=fm.find(CPROVER_INIT);
-  assert(fm.end() != it);
+  ASSERT(fm.end() != it);
   goto_functionst::goto_functiont &init=it->second;
-  assert(init.body_available());
+  ASSERT(init.body_available());
   goto_programt &body=init.body;
   goto_programt::targett pos=std::prev(body.instructions.end(), 2);
   const source_locationt loc(jsa_builtin_source_location());
@@ -140,7 +140,7 @@ void add_jsa_library(jsa_programt &prog, const size_t max_sz,
   null_message_handlert msg;
   add_library(library_text, blank, msg);
 
-  assert(!linking(st, blank, msg));
+  ASSERT(!linking(st, blank, msg));
   goto_functionst &gf=prog.gf;
   const std::vector<irep_idt> new_funcs(get_functions(blank));
   for (const irep_idt &func_name : new_funcs)

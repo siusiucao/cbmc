@@ -332,7 +332,7 @@ void java_record_outputs(
   codet output(ID_output);
   output.operands().resize(2);
 
-  assert(symbol_table.has_symbol(id2string(function.name)+EXC_SUFFIX));
+  ASSERT(symbol_table.has_symbol(id2string(function.name)+EXC_SUFFIX));
 
   // retrieve the exception variable
   const symbolt exc_symbol=symbol_table.lookup(
@@ -389,7 +389,7 @@ main_function_resultt get_main_symbol(
       else if(matches.size()==1)
       {
         s_it=symbol_table.symbols.find(*matches.begin());
-        assert(s_it!=symbol_table.symbols.end());
+        ASSERT(s_it!=symbol_table.symbols.end());
       }
       else
       {
@@ -448,7 +448,7 @@ main_function_resultt get_main_symbol(
   else
   {
     // no function given, we look for the main class
-    assert(config.main=="");
+    ASSERT(config.main=="");
 
     // are we given a main class?
     if(main_class.empty())
@@ -551,8 +551,8 @@ bool java_entry_point(
     return res.stop_convert;
   symbolt symbol=res.main_function;
 
-  assert(!symbol.value.is_nil());
-  assert(symbol.type.id()==ID_code);
+  ASSERT(!symbol.value.is_nil());
+  ASSERT(symbol.type.id()==ID_code);
 
   create_initialize(symbol_table);
 

@@ -73,7 +73,7 @@ void remove_returnst::replace_returns(
     symbol_tablet::symbolst::iterator s_it=
       symbol_table.symbols.find(function_id);
 
-    assert(s_it!=symbol_table.symbols.end());
+    ASSERT(s_it!=symbol_table.symbols.end());
     symbolt &function_symbol=s_it->second;
 
     // make the return type 'void'
@@ -104,7 +104,7 @@ void remove_returnst::replace_returns(
     {
       if(i_it->is_return())
       {
-        assert(i_it->code.operands().size()==1);
+        ASSERT(i_it->code.operands().size()==1);
 
         // replace "return x;" by "fkt#return_value=x;"
         symbol_exprt lhs_expr;
@@ -150,7 +150,7 @@ void remove_returnst::do_function_calls(
       {
         // replace "lhs=f(...)" by
         // "f(...); lhs=f#return_value; DEAD f#return_value;"
-        assert(function_call.function().id()==ID_symbol);
+        ASSERT(function_call.function().id()==ID_symbol);
 
         const irep_idt function_id=
           to_symbol_expr(function_call.function()).get_identifier();
@@ -297,7 +297,7 @@ bool remove_returnst::restore_returns(
   symbol_tablet::symbolst::iterator s_it=
     symbol_table.symbols.find(function_id);
 
-  assert(s_it!=symbol_table.symbols.end());
+  ASSERT(s_it!=symbol_table.symbols.end());
   symbolt &function_symbol=s_it->second;
 
   // restore the return type
@@ -328,18 +328,18 @@ bool remove_returnst::restore_returns(
 
       while(!i_it->is_goto() && !i_it->is_end_function())
       {
-        assert(i_it->is_dead());
+        ASSERT(i_it->is_dead());
         i_it++;
       }
 
       if(i_it->is_goto())
       {
         goto_programt::const_targett target=i_it->get_target();
-        assert(target->is_end_function());
+        ASSERT(target->is_end_function());
       }
       else
       {
-        assert(i_it->is_end_function());
+        ASSERT(i_it->is_end_function());
         i_it=goto_program.instructions.insert(i_it, *i_it);
       }
 
@@ -392,7 +392,7 @@ void remove_returnst::undo_function_calls(
       // and revert to "lhs=f(...);"
       goto_programt::instructionst::iterator next=i_it;
       ++next;
-      assert(next!=goto_program.instructions.end());
+      ASSERT(next!=goto_program.instructions.end());
 
       if(!next->is_assign())
         continue;
@@ -413,8 +413,8 @@ void remove_returnst::undo_function_calls(
       // remove the assignment and subsequent dead
       // i_it remains valid
       next=goto_program.instructions.erase(next);
-      assert(next!=goto_program.instructions.end());
-      assert(next->is_dead());
+      ASSERT(next!=goto_program.instructions.end());
+      ASSERT(next->is_dead());
       // i_it remains valid
       goto_program.instructions.erase(next);
     }

@@ -565,7 +565,7 @@ void smt2_propt::set_assignment(literalt literal, bool value)
     return;
 
   unsigned v=literal.var_no();
-  assert(v<assignment.size());
+  ASSERT(v<assignment.size());
   assignment[v]=tvt(value);
 }
 

@@ -75,7 +75,7 @@ tvt satcheck_limmatt::l_get(literalt a) const
   tvt result;
   unsigned v=a.var_no();
 
-  assert(v<assignment.size());
+  ASSERT(v<assignment.size());
 
   switch(assignment[v])
   {
@@ -201,7 +201,7 @@ propt::resultt satcheck_limmatt::prop_solve()
       int v=*a;
       if(v<0)
         v=-v;
-      assert((unsigned)v<assignment.size());
+      ASSERT((unsigned)v<assignment.size());
       assignment[v]=(*a)>=0;
     }
 

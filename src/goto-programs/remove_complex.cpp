@@ -33,14 +33,14 @@ static exprt complex_member(const exprt &expr, irep_idt id)
     else if(id==ID_imag)
       return expr.op1();
     else
-      assert(false);
+      ASSERT(false);
   }
   else
   {
-    assert(expr.type().id()==ID_struct);
+    ASSERT(expr.type().id()==ID_struct);
     const struct_typet &struct_type=
       to_struct_type(expr.type());
-    assert(struct_type.components().size()==2);
+    ASSERT(struct_type.components().size()==2);
     return member_exprt(expr, id, struct_type.components().front().type());
   }
 }
@@ -150,7 +150,7 @@ static void remove_complex(exprt &expr)
 
   if(expr.id()==ID_typecast)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     if(expr.op0().type().id()==ID_complex)
     {
       if(expr.type().id()==ID_complex)
@@ -176,7 +176,7 @@ static void remove_complex(exprt &expr)
     if(expr.id()==ID_plus || expr.id()==ID_minus ||
        expr.id()==ID_mult || expr.id()==ID_div)
     {
-      assert(expr.operands().size()==2);
+      ASSERT(expr.operands().size()==2);
       // do component-wise:
       // x+y -> complex(x.r+y.r,x.i+y.i)
       struct_exprt struct_expr(expr.type());
@@ -198,7 +198,7 @@ static void remove_complex(exprt &expr)
     }
     else if(expr.id()==ID_unary_minus)
     {
-      assert(expr.operands().size()==1);
+      ASSERT(expr.operands().size()==1);
       // do component-wise:
       // -x -> complex(-x.r,-x.i)
       struct_exprt struct_expr(expr.type());
@@ -218,12 +218,12 @@ static void remove_complex(exprt &expr)
     }
     else if(expr.id()==ID_complex)
     {
-      assert(expr.operands().size()==2);
+      ASSERT(expr.operands().size()==2);
       expr.id(ID_struct);
     }
     else if(expr.id()==ID_typecast)
     {
-      assert(expr.operands().size()==1);
+      ASSERT(expr.operands().size()==1);
       typet subtype=expr.type().subtype();
 
       if(expr.op0().type().id()==ID_struct)
@@ -262,12 +262,12 @@ static void remove_complex(exprt &expr)
 
   if(expr.id()==ID_complex_real)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     expr=complex_member(expr.op0(), ID_real);
   }
   else if(expr.id()==ID_complex_imag)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     expr=complex_member(expr.op0(), ID_imag);
   }
 

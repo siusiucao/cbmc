@@ -46,8 +46,8 @@ cpp_idt &cpp_scopest::put_into_scope(
   cpp_scopet &scope,
   bool is_friend)
 {
-  assert(!symbol.name.empty());
-  assert(!symbol.base_name.empty());
+  ASSERT(!symbol.name.empty());
+  ASSERT(!symbol.base_name.empty());
 
   // functions are also scopes
   if(symbol.type.id()==ID_code)

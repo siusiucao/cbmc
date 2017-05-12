@@ -291,7 +291,7 @@ bool qbf_skizzo_coret::get_certificate(void)
     std::string line;
     std::getline(in, line);
 
-    assert(line=="# QBM file, 1.3");
+    ASSERT(line=="# QBM file, 1.3");
 
     while(in)
     {
@@ -310,7 +310,7 @@ bool qbf_skizzo_coret::get_certificate(void)
     size_t ob=line.find('[');
     std::string n_es=line.substr(ob+1, line.find(']')-ob-1);
     n_e=unsafe_string2int(n_es);
-    assert(n_e!=0);
+    ASSERT(n_e!=0);
 
     e_list.resize(n_e);
     std::string e_lists=line.substr(line.find(':')+2);
@@ -320,7 +320,7 @@ bool qbf_skizzo_coret::get_certificate(void)
       size_t space=e_lists.find(' ');
 
       int cur=unsafe_string2int(e_lists.substr(0, space));
-      assert(cur!=0);
+      ASSERT(cur!=0);
 
       e_list[i]=cur;
       if(cur>e_max)
@@ -365,7 +365,7 @@ bool qbf_skizzo_coret::get_certificate(void)
         NULL,
         &bdds);
 
-    assert(nroots=2*n_e); // ozziKs documentation guarantees that.
+    ASSERT(nroots=2*n_e); // ozziKs documentation guarantees that.
 
     model_bdds.resize(e_max+1, NULL);
 

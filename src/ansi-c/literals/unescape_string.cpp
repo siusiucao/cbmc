@@ -37,7 +37,7 @@ std::string unescape_string(const std::string &src)
     {
       // go to next character
       i++;
-      assert(i<src.size()); // backslash can't be last character
+      ASSERT(i<src.size()); // backslash can't be last character
 
       ch=src[i];
       switch(ch)
@@ -160,7 +160,7 @@ std::basic_string<unsigned int> unescape_wide_string(
     if(ch=='\\') // escape?
     {
       i++;
-      assert(i<src.size()); // backslash can't be last character
+      ASSERT(i<src.size()); // backslash can't be last character
 
       ch=(unsigned char)src[i];
       switch(ch)

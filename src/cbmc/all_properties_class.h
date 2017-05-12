@@ -65,7 +65,7 @@ public:
       }
 
       // make some poor compilers happy
-      assert(false);
+      ASSERT(false);
       return "";
     }
 

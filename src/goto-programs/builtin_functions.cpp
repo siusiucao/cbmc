@@ -253,7 +253,7 @@ void goto_convertt::do_printf(
     }
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -368,7 +368,7 @@ void goto_convertt::do_scanf(
     }
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -567,7 +567,7 @@ void goto_convertt::do_cpp_new(
     const typet &return_type=
       code_type.return_type();
 
-    assert(code_type.parameters().size()==1 ||
+    ASSERT(code_type.parameters().size()==1 ||
            code_type.parameters().size()==2);
 
     const symbolt &tmp_symbol=
@@ -598,7 +598,7 @@ void goto_convertt::do_cpp_new(
 
     const typet &return_type=code_type.return_type();
 
-    assert(code_type.parameters().size()==2 ||
+    ASSERT(code_type.parameters().size()==2 ||
            code_type.parameters().size()==3);
 
     const symbolt &tmp_symbol=
@@ -664,16 +664,16 @@ void set_class_identifier(
 
   if(components.empty())
     return;
-  assert(!expr.operands().empty());
+  ASSERT(!expr.operands().empty());
 
   if(components.front().get_name()=="@class_identifier")
   {
-    assert(expr.op0().id()==ID_constant);
+    ASSERT(expr.op0().id()==ID_constant);
     expr.op0()=constant_exprt(class_type.get_identifier(), string_typet());
   }
   else
   {
-    assert(expr.op0().id()==ID_struct);
+    ASSERT(expr.op0().id()==ID_struct);
     set_class_identifier(to_struct_expr(expr.op0()), ns, class_type);
   }
 }
@@ -704,7 +704,7 @@ void goto_convertt::do_java_new(
 
   source_locationt location=rhs.source_location();
 
-  assert(rhs.operands().empty());
+  ASSERT(rhs.operands().empty());
 
   if(rhs.type().id()!=ID_pointer)
   {
@@ -772,7 +772,7 @@ void goto_convertt::do_java_new_array(
 
   source_locationt location=rhs.source_location();
 
-  assert(rhs.operands().size()>=1); // one per dimension
+  ASSERT(rhs.operands().size()>=1); // one per dimension
 
   if(rhs.type().id()!=ID_pointer)
   {
@@ -804,9 +804,9 @@ void goto_convertt::do_java_new_array(
 
   // multi-dimensional?
 
-  assert(ns.follow(object_type).id()==ID_struct);
+  ASSERT(ns.follow(object_type).id()==ID_struct);
   const struct_typet &struct_type=to_struct_type(ns.follow(object_type));
-  assert(struct_type.components().size()==3);
+  ASSERT(struct_type.components().size()==3);
 
   // if it's an array, we need to set the length field
   dereference_exprt deref(lhs, object_type);
@@ -858,10 +858,10 @@ void goto_convertt::do_java_new_array(
     side_effect_exprt sub_java_new=rhs;
     sub_java_new.operands().erase(sub_java_new.operands().begin());
 
-    assert(rhs.type().id()==ID_pointer);
+    ASSERT(rhs.type().id()==ID_pointer);
     typet sub_type=
       static_cast<const typet &>(rhs.type().subtype().find("#element_type"));
-    assert(sub_type.id()==ID_pointer);
+    ASSERT(sub_type.id()==ID_pointer);
     sub_java_new.type()=sub_type;
 
     side_effect_exprt inc(ID_assign);
@@ -930,7 +930,7 @@ void goto_convertt::cpp_new_initializer(
       convert(to_code(initializer), dest);
     }
     else
-      assert(false);
+      ASSERT(false);
   }
 }
 
@@ -950,7 +950,7 @@ exprt goto_convertt::get_array_argument(const exprt &src)
 {
   if(src.id()==ID_typecast)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     return get_array_argument(src.op0());
   }
 
@@ -961,7 +961,7 @@ exprt goto_convertt::get_array_argument(const exprt &src)
     throw 0;
   }
 
-  assert(src.operands().size()==1);
+  ASSERT(src.operands().size()==1);
 
   if(src.op0().id()!=ID_index)
   {
@@ -970,7 +970,7 @@ exprt goto_convertt::get_array_argument(const exprt &src)
     throw 0;
   }
 
-  assert(src.op0().operands().size()==2);
+  ASSERT(src.op0().operands().size()==2);
 
   if(ns.follow(src.op0().op0().type()).id()!=ID_array)
   {
@@ -1575,7 +1575,7 @@ void goto_convertt::do_function_call_symbol(
   }
   else if(identifier=="__builtin_unreachable")
   {
-    // says something like assert(false);
+    // says something like ASSERT(false);
   }
   else if(identifier==ID_gcc_builtin_va_arg)
   {

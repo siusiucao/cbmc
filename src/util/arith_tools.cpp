@@ -244,7 +244,7 @@ constant_exprt from_integer(
   }
 
   {
-    assert(false);
+    ASSERT(false);
     constant_exprt r;
     r.make_nil();
     return r;
@@ -287,7 +287,7 @@ Function: power
 mp_integer power(const mp_integer &base,
                  const mp_integer &exponent)
 {
-  assert(exponent>=0);
+  ASSERT(exponent>=0);
 
   /* There are a number of special cases which are:
    *  A. very common

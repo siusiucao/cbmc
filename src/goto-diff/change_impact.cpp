@@ -169,7 +169,7 @@ void full_slicert::fixedpoint(
   {
     cfgt::entry_mapt::const_iterator entry=
       cfg.entry_map.find(dep_graph[i].PC);
-    assert(entry!=cfg.entry_map.end());
+    ASSERT(entry!=cfg.entry_map.end());
 
     dep_node_to_cfg.push_back(entry->second);
   }
@@ -430,17 +430,17 @@ void change_impactt::change_impact(
     switch(d.second)
     {
       case unified_difft::differencet::SAME:
-        assert(o_it!=old_goto_program.instructions.end());
-        assert(n_it!=new_goto_program.instructions.end());
+        ASSERT(o_it!=old_goto_program.instructions.end());
+        ASSERT(n_it!=new_goto_program.instructions.end());
         old_impact[o_it]|=SAME;
         ++o_it;
-        assert(n_it==d.first);
+        ASSERT(n_it==d.first);
         new_impact[n_it]|=SAME;
         ++n_it;
         break;
       case unified_difft::differencet::DELETED:
-        assert(o_it!=old_goto_program.instructions.end());
-        assert(o_it==d.first);
+        ASSERT(o_it!=old_goto_program.instructions.end());
+        ASSERT(o_it==d.first);
         {
           const dependence_grapht::nodet &d_node=
             old_dep_graph[old_dep_graph[o_it].get_node_id()];
@@ -462,8 +462,8 @@ void change_impactt::change_impact(
         ++o_it;
         break;
       case unified_difft::differencet::NEW:
-        assert(n_it!=new_goto_program.instructions.end());
-        assert(n_it==d.first);
+        ASSERT(n_it!=new_goto_program.instructions.end());
+        ASSERT(n_it==d.first);
         {
           const dependence_grapht::nodet &d_node=
             new_dep_graph[new_dep_graph[n_it].get_node_id()];
@@ -636,7 +636,7 @@ void change_impactt::operator()()
         ns_new);
     else
     {
-      assert(oc_it->first==nc_it->first);
+      ASSERT(oc_it->first==nc_it->first);
 
       output_change_impact(
         nc_it->first,
@@ -672,7 +672,7 @@ void change_impactt::output_change_impact(
 {
   goto_functionst::function_mapt::const_iterator f_it=
     goto_functions.function_map.find(function);
-  assert(f_it!=goto_functions.function_map.end());
+  ASSERT(f_it!=goto_functions.function_map.end());
   const goto_programt &goto_program=f_it->second.body;
 
   if(!compact_output)
@@ -703,7 +703,7 @@ void change_impactt::output_change_impact(
     else if(mod_flags&DEL_CTRL_DEP)
       prefix='c';
     else
-      assert(false);
+      ASSERT(false);
 
     output_instruction(prefix, goto_program, ns, function, target);
   }
@@ -732,12 +732,12 @@ void change_impactt::output_change_impact(
 {
   goto_functionst::function_mapt::const_iterator o_f_it=
     o_goto_functions.function_map.find(function);
-  assert(o_f_it!=o_goto_functions.function_map.end());
+  ASSERT(o_f_it!=o_goto_functions.function_map.end());
   const goto_programt &old_goto_program=o_f_it->second.body;
 
   goto_functionst::function_mapt::const_iterator f_it=
     n_goto_functions.function_map.find(function);
-  assert(f_it!=n_goto_functions.function_map.end());
+  ASSERT(f_it!=n_goto_functions.function_map.end());
   const goto_programt &goto_program=f_it->second.body;
 
   if(!compact_output)
@@ -777,19 +777,19 @@ void change_impactt::output_change_impact(
       else if(old_mod_flags&DEL_CTRL_DEP)
         prefix='c';
       else
-        assert(false);
+        ASSERT(false);
 
       ++o_target;
     }
     else if(mod_flags&DELETED)
-      assert(false);
+      ASSERT(false);
     else if(mod_flags&NEW)
       prefix='+';
     else if(mod_flags&NEW_DATA_DEP)
     {
       prefix='D';
 
-      assert(old_mod_flags==SAME ||
+      ASSERT(old_mod_flags==SAME ||
              old_mod_flags&DEL_DATA_DEP ||
              old_mod_flags&DEL_CTRL_DEP);
       ++o_target;
@@ -798,13 +798,13 @@ void change_impactt::output_change_impact(
     {
       prefix='C';
 
-      assert(old_mod_flags==SAME ||
+      ASSERT(old_mod_flags==SAME ||
              old_mod_flags&DEL_DATA_DEP ||
              old_mod_flags&DEL_CTRL_DEP);
       ++o_target;
     }
     else
-      assert(false);
+      ASSERT(false);
 
     output_instruction(prefix, goto_program, n_ns, function, target);
   }
@@ -821,17 +821,17 @@ void change_impactt::output_change_impact(
     // syntactic changes are preferred over data/control-dependence
     // modifications
     if(old_mod_flags==SAME)
-      assert(false);
+      ASSERT(false);
     else if(old_mod_flags&DELETED)
       prefix='-';
     else if(old_mod_flags&NEW)
-      assert(false);
+      ASSERT(false);
     else if(old_mod_flags&DEL_DATA_DEP)
       prefix='d';
     else if(old_mod_flags&DEL_CTRL_DEP)
       prefix='c';
     else
-      assert(false);
+      ASSERT(false);
 
     output_instruction(prefix, goto_program, o_ns, function, o_target);
   }

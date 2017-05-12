@@ -276,7 +276,7 @@ void cpp_convert_typet::read_function_type(const typet &type)
       cpp_convert_plain_type(declaration.type());
 
       // there should be only one declarator
-      assert(declaration.declarators().size()==1);
+      ASSERT(declaration.declarators().size()==1);
 
       cpp_declaratort &declarator=
         declaration.declarators().front();
@@ -308,7 +308,7 @@ void cpp_convert_typet::read_function_type(const typet &type)
         else if(cpp_name.is_simple_name())
         {
           irep_idt base_name=cpp_name.get_base_name();
-          assert(!base_name.empty());
+          ASSERT(!base_name.empty());
           new_parameter.set_identifier(base_name);
           new_parameter.set_base_name(base_name);
           new_parameter.add_source_location()=cpp_name.source_location();
@@ -329,7 +329,7 @@ void cpp_convert_typet::read_function_type(const typet &type)
       throw "ellipsis only allowed as last parameter";
     }
     else
-      assert(false);
+      ASSERT(false);
   }
 
   // if we just have one parameter of type void, remove it

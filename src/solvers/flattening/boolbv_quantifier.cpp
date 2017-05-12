@@ -55,7 +55,7 @@ exprt get_quantifier_var_min(
   const exprt &var_expr,
   const exprt &quantifier_expr)
 {
-  assert(quantifier_expr.id()==ID_or ||
+  ASSERT(quantifier_expr.id()==ID_or ||
          quantifier_expr.id()==ID_and);
   exprt res;
   res.make_false();
@@ -114,7 +114,7 @@ exprt get_quantifier_var_max(
   const exprt &var_expr,
   const exprt &quantifier_expr)
 {
-  assert(quantifier_expr.id()==ID_or ||
+  ASSERT(quantifier_expr.id()==ID_or ||
          quantifier_expr.id()==ID_and);
   exprt res;
   res.make_false();
@@ -189,8 +189,8 @@ bool instantiate_quantifier(exprt &expr,
   if(!(expr.id()==ID_forall || expr.id()==ID_exists))
     return true;
 
-  assert(expr.operands().size()==2);
-  assert(expr.op0().id()==ID_symbol);
+  ASSERT(expr.operands().size()==2);
+  ASSERT(expr.op0().id()==ID_symbol);
 
   exprt var_expr=expr.op0();
 

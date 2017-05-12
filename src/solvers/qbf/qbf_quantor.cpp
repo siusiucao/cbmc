@@ -58,7 +58,7 @@ Function: qbf_quantort::l_get
 
 tvt qbf_quantort::l_get(literalt a) const
 {
-  assert(false);
+  ASSERT(false);
   return tvt::unknown();
 }
 
@@ -113,7 +113,7 @@ propt::resultt qbf_quantort::prop_solve()
   // solve it
   int res=system((
     "quantor "+qbf_tmp_file+" -o "+result_tmp_file).c_str());
-  assert(0==res);
+  ASSERT(0==res);
 
   bool result=false;
 

@@ -84,7 +84,7 @@ std::string expr2cppt::convert_struct(
   const struct_typet::componentst &components=
     struct_type.components();
 
-  assert(components.size()==src.operands().size());
+  ASSERT(components.size()==src.operands().size());
 
   exprt::operandst::const_iterator o_it=src.operands().begin();
 
@@ -605,7 +605,7 @@ std::string expr2cppt::convert_extractbit(
   const exprt &src,
   unsigned precedence)
 {
-  assert(src.operands().size()==2);
+  ASSERT(src.operands().size()==2);
   return convert(src.op0())+"["+convert(src.op1())+"]";
 }
 
@@ -625,7 +625,7 @@ std::string expr2cppt::convert_extractbits(
   const exprt &src,
   unsigned precedence)
 {
-  assert(src.operands().size()==3);
+  ASSERT(src.operands().size()==3);
   return
     convert(src.op0())+".range("+convert(src.op1())+ ","+
     convert(src.op2())+")";

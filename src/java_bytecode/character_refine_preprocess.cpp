@@ -30,7 +30,7 @@ codet character_refine_preprocesst::convert_char_function(
   conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==1);
+  ASSERT(function_call.arguments().size()==1);
   const exprt &arg=function_call.arguments()[0];
   const exprt &result=function_call.lhs();
   const typet &type=result.type();
@@ -182,7 +182,7 @@ Function: character_refine_preprocesst::convert_compare
 codet character_refine_preprocesst::convert_compare(conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==2);
+  ASSERT(function_call.arguments().size()==2);
   const exprt &char1=function_call.arguments()[0];
   const exprt &char2=function_call.arguments()[1];
   const exprt &result=function_call.lhs();
@@ -214,7 +214,7 @@ codet character_refine_preprocesst::convert_digit_char(
   conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==2);
+  ASSERT(function_call.arguments().size()==2);
   const exprt &arg=function_call.arguments()[0];
   const exprt &radix=function_call.arguments()[1];
   const exprt &result=function_call.lhs();
@@ -315,7 +315,7 @@ Function: character_refine_preprocesst::convert_for_digit
 codet character_refine_preprocesst::convert_for_digit(conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==2);
+  ASSERT(function_call.arguments().size()==2);
   const exprt &digit=function_call.arguments()[0];
   const exprt &result=function_call.lhs();
   const typet &type=result.type();
@@ -950,7 +950,7 @@ codet character_refine_preprocesst::convert_is_ideographic(
   conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==1);
+  ASSERT(function_call.arguments().size()==1);
   const exprt &arg=function_call.arguments()[0];
   const exprt &result=function_call.lhs();
   exprt is_ideograph=in_interval_expr(arg, 0x4E00, 0x9FFF);
@@ -973,7 +973,7 @@ codet character_refine_preprocesst::convert_is_ISO_control_char(
   conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==1);
+  ASSERT(function_call.arguments().size()==1);
   const exprt &arg=function_call.arguments()[0];
   const exprt &result=function_call.lhs();
   or_exprt iso(
@@ -1267,7 +1267,7 @@ codet character_refine_preprocesst::convert_is_low_surrogate(
   conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==1);
+  ASSERT(function_call.arguments().size()==1);
   const exprt &arg=function_call.arguments()[0];
   const exprt &result=function_call.lhs();
   exprt is_low_surrogate=in_interval_expr(arg, 0xDC00, 0xDFFF);
@@ -1515,7 +1515,7 @@ codet character_refine_preprocesst::convert_is_surrogate_pair(
   conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==2);
+  ASSERT(function_call.arguments().size()==2);
   const exprt &arg0=function_call.arguments()[0];
   const exprt &arg1=function_call.arguments()[1];
   const exprt &result=function_call.lhs();
@@ -2056,7 +2056,7 @@ codet character_refine_preprocesst::convert_to_code_point(
   conversion_inputt &target)
 {
   const code_function_callt &function_call=target;
-  assert(function_call.arguments().size()==2);
+  ASSERT(function_call.arguments().size()==2);
   const exprt &arg0=function_call.arguments()[0];
   const exprt &arg1=function_call.arguments()[1];
   const exprt &result=function_call.lhs();

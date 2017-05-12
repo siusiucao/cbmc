@@ -268,7 +268,7 @@ void string_abstractiont::add_str_arguments(
     goto_functionst::goto_functiont &fct)
 {
   symbol_tablet::symbolst::iterator sym_entry=symbol_table.symbols.find(name);
-  assert(sym_entry!=symbol_table.symbols.end());
+  ASSERT(sym_entry!=symbol_table.symbols.end());
   symbolt &fct_symbol=sym_entry->second;
 
   code_typet::parameterst &parameters=
@@ -539,7 +539,7 @@ exprt string_abstractiont::make_val_or_dummy_rec(goto_programt &dest,
       ++it2;
     }
 
-    assert(components.size()==seen);
+    ASSERT(components.size()==seen);
   }
 
   return nil_exprt();
@@ -658,7 +658,7 @@ goto_programt::targett string_abstractiont::abstract(
 
   case RETURN:
     // use remove_returns
-    assert(false);
+    ASSERT(false);
     break;
 
   case END_FUNCTION:
@@ -675,7 +675,7 @@ goto_programt::targett string_abstractiont::abstract(
   case LOCATION:
     break;
   case NO_INSTRUCTION_TYPE:
-    assert(false);
+    ASSERT(false);
     break;
   }
 
@@ -769,7 +769,7 @@ void string_abstractiont::abstract_function_call(
     if(str_args.back().type().id()==ID_array &&
         abstract_type.id()==ID_pointer)
     {
-      assert(type_eq(str_args.back().type().subtype(),
+      ASSERT(type_eq(str_args.back().type().subtype(),
           abstract_type.subtype(), ns));
 
       index_exprt idx(str_args.back(), from_integer(0, index_type()));
@@ -831,19 +831,19 @@ void string_abstractiont::replace_string_macros(
 {
   if(expr.id()=="is_zero_string")
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     exprt tmp=build(expr.op0(), IS_ZERO, lhs, source_location);
     expr.swap(tmp);
   }
   else if(expr.id()=="zero_string_length")
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     exprt tmp=build(expr.op0(), LENGTH, lhs, source_location);
     expr.swap(tmp);
   }
   else if(expr.id()=="buffer_size")
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     exprt tmp=build(expr.op0(), SIZE, false, source_location);
     expr.swap(tmp);
   }
@@ -874,7 +874,7 @@ exprt string_abstractiont::build(
   if(pointer.id()==ID_typecast)
   {
     // cast from another pointer type?
-    assert(pointer.operands().size()==1);
+    ASSERT(pointer.operands().size()==1);
     if(pointer.op0().type().id()!=ID_pointer)
       return build_unknown(what, write);
 
@@ -884,7 +884,7 @@ exprt string_abstractiont::build(
 
   exprt str_struct;
   if(build_wrap(pointer, str_struct, write))
-    assert(false);
+    ASSERT(false);
 
   exprt result=member(str_struct, what);
 
@@ -927,7 +927,7 @@ const typet &string_abstractiont::build_abstraction_type(const typet &type)
 
   abstraction_types_map.swap(tmp);
   map_entry=tmp.find(eff_type);
-  assert(map_entry!=tmp.end());
+  ASSERT(map_entry!=tmp.end());
   return abstraction_types_map.insert(
       std::make_pair(eff_type, map_entry->second)).first->second;
 }
@@ -1139,7 +1139,7 @@ Function: string_abstractiont::build_array
 bool string_abstractiont::build_array(const array_exprt &object,
     exprt &dest, bool write)
 {
-  assert(is_char_type(object.type().subtype()));
+  ASSERT(is_char_type(object.type().subtype()));
 
   // writing is invalid
   if(write)
@@ -1150,7 +1150,7 @@ bool string_abstractiont::build_array(const array_exprt &object,
   // don't do anything, if we cannot determine the size
   if(to_integer(a_size, size))
     return true;
-  assert(size==object.operands().size());
+  ASSERT(size==object.operands().size());
 
   exprt::operandst::const_iterator it=object.operands().begin();
   for(mp_integer i=0; i<size; ++i, ++it)
@@ -1175,7 +1175,7 @@ Function: string_abstractiont::build_pointer
 bool string_abstractiont::build_pointer(const exprt &object,
     exprt &dest, bool write)
 {
-  assert(object.type().id()==ID_pointer);
+  ASSERT(object.type().id()==ID_pointer);
 
   pointer_arithmetict ptr(object);
   if(ptr.pointer.id()==ID_address_of)
@@ -1296,7 +1296,7 @@ bool string_abstractiont::build_symbol(const symbol_exprt &sym, exprt &dest)
   const symbolt &symbol=ns.lookup(sym.get_identifier());
 
   const typet &abstract_type=build_abstraction_type(symbol.type);
-  assert(!abstract_type.is_nil());
+  ASSERT(!abstract_type.is_nil());
 
   irep_idt identifier="";
 
@@ -1536,7 +1536,7 @@ goto_programt::targett string_abstractiont::abstract_char_assign(
     if(!build_wrap(i_lhs.array(), new_lhs, true))
     {
       exprt i2=member(new_lhs, LENGTH);
-      assert(i2.is_not_nil());
+      ASSERT(i2.is_not_nil());
 
       exprt new_length=i_lhs.index();
       make_type(new_length, i2.type());
@@ -1554,7 +1554,7 @@ goto_programt::targett string_abstractiont::abstract_char_assign(
     if(!build_wrap(ptr.pointer, new_lhs, true))
     {
       const exprt i2=member(new_lhs, LENGTH);
-      assert(i2.is_not_nil());
+      ASSERT(i2.is_not_nil());
 
       make_type(ptr.offset, build_type(LENGTH));
       return
@@ -1594,7 +1594,7 @@ goto_programt::targett string_abstractiont::char_assign(
   goto_programt tmp;
 
   const exprt i1=member(new_lhs, IS_ZERO);
-  assert(i1.is_not_nil());
+  ASSERT(i1.is_not_nil());
 
   goto_programt::targett assignment1=tmp.add_instruction();
   assignment1->make_assignment();
@@ -1642,7 +1642,7 @@ goto_programt::targett string_abstractiont::value_assignments(
   if(rhs.id()==ID_if)
     return value_assignments_if(dest, target, lhs, to_if_expr(rhs));
 
-  assert(type_eq(lhs.type(), rhs.type(), ns));
+  ASSERT(type_eq(lhs.type(), rhs.type(), ns));
 
   if(lhs.type().id()==ID_array)
   {
@@ -1669,7 +1669,7 @@ goto_programt::targett string_abstractiont::value_assignments(
 
     for(const auto &comp : struct_union_type.components())
     {
-      assert(!comp.get_name().empty());
+      ASSERT(!comp.get_name().empty());
 
       target=value_assignments(dest, target,
           member_exprt(lhs, comp.get_name(), comp.type()),
@@ -1804,7 +1804,7 @@ exprt string_abstractiont::member(const exprt &a, whatt what)
 {
   if(a.is_nil())
     return a;
-  assert(type_eq(a.type(), string_struct, ns) ||
+  ASSERT(type_eq(a.type(), string_struct, ns) ||
       is_ptr_string_struct(a.type()));
 
   member_exprt result(build_type(what));

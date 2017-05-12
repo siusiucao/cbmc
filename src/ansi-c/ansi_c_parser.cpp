@@ -46,7 +46,7 @@ ansi_c_id_classt ansi_c_parsert::lookup(
 
     if(n_it!=it->name_map.end())
     {
-      assert(id2string(n_it->second.prefixed_name)==
+      ASSERT(id2string(n_it->second.prefixed_name)==
              it->prefix+id2string(scope_name));
       identifier=n_it->second.prefixed_name;
       return n_it->second.id_class;
@@ -136,7 +136,7 @@ void ansi_c_parsert::add_declarator(
   exprt &declaration,
   irept &declarator)
 {
-  assert(declarator.is_not_nil());
+  ASSERT(declarator.is_not_nil());
   ansi_c_declarationt &ansi_c_declaration=
     to_ansi_c_declaration(declaration);
 

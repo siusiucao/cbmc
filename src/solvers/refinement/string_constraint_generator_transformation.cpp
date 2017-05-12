@@ -75,7 +75,7 @@ string_exprt string_constraint_generatort::add_axioms_for_substring(
   const function_application_exprt &f)
 {
   const function_application_exprt::argumentst &args=f.arguments();
-  assert(args.size()>=2);
+  ASSERT(args.size()>=2);
   string_exprt str=get_string_expr(args[0]);
   exprt i(args[1]);
   exprt j;
@@ -85,7 +85,7 @@ string_exprt string_constraint_generatort::add_axioms_for_substring(
   }
   else
   {
-    assert(args.size()==2);
+    ASSERT(args.size()==2);
     j=str.length();
   }
   return add_axioms_for_substring(str, i, j);
@@ -110,8 +110,8 @@ string_exprt string_constraint_generatort::add_axioms_for_substring(
 {
   const refined_string_typet &ref_type=to_refined_string_type(str.type());
   const typet &index_type=ref_type.get_index_type();
-  assert(start.type()==index_type);
-  assert(end.type()==index_type);
+  ASSERT(start.type()==index_type);
+  ASSERT(end.type()==index_type);
   string_exprt res=fresh_string(ref_type);
 
   // We add axioms:
@@ -451,8 +451,8 @@ Function: string_constraint_generatort::add_axioms_for_delete
 string_exprt string_constraint_generatort::add_axioms_for_delete(
   const string_exprt &str, const exprt &start, const exprt &end)
 {
-  assert(start.type()==str.length().type());
-  assert(end.type()==str.length().type());
+  ASSERT(start.type()==str.length().type());
+  ASSERT(end.type()==str.length().type());
   string_exprt str1=add_axioms_for_substring(
     str, from_integer(0, str.length().type()), start);
   string_exprt str2=add_axioms_for_substring(str, end, str.length());

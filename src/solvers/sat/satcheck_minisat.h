@@ -83,7 +83,7 @@ public:
 
   virtual bool is_in_core(literalt l) const
   {
-    assert(l.var_no()<in_core.size());
+    ASSERT(l.var_no()<in_core.size());
     return in_core[l.var_no()];
   }
 

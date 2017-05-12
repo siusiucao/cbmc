@@ -168,7 +168,7 @@ bool bv_pointerst::convert_address_of_rec(
     {
       // this should be gone
       bv=convert_pointer_type(array);
-      assert(bv.size()==bits);
+      ASSERT(bv.size()==bits);
     }
     else if(array_type.id()==ID_array ||
             array_type.id()==ID_incomplete_array ||
@@ -176,17 +176,17 @@ bool bv_pointerst::convert_address_of_rec(
     {
       if(convert_address_of_rec(array, bv))
         return true;
-      assert(bv.size()==bits);
+      ASSERT(bv.size()==bits);
     }
     else
-      assert(false);
+      ASSERT(false);
 
     // get size
     mp_integer size=
       pointer_offset_size(array_type.subtype(), ns);
 
     offset_arithmetic(bv, size, index);
-    assert(bv.size()==bits);
+    ASSERT(bv.size()==bits);
     return false;
   }
   else if(expr.id()==ID_member)
@@ -335,7 +335,7 @@ bvt bv_pointerst::convert_pointer_type(const exprt &expr)
       return bv;
     }
 
-    assert(bv.size()==bits);
+    ASSERT(bv.size()==bits);
     return bv;
   }
   else if(expr.id()==ID_constant)
@@ -373,7 +373,7 @@ bvt bv_pointerst::convert_pointer_type(const exprt &expr)
       {
         count++;
         bv=convert_bv(*it);
-        assert(bv.size()==bits);
+        ASSERT(bv.size()==bits);
         size=pointer_offset_size(it->type().subtype(), ns);
       }
     }
@@ -638,7 +638,7 @@ exprt bv_pointerst::bv_get_rec(
        case tvt::tv_enumt::TV_FALSE: ch='0'; break;
        case tvt::tv_enumt::TV_TRUE:  ch='1'; break;
        case tvt::tv_enumt::TV_UNKNOWN: ch='0'; break;
-       default: assert(false);
+       default: ASSERT(false);
       }
     }
 
@@ -844,8 +844,8 @@ void bv_pointerst::do_postponed(
       bvt saved_bv=postponed.op;
       saved_bv.erase(saved_bv.begin(), saved_bv.begin()+offset_bits);
 
-      assert(bv.size()==saved_bv.size());
-      assert(postponed.bv.size()==1);
+      ASSERT(bv.size()==saved_bv.size());
+      ASSERT(postponed.bv.size()==1);
 
       literalt l1=bv_utils.equal(bv, saved_bv);
       literalt l2=postponed.bv.front();
@@ -897,8 +897,8 @@ void bv_pointerst::do_postponed(
       bvt saved_bv=postponed.op;
       saved_bv.erase(saved_bv.begin(), saved_bv.begin()+offset_bits);
 
-      assert(bv.size()==saved_bv.size());
-      assert(postponed.bv.size()>=1);
+      ASSERT(bv.size()==saved_bv.size());
+      ASSERT(postponed.bv.size()>=1);
 
       literalt l1=bv_utils.equal(bv, saved_bv);
 
@@ -909,7 +909,7 @@ void bv_pointerst::do_postponed(
     }
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\

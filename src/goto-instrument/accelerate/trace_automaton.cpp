@@ -133,7 +133,7 @@ void trace_automatont::determinise()
   {
     state_sett t;
     pop_unmarked_dstate(t);
-    assert(find_dstate(t)!=no_state);
+    ASSERT(find_dstate(t)!=no_state);
 
 
     // For each symbol a such that there is a transition
@@ -234,7 +234,7 @@ statet trace_automatont::add_dstate(state_sett &s)
   dstates[s]=state_num;
   unmarked_dstates.push_back(s);
 
-  assert(dstates.find(s)!=dstates.end());
+  ASSERT(dstates.find(s)!=dstates.end());
 
   for(state_sett::iterator it=s.begin();
       it!=s.end();
@@ -286,7 +286,7 @@ statet automatont::add_state()
  */
 void automatont::add_trans(statet s, goto_programt::targett a, statet t)
 {
-  assert(s < transitions.size());
+  ASSERT(s < transitions.size());
   transitionst &trans=transitions[s];
 
   trans.insert(std::make_pair(a, t));
@@ -303,15 +303,15 @@ void trace_automatont::add_dtrans(
   statet sidx=find_dstate(s);
   statet tidx=find_dstate(t);
 
-  assert(sidx!=no_state);
-  assert(tidx!=no_state);
+  ASSERT(sidx!=no_state);
+  ASSERT(tidx!=no_state);
 
   dta.add_trans(sidx, a, tidx);
 }
 
 void automatont::move(statet s, goto_programt::targett a, state_sett &t)
 {
-  assert(s < transitions.size());
+  ASSERT(s < transitions.size());
 
   transitionst &trans=transitions[s];
 

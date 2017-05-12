@@ -48,7 +48,7 @@ unsigned fence_insertert::fence_cost(fence_typet f) const
     case Ctlfence:
       return 1;
   }
-  assert(false);
+  ASSERT(false);
   return 0;
 }
 
@@ -130,13 +130,13 @@ void fence_insertert::preprocess()
       com_constraints.push_back(new_comset);
     }
 
-    assert(powr_constraints.size()==poww_constraints.size());
-    assert(poww_constraints.size()==porw_constraints.size());
-    assert(porw_constraints.size()==porr_constraints.size());
+    ASSERT(powr_constraints.size()==poww_constraints.size());
+    ASSERT(poww_constraints.size()==porw_constraints.size());
+    ASSERT(porw_constraints.size()==porr_constraints.size());
   }
 
   // Note: not true if filters
-  // assert(non_powr_constraints.size()==instrumenter.set_of_cycles.size());
+  // ASSERT(non_powr_constraints.size()==instrumenter.set_of_cycles.size());
 
   // NEW
   /* first, powr constraints: for all C_j */
@@ -152,7 +152,7 @@ void fence_insertert::preprocess()
       ++e_c_it)
     {
       std::set<unsigned> pt_set;
-      assert(map_to_e.find(*e_c_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_c_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_c_it)->second, pt_set);
     }
   }
@@ -170,7 +170,7 @@ void fence_insertert::preprocess()
       ++e_nc_it)
     {
       std::set<unsigned> pt_set;
-      assert(map_to_e.find(*e_nc_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_nc_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_nc_it)->second, pt_set);
     }
   }
@@ -188,7 +188,7 @@ void fence_insertert::preprocess()
       ++e_nc_it)
     {
       std::set<unsigned> pt_set;
-      assert(map_to_e.find(*e_nc_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_nc_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_nc_it)->second, pt_set);
     }
   }
@@ -206,7 +206,7 @@ void fence_insertert::preprocess()
       ++e_nc_it)
     {
       std::set<unsigned> pt_set;
-      assert(map_to_e.find(*e_nc_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_nc_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_nc_it)->second, pt_set);
     }
   }
@@ -226,7 +226,7 @@ void fence_insertert::preprocess()
         ++e_c_it)
       {
         std::set<unsigned> ct_set;
-        assert(invisible_var.map_to_e.find(*e_c_it)!=
+        ASSERT(invisible_var.map_to_e.find(*e_c_it)!=
                invisible_var.map_to_e.end());
         const_graph_visitor.CT(invisible_var.map_to_e.find(*e_c_it)->second,
           ct_set);
@@ -262,14 +262,14 @@ void inline fence_insertert::mip_set_var(
   {
     const bool has_cost=1; // (po_plus.find(i)==po_plus.end());
     /* has_cost==0 => invisible variable */
-    assert(has_cost); // not useful for this problem
+    ASSERT(has_cost); // not useful for this problem
 
     /* computes the sum of the frequencies of the cycles in which
        this event appears, if requested */
     float freq_sum=0;
     if(with_freq)
     {
-      assert(instrumenter.set_of_cycles.size()==freq_table.size());
+      ASSERT(instrumenter.set_of_cycles.size()==freq_table.size());
       freq_sum += epsilon;
       for(std::set<event_grapht::critical_cyclet>::const_iterator
         C_j=instrumenter.set_of_cycles.begin();
@@ -495,13 +495,13 @@ void inline fence_insertert::mip_fill_matrix(
       ++e_c_it)
     {
       std::set<event_idt> pt_set;
-      assert(map_to_e.find(*e_c_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_c_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_c_it)->second, pt_set);
       /* sum_e' f_e' */
       for(col=1; col<=unique*fence_options; ++col)
       {
-        assert(row<=const_constraints_number);
-        assert(col<=const_unique*fence_options);
+        ASSERT(row<=const_constraints_number);
+        ASSERT(col<=const_unique*fence_options);
         ilp.imat[i]=row;
         ilp.jmat[i]=col;
         if(model==Power || model==Unknown)
@@ -539,13 +539,13 @@ void inline fence_insertert::mip_fill_matrix(
       ++e_nc_it)
     {
       std::set<event_idt> pt_set;
-      assert(map_to_e.find(*e_nc_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_nc_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_nc_it)->second, pt_set);
       /* sum_e' (f_e' + lwf_e') */
       for(col=1; col<=unique*fence_options; ++col)
       {
-        assert(row<=const_constraints_number);
-        assert(col<=const_unique*fence_options);
+        ASSERT(row<=const_constraints_number);
+        ASSERT(col<=const_unique*fence_options);
         ilp.imat[i]=row;
         ilp.jmat[i]=col;
         if(model==Power)
@@ -583,13 +583,13 @@ void inline fence_insertert::mip_fill_matrix(
       ++e_nc_it)
     {
       std::set<event_idt> pt_set;
-      assert(map_to_e.find(*e_nc_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_nc_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_nc_it)->second, pt_set);
       /* dp_e + sum_e' (f_e' + lwf_e' + br_e') */
       for(col=1; col<=unique*fence_options; ++col)
       {
-        assert(row<=const_constraints_number);
-        assert(col<=const_unique*fence_options);
+        ASSERT(row<=const_constraints_number);
+        ASSERT(col<=const_unique*fence_options);
         ilp.imat[i]=row;
         ilp.jmat[i]=col;
         if(model==Power)
@@ -650,7 +650,7 @@ void inline fence_insertert::mip_fill_matrix(
         ++e_nc_it)
     {
       std::set<event_idt> pt_set;
-      assert(map_to_e.find(*e_nc_it)!=map_to_e.end());
+      ASSERT(map_to_e.find(*e_nc_it)!=map_to_e.end());
       const_graph_visitor.PT(map_to_e.find(*e_nc_it)->second, pt_set);
 // uncomment for cf
 #if 0
@@ -660,8 +660,8 @@ void inline fence_insertert::mip_fill_matrix(
       /* dp_e + sum_e' (f_e' + lwf_e') + sum_e'' cf_e'') */
       for(col=1; col<=unique*fence_options; ++col)
       {
-        assert(row<=const_constraints_number);
-        assert(col<=const_unique*fence_options);
+        ASSERT(row<=const_constraints_number);
+        ASSERT(col<=const_unique*fence_options);
         ilp.imat[i]=row;
         ilp.jmat[i]=col;
         if(model==Power)
@@ -723,7 +723,7 @@ void inline fence_insertert::mip_fill_matrix(
         unsigned possibilities_met=0;
 
         std::set<event_idt> ct_set;
-        assert(invisible_var.map_to_e.find(*e_c_it)!=
+        ASSERT(invisible_var.map_to_e.find(*e_c_it)!=
                invisible_var.map_to_e.end());
         const_graph_visitor.CT(invisible_var.map_to_e.find(*e_c_it)->second,
           ct_set);
@@ -740,8 +740,8 @@ void inline fence_insertert::mip_fill_matrix(
         /* sum_e' f_e' + sum_e'' lwf_e'' */
         for(col=1; col<=unique*fence_options; ++col)
         {
-          assert(row<=const_constraints_number);
-          assert(col<=const_unique*fence_options);
+          ASSERT(row<=const_constraints_number);
+          ASSERT(col<=const_unique*fence_options);
           ilp.imat[i]=row;
           ilp.jmat[i]=col;
           if((ct_set.find(col_to_var(col))!=ct_set.end() &&
@@ -757,7 +757,7 @@ void inline fence_insertert::mip_fill_matrix(
           ++i;
         }
         ++row;
-        assert(possibilities_met);
+        ASSERT(possibilities_met);
       }
     }
   }
@@ -798,7 +798,7 @@ void fence_insertert::solve()
   mip_set_cst(ilp, i);
 
   instrumenter.message.debug() << "3: " << i << messaget::eom;
-  assert(i-1==constraints_number);
+  ASSERT(i-1==constraints_number);
 
   const std::size_t const_constraints_number=constraints_number;
   const event_idt const_unique=unique;
@@ -825,7 +825,7 @@ void fence_insertert::solve()
 
   instrumenter.message.statistics() << "i: " << i << " mat_size: " << mat_size
     << messaget::eom;
-  // assert(i-1==mat_size);
+  // ASSERT(i-1==mat_size);
 
 #ifdef DEBUG
   for(i=1; i<=mat_size; ++i)
@@ -849,7 +849,7 @@ void fence_insertert::solve()
       break;
     case GLP_UNDEF:
       instrumenter.message.result() << "Solution undefined" << messaget::eom;
-      assert(0);
+      ASSERT(0);
     case GLP_FEAS:
       instrumenter.message.result() << "Solution feasible, "
                                     << "yet not proven optimal, "
@@ -859,7 +859,7 @@ void fence_insertert::solve()
     case GLP_NOFEAS:
       instrumenter.message.result()
         << "No feasible solution, the system is UNSAT" << messaget::eom;
-      assert(0);
+      ASSERT(0);
   }
 
   event_grapht &egraph=instrumenter.egraph;
@@ -872,7 +872,7 @@ void fence_insertert::solve()
     if(glp_mip_col_val(ilp.lp, j)>=1)
     {
       /* insert that fence */
-      assert(map_to_e.find(col_to_var(j))!=map_to_e.end());
+      ASSERT(map_to_e.find(col_to_var(j))!=map_to_e.end());
       const edget &delay=map_to_e.find(col_to_var(j))->second;
       instrumenter.message.statistics() << delay.first << " -> "
         << delay.second << " : " << to_string(col_to_fence(j))
@@ -1116,7 +1116,7 @@ std::string fence_insertert::to_string(fence_typet f) const
     case Branching: return "branching";
     case Ctlfence: return "ctlfence";
   }
-  assert(0);
+  ASSERT(0);
 }
 
 /*******************************************************************\
@@ -1159,7 +1159,7 @@ inline fence_insertert::fence_typet fence_insertert::col_to_fence(unsigned u)
     case 3: return Branching;
     case 4: return Ctlfence;
   }
-  assert(0);
+  ASSERT(0);
 }
 
 /*******************************************************************\
@@ -1185,7 +1185,7 @@ inline unsigned fence_insertert::var_fence_to_col(fence_typet f, unsigned var)
     case Branching: return (var-1)*fence_options+3;
     case Ctlfence: return (var-1)*fence_options+4;
   }
-  assert(0);
+  ASSERT(0);
 }
 
 /*******************************************************************\
@@ -1295,7 +1295,7 @@ typet fence_insertert::get_type(const irep_idt &id)
         if(*it!='.')
           ++it;
         /* safe as next!=copy.end() */
-        assert(next!=copy.end());
+        ASSERT(next!=copy.end());
       }
     }
 
@@ -1339,5 +1339,5 @@ typet fence_insertert::type_component(
     return type;
   }
 
-  assert(0);
+  ASSERT(0);
 }

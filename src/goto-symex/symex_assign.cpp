@@ -69,7 +69,7 @@ void goto_symext::symex_assign(
 
     if(statement==ID_function_call)
     {
-      assert(!side_effect_expr.operands().empty());
+      ASSERT(!side_effect_expr.operands().empty());
 
       if(side_effect_expr.op0().id()!=ID_symbol)
         throw "symex_assign: expected symbol as function";
@@ -130,12 +130,12 @@ exprt goto_symext::add_to_lhs(
   const exprt &lhs,
   const exprt &what)
 {
-  assert(lhs.id()!=ID_symbol);
+  ASSERT(lhs.id()!=ID_symbol);
   exprt tmp_what=what;
 
   if(tmp_what.id()!=ID_symbol)
   {
-    assert(tmp_what.operands().size()>=1);
+    ASSERT(tmp_what.operands().size()>=1);
     tmp_what.op0().make_nil();
   }
 
@@ -145,12 +145,12 @@ exprt goto_symext::add_to_lhs(
 
   while(p->is_not_nil())
   {
-    assert(p->id()!=ID_symbol);
-    assert(p->operands().size()>=1);
+    ASSERT(p->id()!=ID_symbol);
+    ASSERT(p->operands().size()>=1);
     p=&p->op0();
   }
 
-  assert(p->is_nil());
+  ASSERT(p->is_nil());
 
   *p=tmp_what;
   return new_lhs;
@@ -223,7 +223,7 @@ void goto_symext::symex_assign_rec(
           lhs.id()==ID_complex_imag)
   {
     // this is stuff like __real__ x = 1;
-    assert(lhs.operands().size()==1);
+    ASSERT(lhs.operands().size()==1);
 
     exprt new_rhs=exprt(ID_complex, lhs.op0().type());
     new_rhs.operands().resize(2);
@@ -336,7 +336,7 @@ void goto_symext::symex_assign_typecast(
 {
   // these may come from dereferencing on the lhs
 
-  assert(lhs.operands().size()==1);
+  ASSERT(lhs.operands().size()==1);
 
   exprt rhs_typecasted=rhs;
   rhs_typecasted.make_typecast(lhs.op0().type());
@@ -445,7 +445,7 @@ void goto_symext::symex_assign_struct_member(
   // typecasts involved? C++ does that for inheritance.
   if(lhs_struct.id()==ID_typecast)
   {
-    assert(lhs_struct.operands().size()==1);
+    ASSERT(lhs_struct.operands().size()==1);
 
     if(lhs_struct.op0().id()=="NULL-object")
     {
@@ -576,7 +576,7 @@ void goto_symext::symex_assign_byte_extract(
   else if(lhs.id()==ID_byte_extract_big_endian)
     new_rhs.id(ID_byte_update_big_endian);
   else
-    assert(false);
+    ASSERT(false);
 
   new_rhs.copy_to_operands(lhs.op(), lhs.offset(), rhs);
   new_rhs.type()=lhs.op().type();

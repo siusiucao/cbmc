@@ -74,8 +74,8 @@ int run(
 {
   #ifdef _WIN32
   // we don't support stdin/stdout redirection on Windows
-  assert(std_input.empty());
-  assert(std_output.empty());
+  ASSERT(std_input.empty());
+  ASSERT(std_output.empty());
 
   // unicode version of the arguments
   std::vector<std::wstring> wargv;

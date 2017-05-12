@@ -77,7 +77,7 @@ static void check_apply_invariants(
   const goto_programt::targett loop_head,
   const loopt &loop)
 {
-  assert(!loop.empty());
+  ASSERT(!loop.empty());
 
   // find the last back edge
   goto_programt::targett loop_end=loop_head;
@@ -99,12 +99,12 @@ static void check_apply_invariants(
 
   // change H: loop; E: ...
   // to
-  // H: assert(invariant);
+  // H: ASSERT(invariant);
   // havoc;
   // assume(invariant);
   // if(guard) goto E:
   // loop;
-  // assert(invariant);
+  // ASSERT(invariant);
   // assume(false);
   // E: ...
 
@@ -317,11 +317,11 @@ void code_contractst::add_contract_check(
   const irep_idt &function,
   goto_programt &dest)
 {
-  assert(!dest.instructions.empty());
+  ASSERT(!dest.instructions.empty());
 
   goto_functionst::function_mapt::iterator f_it=
     goto_functions.function_map.find(function);
-  assert(f_it!=goto_functions.function_map.end());
+  ASSERT(f_it!=goto_functions.function_map.end());
 
   const goto_functionst::goto_functiont &gf=f_it->second;
 
@@ -329,7 +329,7 @@ void code_contractst::add_contract_check(
     static_cast<const exprt&>(gf.type.find(ID_C_spec_requires));
   const exprt &ensures=
     static_cast<const exprt&>(gf.type.find(ID_C_spec_ensures));
-  assert(ensures.is_not_nil());
+  ASSERT(ensures.is_not_nil());
 
   // build:
   // if(nondet)
@@ -337,7 +337,7 @@ void code_contractst::add_contract_check(
   //   decl parameter1 ...
   //   assume(requires)  [optional]
   //   ret=function(parameter1, ...)
-  //   assert(ensures)
+  //   ASSERT(ensures)
   //   assume(false)
   // skip: ...
 
@@ -416,7 +416,7 @@ void code_contractst::add_contract_check(
   f->function=skip->function;
   f->source_location=skip->source_location;
 
-  // assert(ensures)
+  // ASSERT(ensures)
   goto_programt::targett a=check.add_instruction();
   a->make_assertion(ensures);
   a->function=skip->function;
@@ -455,7 +455,7 @@ void code_contractst::operator()()
 
   goto_functionst::function_mapt::iterator i_it=
     goto_functions.function_map.find(CPROVER_PREFIX "initialize");
-  assert(i_it!=goto_functions.function_map.end());
+  ASSERT(i_it!=goto_functions.function_map.end());
 
   for(id_sett::const_iterator it=summarized.begin();
       it!=summarized.end();

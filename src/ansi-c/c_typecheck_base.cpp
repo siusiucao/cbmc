@@ -631,7 +631,7 @@ void c_typecheck_baset::typecheck_function_body(symbolt &symbol)
 {
   code_typet &code_type=to_code_type(symbol.type);
 
-  assert(symbol.value.is_not_nil());
+  ASSERT(symbol.value.is_not_nil());
 
   // reset labels
   labels_used.clear();
@@ -772,7 +772,7 @@ void c_typecheck_baset::apply_asm_label(
 
       if(!asm_label_map.insert(
           std::make_pair(p_id, p_new_id)).second)
-        assert(asm_label_map[p_id]==p_new_id);
+        ASSERT(asm_label_map[p_id]==p_new_id);
     }
   }
 }
@@ -794,7 +794,7 @@ void c_typecheck_baset::typecheck_declaration(
 {
   if(declaration.get_is_static_assert())
   {
-    assert(declaration.operands().size()==2);
+    ASSERT(declaration.operands().size()==2);
     typecheck_expr(declaration.op0());
     typecheck_expr(declaration.op1());
   }
@@ -883,7 +883,7 @@ void c_typecheck_baset::typecheck_declaration(
       // available
       symbol_tablet::symbolst::iterator s_it=
         symbol_table.symbols.find(identifier);
-      assert(s_it!=symbol_table.symbols.end());
+      ASSERT(s_it!=symbol_table.symbols.end());
       symbolt &new_symbol=s_it->second;
 
       typecheck_spec_expr(contract, ID_C_spec_requires);
@@ -891,7 +891,7 @@ void c_typecheck_baset::typecheck_declaration(
       typet ret_type=empty_typet();
       if(new_symbol.type.id()==ID_code)
         ret_type=to_code_type(new_symbol.type).return_type();
-      assert(parameter_map.empty());
+      ASSERT(parameter_map.empty());
       if(ret_type.id()!=ID_empty)
         parameter_map["__CPROVER_return_value"]=ret_type;
       typecheck_spec_expr(contract, ID_C_spec_ensures);

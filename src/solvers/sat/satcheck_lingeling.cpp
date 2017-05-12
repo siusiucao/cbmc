@@ -112,7 +112,7 @@ Function: satcheck_lingelingt::prop_solve
 
 propt::resultt satcheck_lingelingt::prop_solve()
 {
-  assert(status!=ERROR);
+  ASSERT(status!=ERROR);
 
   // We start counting at 1, thus there is one variable fewer.
   {
@@ -137,7 +137,7 @@ propt::resultt satcheck_lingelingt::prop_solve()
   }
   else
   {
-    assert(res==20);
+    ASSERT(res==20);
     msg="SAT checker: instance is UNSATISFIABLE";
     messaget::status() << msg << messaget::eom;
   }
@@ -160,7 +160,7 @@ Function: satcheck_lingelingt::set_assignment
 
 void satcheck_lingelingt::set_assignment(literalt a, bool value)
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -215,7 +215,7 @@ void satcheck_lingelingt::set_assumptions(const bvt &bv)
   assumptions=bv;
 
   forall_literals(it, assumptions)
-    assert(!it->is_constant());
+    ASSERT(!it->is_constant());
 }
 
 /*******************************************************************\
@@ -254,6 +254,6 @@ Function: satcheck_lingelingt::is_in_conflict
 
 bool satcheck_lingelingt::is_in_conflict(literalt a) const
 {
-  assert(!a.is_constant());
+  ASSERT(!a.is_constant());
   return lglfailed(solver, a.dimacs())!=0;
 }

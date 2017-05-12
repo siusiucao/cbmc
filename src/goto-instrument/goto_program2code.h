@@ -59,7 +59,7 @@ public:
     type_names(_type_names),
     system_headers(_system_headers)
   {
-    assert(local_static.empty());
+    ASSERT(local_static.empty());
 
     for(id_listt::const_iterator
         it=type_names.begin();

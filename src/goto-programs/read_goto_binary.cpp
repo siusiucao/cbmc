@@ -349,7 +349,7 @@ static bool link_functions(
       {
         // the linking code will have ensured that types match
         rename_symbol(src_func.type);
-        assert(base_type_eq(in_dest_symbol_table.type, src_func.type, ns));
+        ASSERT(base_type_eq(in_dest_symbol_table.type, src_func.type, ns));
       }
     }
   }
@@ -362,7 +362,7 @@ static bool link_functions(
     {
       const symbolt &symbol=it->second;
 
-      assert(symbol.value.id()==ID_symbol);
+      ASSERT(symbol.value.id()==ID_symbol);
       const irep_idt &id=to_symbol_expr(symbol.value).get_identifier();
 
       #if 0
@@ -371,7 +371,7 @@ static bool link_functions(
         std::cerr << symbol << std::endl;
         std::cerr << ns.lookup(id) << std::endl;
       }
-      assert(base_type_eq(symbol.type, ns.lookup(id).type, ns));
+      ASSERT(base_type_eq(symbol.type, ns.lookup(id).type, ns));
       #endif
 
       macro_application.insert_expr(symbol.name, id);

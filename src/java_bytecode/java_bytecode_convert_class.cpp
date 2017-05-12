@@ -287,7 +287,7 @@ void java_bytecode_convert_classt::convert(
       symbol_table.symbols.erase(s_it); // erase, we stubbed it
 
     if(symbol_table.add(new_symbol))
-      assert(false && "failed to add static field symbol");
+      ASSERT(false && "failed to add static field symbol");
   }
   else
   {

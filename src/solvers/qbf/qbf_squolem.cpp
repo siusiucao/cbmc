@@ -57,7 +57,7 @@ Function: qbf_squolemt::l_get
 
 tvt qbf_squolemt::l_get(literalt a) const
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\

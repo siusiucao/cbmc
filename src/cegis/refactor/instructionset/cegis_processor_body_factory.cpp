@@ -128,10 +128,10 @@ class body_factoryt
 
   void finalise_conditional_instr_gotos()
   {
-    assert(last != last_case);
+    ASSERT(last != last_case);
     last_case->set_target(switch_end);
     last_case=last;
-    assert(last != switch_end);
+    ASSERT(last != switch_end);
     pos=switch_end;
     switch_end=last;
   }
@@ -201,7 +201,7 @@ public:
       {
         if (SKIP != pos->type) pos=body.insert_after(pos);
         const cegis_operand_datat::const_iterator it=slots.find(sig[op]);
-        assert(slots.end() != it);
+        ASSERT(slots.end() != it);
         const member_exprt operand_id(cegis_operand_id(st, func_name, op));
         assume_less(pos, operand_id, it->second);
       }

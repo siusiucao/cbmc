@@ -416,7 +416,7 @@ void custom_bitvector_domaint::transform(
             else if(identifier=="__CPROVER_clear_may")
               mode=CLEAR_MAY;
             else
-              assert(false);
+              ASSERT(false);
 
             exprt lhs=code_function_call.arguments()[0];
 
@@ -467,7 +467,7 @@ void custom_bitvector_domaint::transform(
          statement=="clear_may" ||
          statement=="clear_must")
       {
-        assert(instruction.code.operands().size()==2);
+        ASSERT(instruction.code.operands().size()==2);
 
         unsigned bit_nr=
           cba.get_bit_nr(instruction.code.op1());
@@ -483,7 +483,7 @@ void custom_bitvector_domaint::transform(
         else if(statement=="clear_may")
           mode=CLEAR_MAY;
         else
-          assert(false);
+          ASSERT(false);
 
         exprt lhs=instruction.code.op0();
 
@@ -583,7 +583,7 @@ void custom_bitvector_domaint::output(
     for(unsigned i=0; b!=0; i++, b>>=1)
       if(b&1)
       {
-        assert(i<cba.bits.size());
+        ASSERT(i<cba.bits.size());
         out << ' '
             << cba.bits[i];
       }
@@ -599,7 +599,7 @@ void custom_bitvector_domaint::output(
     for(unsigned i=0; b!=0; i++, b>>=1)
       if(b&1)
       {
-        assert(i<cba.bits.size());
+        ASSERT(i<cba.bits.size());
         out << ' '
             << cba.bits[i];
       }

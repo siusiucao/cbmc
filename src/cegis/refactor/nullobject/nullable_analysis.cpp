@@ -91,7 +91,7 @@ std::string get_return_value_name(const irep_idt &method)
 cegis_operand_datat get_operand_signature(const symbol_tablet &st,
     const irep_idt &method)
 {
-  assert(st.has_symbol(method));
+  ASSERT(st.has_symbol(method));
   // TODO: Add global vars
   cegis_operand_datat result;
   const code_typet &code_type=to_code_type(st.lookup(method).type);
@@ -120,7 +120,7 @@ std::vector<irep_idt> prepare_ops(symbol_tablet &st, const goto_functionst &gf,
   typedef goto_functionst::function_mapt fmapt;
   const fmapt &fmap=gf.function_map;
   const fmapt::const_iterator it=fmap.find(method);
-  assert(fmap.end() != it);
+  ASSERT(fmap.end() != it);
   std::vector<irep_idt> result;
   const std::string ret_val_name(get_return_value_name(method));
   if (st.has_symbol(ret_val_name)) result.push_back(ret_val_name);
@@ -130,7 +130,7 @@ std::vector<irep_idt> prepare_ops(symbol_tablet &st, const goto_functionst &gf,
   const code_typet &code_type=to_code_type(func.type());
   const code_typet::parameterst &params=code_type.parameters();
   const size_t size=args.size();
-  assert(size == params.size());
+  ASSERT(size == params.size());
   const source_locationt &loc=first->source_location;
   goto_programt::targett pos=first;
   for (size_t i=0; i < size; ++i)

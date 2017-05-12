@@ -39,7 +39,7 @@ void build_goto_trace(
 
     goto_trace_stept trace_step;
 
-    assert(!step.pc.is_nil());
+    ASSERT(!step.pc.is_nil());
     trace_step.pc=state.locs[step.pc].target;
     trace_step.thread_nr=step.thread_nr;
     trace_step.step_nr=step_nr;
@@ -100,7 +100,7 @@ void build_goto_trace(
   const goto_programt::instructiont &instruction=
     *state.get_instruction();
 
-  assert(instruction.is_assert());
+  ASSERT(instruction.is_assert());
 
   {
     goto_trace_stept trace_step;

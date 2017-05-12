@@ -71,7 +71,7 @@ exprt static_analysis_baset::get_return_lhs(locationt to)
     return static_cast<const exprt &>(get_nil_irep());
 
   // must be the function call
-  assert(to->is_function_call());
+  ASSERT(to->is_function_call());
 
   const code_function_callt &code=
     to_code_function_call(to->code);
@@ -285,7 +285,7 @@ Function: static_analysis_baset::get_next
 static_analysis_baset::locationt static_analysis_baset::get_next(
   working_sett &working_set)
 {
-  assert(!working_set.empty());
+  ASSERT(!working_set.empty());
 
   working_sett::iterator i=working_set.begin();
   locationt l=i->second;
@@ -425,7 +425,7 @@ void static_analysis_baset::do_function_call(
   if(!goto_function.body_available())
     return; // do nothing
 
-  assert(!goto_function.body.instructions.empty());
+  ASSERT(!goto_function.body.instructions.empty());
 
   {
     // get the state at the beginning of the function
@@ -463,7 +463,7 @@ void static_analysis_baset::do_function_call(
     // get location at end of procedure
     locationt l_end=--goto_function.body.instructions.end();
 
-    assert(l_end->is_end_function());
+    ASSERT(l_end->is_end_function());
 
     statet &end_of_function=get_state(l_end);
 

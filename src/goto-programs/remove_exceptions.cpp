@@ -80,7 +80,7 @@ void remove_exceptionst::add_exceptional_returns(
   const irep_idt &function_id=func_it->first;
   goto_programt &goto_program=func_it->second.body;
 
-  assert(symbol_table.has_symbol(function_id));
+  ASSERT(symbol_table.has_symbol(function_id));
   const symbolt &function_symbol=symbol_table.lookup(function_id);
 
   // for now only add exceptional returns for Java
@@ -108,7 +108,7 @@ void remove_exceptionst::add_exceptional_returns(
     symbol_tablet::symbolst::iterator s_it=
       symbol_table.symbols.find(function_id);
 
-    assert(s_it!=symbol_table.symbols.end());
+    ASSERT(s_it!=symbol_table.symbols.end());
 
     auxiliary_symbolt new_symbol;
     new_symbol.is_static_lifetime=true;
@@ -154,7 +154,7 @@ void remove_exceptionst::instrument_exception_handler(
   const irep_idt &function_id=func_it->first;
   goto_programt &goto_program=func_it->second.body;
 
-  assert(instr_it->type==CATCH && instr_it->code.has_operands());
+  ASSERT(instr_it->type==CATCH && instr_it->code.has_operands());
 
   // retrieve the exception variable
   const exprt &exception=instr_it->code.op0();
@@ -209,12 +209,12 @@ void remove_exceptionst::instrument_throw(
   const remove_exceptionst::stack_catcht &stack_catch,
   std::vector<exprt> &locals)
 {
-  assert(instr_it->type==THROW);
+  ASSERT(instr_it->type==THROW);
 
   goto_programt &goto_program=func_it->second.body;
   const irep_idt &function_id=func_it->first;
 
-  assert(instr_it->code.operands().size()==1);
+  ASSERT(instr_it->code.operands().size()==1);
 
   // find the end of the function
   goto_programt::targett end_function=goto_program.get_end_function();
@@ -300,7 +300,7 @@ void remove_exceptionst::instrument_function_call(
   const stack_catcht &stack_catch,
   std::vector<exprt> &locals)
 {
-  assert(instr_it->type==FUNCTION_CALL);
+  ASSERT(instr_it->type==FUNCTION_CALL);
 
   goto_programt &goto_program=func_it->second.body;
   const irep_idt &function_id=func_it->first;
@@ -310,7 +310,7 @@ void remove_exceptionst::instrument_function_call(
   next_it++;
 
   code_function_callt &function_call=to_code_function_call(instr_it->code);
-  assert(function_call.function().id()==ID_symbol);
+  ASSERT(function_call.function().id()==ID_symbol);
   const irep_idt &callee_id=
     to_symbol_expr(function_call.function()).get_identifier();
 
@@ -455,7 +455,7 @@ void remove_exceptionst::instrument_exceptions(
         // copy targets
         const irept::subt &exception_list=
           instr_it->code.find(ID_exception_list).get_sub();
-        assert(exception_list.size()==instr_it->targets.size());
+        ASSERT(exception_list.size()==instr_it->targets.size());
 
         // Fill the map with the catch type and the target
         unsigned i=0;

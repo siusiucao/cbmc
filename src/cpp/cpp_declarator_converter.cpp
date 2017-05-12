@@ -56,7 +56,7 @@ symbolt &cpp_declarator_convertert::convert(
   const cpp_member_spect &member_spec,
   cpp_declaratort &declarator)
 {
-  assert(declaration_type.is_not_nil());
+  ASSERT(declaration_type.is_not_nil());
 
   if(declaration_type.id()=="cpp-cast-operator")
   {
@@ -70,9 +70,9 @@ symbolt &cpp_declarator_convertert::convert(
     declarator.name().get_sub().back().swap(name);
   }
 
-  assert(declarator.id()==ID_cpp_declarator);
+  ASSERT(declarator.id()==ID_cpp_declarator);
   final_type=declarator.merge_type(declaration_type);
-  assert(final_type.is_not_nil());
+  ASSERT(final_type.is_not_nil());
 
   cpp_template_args_non_tct template_args;
 
@@ -110,7 +110,7 @@ symbolt &cpp_declarator_convertert::convert(
     // adjust template type
     if(final_type.id()==ID_template)
     {
-      assert(0);
+      ASSERT(0);
       typet tmp;
       tmp.swap(final_type.subtype());
       final_type.swap(tmp);
@@ -144,7 +144,7 @@ symbolt &cpp_declarator_convertert::convert(
       }
     }
 
-    assert(c_it!=cpp_typecheck.symbol_table.symbols.end());
+    ASSERT(c_it!=cpp_typecheck.symbol_table.symbols.end());
 
     symbolt &symbol=c_it->second;
 
@@ -175,7 +175,7 @@ symbolt &cpp_declarator_convertert::convert(
       irep_idt identifier=symbol_expr.type().get(ID_identifier);
       const symbolt &symb=cpp_typecheck.lookup(identifier);
       const typet &type = symb.type;
-      assert(type.id()==ID_struct);
+      ASSERT(type.id()==ID_struct);
 
       if(declarator.find(ID_member_initializers).is_nil())
         declarator.set(ID_member_initializers, ID_member_initializers);

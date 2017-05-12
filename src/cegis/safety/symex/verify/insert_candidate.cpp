@@ -21,7 +21,7 @@ void safety_insert_candidate(safety_programt &program,
   if (candidate.empty()) return;
   const safety_programt::safety_loopst &loops=program.safety_loops;
   const size_t size=loops.size();
-  assert(size == candidate.size());
+  ASSERT(size == candidate.size());
   goto_programt &body=get_entry_body(program.gf);
   const std::string Ix_0(get_cegis_meta_name(get_Ix(0)));
   const std::string Ix0(get_cegis_meta_name(get_Ix0()));

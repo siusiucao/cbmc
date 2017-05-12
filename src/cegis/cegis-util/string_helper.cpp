@@ -31,7 +31,7 @@ bool ends_with(const std::string &haystack, const std::string &suffix)
 
 void remove_suffix(std::string &haystack, const std::string &suffix)
 {
-  assert(ends_with(haystack, suffix));
+  ASSERT(ends_with(haystack, suffix));
   const size_t new_size=haystack.size() - suffix.size();
   haystack=haystack.substr(0, new_size);
 }

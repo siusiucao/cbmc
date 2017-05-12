@@ -29,7 +29,7 @@ bvt bv_utilst::build_constant(const mp_integer &n, std::size_t width)
   std::string n_str=integer2binary(n, width);
   bvt result;
   result.resize(width);
-  assert(n_str.size()==width);
+  ASSERT(n_str.size()==width);
   for(std::size_t i=0; i<width; i++)
     result[i]=const_literal(n_str[width-i-1]=='1');
   return result;
@@ -49,7 +49,7 @@ Function: bv_utilst::is_one
 
 literalt bv_utilst::is_one(const bvt &bv)
 {
-  assert(!bv.empty());
+  ASSERT(!bv.empty());
   bvt tmp;
   tmp=bv;
   tmp.erase(tmp.begin(), tmp.begin()+1);
@@ -70,7 +70,7 @@ Function: bv_utilst::set_equal
 
 void bv_utilst::set_equal(const bvt &a, const bvt &b)
 {
-  assert(a.size()==b.size());
+  ASSERT(a.size()==b.size());
   for(std::size_t i=0; i<a.size(); i++)
     prop.set_equal(a[i], b[i]);
 }
@@ -90,16 +90,16 @@ Function: bv_utilst::extract
 bvt bv_utilst::extract(const bvt &a, std::size_t first, std::size_t last)
 {
   // preconditions
-  assert(first<a.size());
-  assert(last<a.size());
-  assert(first<=last);
+  ASSERT(first<a.size());
+  ASSERT(last<a.size());
+  ASSERT(first<=last);
 
   bvt result=a;
   result.resize(last+1);
   if(first!=0)
     result.erase(result.begin(), result.begin()+first);
 
-  assert(result.size()==last-first+1);
+  ASSERT(result.size()==last-first+1);
   return result;
 }
 
@@ -118,12 +118,12 @@ Function: bv_utilst::extract_msb
 bvt bv_utilst::extract_msb(const bvt &a, std::size_t n)
 {
   // preconditions
-  assert(n<=a.size());
+  ASSERT(n<=a.size());
 
   bvt result=a;
   result.erase(result.begin(), result.begin()+(result.size()-n));
 
-  assert(result.size()==n);
+  ASSERT(result.size()==n);
   return result;
 }
 
@@ -142,7 +142,7 @@ Function: bv_utilst::extract_lsb
 bvt bv_utilst::extract_lsb(const bvt &a, std::size_t n)
 {
   // preconditions
-  assert(n<=a.size());
+  ASSERT(n<=a.size());
 
   bvt result=a;
   result.resize(n);
@@ -190,7 +190,7 @@ Function: bv_utilst::select
 
 bvt bv_utilst::select(literalt s, const bvt &a, const bvt &b)
 {
-  assert(a.size()==b.size());
+  ASSERT(a.size()==b.size());
 
   bvt result;
 
@@ -222,7 +222,7 @@ bvt bv_utilst::extension(
   bvt result=bv;
   result.resize(new_size);
 
-  assert(old_size!=0);
+  ASSERT(old_size!=0);
 
   literalt extend_with=
     (rep==SIGNED && !bv.empty())?bv[old_size-1]:
@@ -438,7 +438,7 @@ void bv_utilst::adder(
   literalt carry_in,
   literalt &carry_out)
 {
-  assert(sum.size()==op.size());
+  ASSERT(sum.size()==op.size());
 
   carry_out=carry_in;
 
@@ -465,7 +465,7 @@ literalt bv_utilst::carry_out(
   const bvt &op1,
   literalt carry_in)
 {
-  assert(op0.size()==op1.size());
+  ASSERT(op0.size()==op1.size());
 
   literalt carry_out=carry_in;
 
@@ -512,7 +512,7 @@ Function: bv_utilst::add_sub
 
 bvt bv_utilst::add_sub(const bvt &op0, const bvt &op1, bool subtract)
 {
-  assert(op0.size()==op1.size());
+  ASSERT(op0.size()==op1.size());
 
   literalt carry_in=const_literal(subtract);
   literalt carry_out;
@@ -583,7 +583,7 @@ literalt bv_utilst::overflow_add(
     return carry_out(op0, op1, const_literal(false));
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -620,7 +620,7 @@ literalt bv_utilst::overflow_sub(
     return !carry_out(op0, inverted(op1), const_literal(true));
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -666,7 +666,7 @@ void bv_utilst::adder_no_overflow(
     prop.l_set_to(carry_out, subtract);
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -759,7 +759,7 @@ bvt bv_utilst::shift(const bvt &src, const shiftt s, std::size_t dist)
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
 
     result[i]=l;
@@ -910,7 +910,7 @@ Function: bv_utilst::wallace_tree
 
 bvt bv_utilst::wallace_tree(const std::vector<bvt> &pps)
 {
-  assert(!pps.empty());
+  ASSERT(!pps.empty());
 
   if(pps.size()==1)
     return pps.front();
@@ -928,7 +928,7 @@ bvt bv_utilst::wallace_tree(const std::vector<bvt> &pps)
                 &b=pps[i*3+1],
                 &c=pps[i*3+2];
 
-      assert(a.size()==b.size() && a.size()==c.size());
+      ASSERT(a.size()==b.size() && a.size()==c.size());
 
       bvt s(a.size()), t(a.size());
 
@@ -948,7 +948,7 @@ bvt bv_utilst::wallace_tree(const std::vector<bvt> &pps)
     for(std::size_t i=no_full_adders*3; i<pps.size(); i++)
       new_pps.push_back(pps[i]);
 
-    assert(new_pps.size()<pps.size());
+    ASSERT(new_pps.size()<pps.size());
     return wallace_tree(new_pps);
   }
 }
@@ -1056,7 +1056,7 @@ bvt bv_utilst::unsigned_multiplier_no_overflow(
   if(is_constant(_op1))
     _op0.swap(_op1);
 
-  assert(_op0.size()==_op1.size());
+  ASSERT(_op0.size()==_op1.size());
 
   bvt product;
   product.resize(_op0.size());
@@ -1155,7 +1155,7 @@ Function: bv_utilst::absolute_value
 
 bvt bv_utilst::absolute_value(const bvt &bv)
 {
-  assert(!bv.empty());
+  ASSERT(!bv.empty());
   return cond_negate(bv, bv[bv.size()-1]);
 }
 
@@ -1235,7 +1235,7 @@ bvt bv_utilst::multiplier(
   {
   case SIGNED: return signed_multiplier(op0, op1);
   case UNSIGNED: return unsigned_multiplier(op0, op1);
-  default: assert(false);
+  default: ASSERT(false);
   }
 }
 
@@ -1260,7 +1260,7 @@ bvt bv_utilst::multiplier_no_overflow(
   {
   case SIGNED: return signed_multiplier_no_overflow(op0, op1);
   case UNSIGNED: return unsigned_multiplier_no_overflow(op0, op1);
-  default: assert(false);
+  default: ASSERT(false);
   }
 }
 
@@ -1330,13 +1330,13 @@ void bv_utilst::divider(
   bvt &remainer,
   representationt rep)
 {
-  assert(prop.has_set_to());
+  ASSERT(prop.has_set_to());
 
   switch(rep)
   {
   case SIGNED: signed_divider(op0, op1, result, remainer); break;
   case UNSIGNED: unsigned_divider(op0, op1, result, remainer); break;
-  default: assert(false);
+  default: ASSERT(false);
   }
 }
 
@@ -1449,7 +1449,7 @@ Function: bv_utilst::equal_const_rec
 
 void bv_utilst::equal_const_register(const bvt &var)
 {
-  assert(!is_constant(var));
+  ASSERT(!is_constant(var));
   equal_const_registered.insert(var);
   return;
 }
@@ -1474,9 +1474,9 @@ literalt bv_utilst::equal_const_rec(bvt &var, bvt &constant)
 {
   std::size_t size = var.size();
 
-  assert(size != 0);
-  assert(size == constant.size());
-  assert(is_constant(constant));
+  ASSERT(size != 0);
+  ASSERT(size == constant.size());
+  ASSERT(is_constant(constant));
 
   if(size == 1)
   {
@@ -1534,10 +1534,10 @@ literalt bv_utilst::equal_const(const bvt &var, const bvt &constant)
 {
   std::size_t size = constant.size();
 
-  assert(var.size() == size);
-  assert(!is_constant(var));
-  assert(is_constant(constant));
-  assert(size >= 2);
+  ASSERT(var.size() == size);
+  ASSERT(!is_constant(var));
+  ASSERT(is_constant(constant));
+  ASSERT(size >= 2);
 
   // These get modified : be careful!
   bvt var_upper;
@@ -1576,8 +1576,8 @@ literalt bv_utilst::equal_const(const bvt &var, const bvt &constant)
   }
 
   // Check we have split the array correctly
-  assert(var_upper.size() + var_lower.size() == size);
-  assert(constant_upper.size() + constant_lower.size() == size);
+  ASSERT(var_upper.size() + var_lower.size() == size);
+  ASSERT(constant_upper.size() + constant_lower.size() == size);
 
   literalt top_comparison = equal_const_rec(var_upper, constant_upper);
   literalt bottom_comparison = equal_const_rec(var_lower, constant_lower);
@@ -1601,7 +1601,7 @@ Function: bv_utilst::equal
 
 literalt bv_utilst::equal(const bvt &op0, const bvt &op1)
 {
-  assert(op0.size()==op1.size());
+  ASSERT(op0.size()==op1.size());
 
   #ifdef COMPACT_EQUAL_CONST
   // simplify_expr should put the constant on the right
@@ -1654,7 +1654,7 @@ literalt bv_utilst::lt_or_le(
   const bvt &bv1,
   representationt rep)
 {
-  assert(bv0.size() == bv1.size());
+  ASSERT(bv0.size() == bv1.size());
 
   literalt top0=bv0[bv0.size()-1],
     top1=bv1[bv1.size()-1];
@@ -1673,7 +1673,7 @@ literalt bv_utilst::lt_or_le(
 
     if(rep==SIGNED)
     {
-      assert(bv0.size() >= 2);
+      ASSERT(bv0.size() >= 2);
       start = compareBelow.size() - 2;
 
       literalt firstComp=compareBelow[start];
@@ -1754,7 +1754,7 @@ literalt bv_utilst::lt_or_le(
     else if(rep==UNSIGNED)
       result=!carry;
     else
-      assert(false);
+      ASSERT(false);
 
     if(or_equal)
       result=prop.lor(result, equal(bv0, bv1));
@@ -1837,7 +1837,7 @@ literalt bv_utilst::rel(
   else if(id==ID_gt)
     return lt_or_le(false, bv1, bv0, rep); // swapped
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /*******************************************************************\
@@ -1878,7 +1878,7 @@ void bv_utilst::cond_implies_equal(
   const bvt &a,
   const bvt &b)
 {
-  assert(a.size()==b.size());
+  ASSERT(a.size()==b.size());
 
   if(prop.cnf_handled_well())
   {

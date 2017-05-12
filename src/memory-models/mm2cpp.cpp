@@ -146,7 +146,7 @@ void mm2cppt::check_acyclic(const exprt &expr, unsigned indent)
   }
   else if(expr.id()==ID_union)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     check_acyclic(expr.op0(), indent);
     check_acyclic(expr.op1(), indent);
   }
@@ -179,13 +179,13 @@ void mm2cppt::instruction2cpp(const codet &code, unsigned indent)
   }
   else if(statement==ID_let)
   {
-    assert(code.operands().size()==1);
+    ASSERT(code.operands().size()==1);
     const exprt &binding_list=code.op0();
     forall_operands(it, binding_list)
     {
       if(it->id()=="valbinding")
       {
-        assert(it->operands().size()==2);
+        ASSERT(it->operands().size()==2);
         if(it->op0().id()==ID_symbol)
         {
           irep_idt identifier=it->op0().get(ID_identifier);
@@ -204,7 +204,7 @@ void mm2cppt::instruction2cpp(const codet &code, unsigned indent)
   }
   else if(statement=="check")
   {
-    assert(code.operands().size()==3);
+    ASSERT(code.operands().size()==3);
     if(code.op0().id()=="acyclic")
     {
       check_acyclic(code.op1(), indent);

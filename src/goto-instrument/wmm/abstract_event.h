@@ -144,7 +144,7 @@ public:
       case Lwfence: return "f";
       case ASMfence: return "asm:";
     }
-    assert(false);
+    ASSERT(false);
     return "?";
   }
 

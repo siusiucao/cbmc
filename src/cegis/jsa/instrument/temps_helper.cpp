@@ -47,12 +47,12 @@ void add_zero_jsa_temps_to_pred_exec(jsa_programt &prog)
 {
   symbol_tablet &st=prog.st;
   const size_t num_tmps=count_tmps(st);
-  assert(num_tmps > 0);
+  ASSERT(num_tmps > 0);
   goto_functionst::function_mapt &fm=prog.gf.function_map;
   const goto_functionst::function_mapt::iterator it=fm.find(JSA_PRED_EXEC);
-  assert(fm.end() != it);
+  ASSERT(fm.end() != it);
   goto_function_templatet<goto_programt> &exec=it->second;
-  assert(exec.body_available());
+  ASSERT(exec.body_available());
   goto_programt &body=exec.body;
   goto_programt::instructionst &instr=body.instructions;
   source_locationt loc;
@@ -82,7 +82,7 @@ void add_zero_jsa_temps_to_pred_exec(jsa_programt &prog)
     move_labels(body, return_pos, pos);
     return;
   }
-  assert(!"insertion point for temp assignment in " JSA_PRED_EXEC "not found");
+  ASSERT(!"insertion point for temp assignment in " JSA_PRED_EXEC "not found");
 }
 
 size_t count_tmps(const symbol_tablet &st)

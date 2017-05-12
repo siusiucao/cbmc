@@ -122,7 +122,7 @@ const symbolt &declare_global_meta_variable(symbol_tablet &st,
   new_symbol.is_lvalue=true;
   new_symbol.is_static_lifetime=true;
   new_symbol.is_state_var=true;
-  assert(!st.add(new_symbol));
+  ASSERT(!st.add(new_symbol));
   return st.lookup(name);
 }
 

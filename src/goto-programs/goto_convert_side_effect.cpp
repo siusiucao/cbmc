@@ -144,7 +144,7 @@ void goto_convertt::remove_assignment(
     convert(assignment, dest);
   }
   else
-    assert(false);
+    ASSERT(false);
 
   // revert assignment in the expression to its LHS
   if(result_is_used)
@@ -183,7 +183,7 @@ void goto_convertt::remove_pre(
 
   const irep_idt statement=expr.get_statement();
 
-  assert(statement==ID_preincrement ||
+  ASSERT(statement==ID_preincrement ||
          statement==ID_predecrement);
 
   exprt rhs;
@@ -287,7 +287,7 @@ void goto_convertt::remove_post(
 
   const irep_idt statement=expr.get_statement();
 
-  assert(statement==ID_postincrement ||
+  ASSERT(statement==ID_postincrement ||
          statement==ID_postdecrement);
 
   exprt rhs;
@@ -393,7 +393,7 @@ void goto_convertt::remove_function_call(
 {
   if(!result_is_used)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     code_function_callt call;
     call.function()=expr.op0();
     call.arguments()=expr.op1().operands();
@@ -548,7 +548,7 @@ void goto_convertt::remove_cpp_delete(
   goto_programt &dest,
   bool result_is_used)
 {
-  assert(expr.operands().size()==1);
+  ASSERT(expr.operands().size()==1);
 
   codet tmp;
 
@@ -653,7 +653,7 @@ void goto_convertt::remove_temporary_object(
 
   if(expr.find(ID_initializer).is_not_nil())
   {
-    assert(expr.operands().empty());
+    ASSERT(expr.operands().empty());
     exprt initializer=static_cast<const exprt &>(expr.find(ID_initializer));
     replace_new_object(new_symbol.symbol_expr(), initializer);
 

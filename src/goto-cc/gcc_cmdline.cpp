@@ -214,7 +214,7 @@ const char *gcc_options_without_argument[]=
 
 bool gcc_cmdlinet::parse(int argc, const char **argv)
 {
-  assert(argc>0);
+  ASSERT(argc>0);
   add_arg(argv[0]);
 
   argst args;
@@ -455,8 +455,8 @@ Function: gcc_cmdlinet::parse_specs_line
 void gcc_cmdlinet::parse_specs_line(const std::string &line)
 {
   // initial whitespace has been stripped
-  assert(!line.empty());
-  assert(line[0]!=' ' && line[0]!='\t');
+  ASSERT(!line.empty());
+  ASSERT(line[0]!=' ' && line[0]!='\t');
 
   argst args;
 

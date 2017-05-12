@@ -70,13 +70,13 @@ public:
 
   cpp_idt &get_parent() const
   {
-    assert(parent!=NULL);
+    ASSERT(parent!=NULL);
     return *parent;
   }
 
   void set_parent(cpp_idt &_parent)
   {
-    assert(_parent.is_scope);
+    ASSERT(_parent.is_scope);
     parent=&_parent;
   }
 

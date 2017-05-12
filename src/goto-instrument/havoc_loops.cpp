@@ -73,7 +73,7 @@ Function: havoc_loopst::get_loop_exit
 
 goto_programt::targett havoc_loopst::get_loop_exit(const loopt &loop)
 {
-  assert(!loop.empty());
+  ASSERT(!loop.empty());
 
   // find the last instruction in the loop
   std::map<unsigned, goto_programt::targett> loop_map;
@@ -138,7 +138,7 @@ void havoc_loopst::havoc_loop(
   const goto_programt::targett loop_head,
   const loopt &loop)
 {
-  assert(!loop.empty());
+  ASSERT(!loop.empty());
 
   // first find out what can get changed in the loop
   modifiest modifies;

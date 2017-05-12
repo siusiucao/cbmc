@@ -89,10 +89,10 @@ void cycles_visitort::po_edges(std::set<event_idt> &edges)
     }
 
     event_grapht::critical_cyclet::const_iterator cur=C_j->begin();
-    assert(cur!=C_j->end());
+    ASSERT(cur!=C_j->end());
     event_grapht::critical_cyclet::const_iterator next=cur;
     ++next;
-    assert(next!=C_j->end());
+    ASSERT(next!=C_j->end());
     for(; cur!=C_j->end() && next!=C_j->end(); ++cur, ++next)
     {
       if(egraph[*cur].is_fence() || egraph[*next].is_fence())
@@ -412,7 +412,7 @@ void cycles_visitort::com_constraint(
 
   std::list<event_idt>::const_iterator e_it=C_j.begin();
   std::list<event_idt>::const_iterator next_it=e_it;
-  assert(C_j.size()>0);
+  ASSERT(C_j.size()>0);
   ++next_it;
   for(;  next_it!=C_j.end() && e_it!=C_j.end(); ++e_it, ++next_it)
   {
@@ -428,7 +428,7 @@ void cycles_visitort::com_constraint(
     }
   }
   /* last case */
-  assert(e_it!=C_j.end());
+  ASSERT(e_it!=C_j.end());
   next_it=C_j.begin();
 
   const abstract_eventt &e1=egraph[*e_it];

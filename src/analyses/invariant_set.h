@@ -42,7 +42,7 @@ public:
 
   const exprt &get_expr(unsigned n) const
   {
-    assert(n<entries.size());
+    ASSERT(n<entries.size());
     return entries[n].expr;
   }
 

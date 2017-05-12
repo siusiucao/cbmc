@@ -111,7 +111,7 @@ Function: satcheck_precosatt::prop_solve
 
 propt::resultt satcheck_precosatt::prop_solve()
 {
-  assert(status!=ERROR);
+  ASSERT(status!=ERROR);
 
   // We start counting at 1, thus there is one variable fewer.
   {
@@ -133,7 +133,7 @@ propt::resultt satcheck_precosatt::prop_solve()
   }
   else
   {
-    assert(res==-1);
+    ASSERT(res==-1);
     msg="SAT checker: instance is UNSATISFIABLE";
     messaget::status() << msg << messaget::eom;
   }
@@ -156,7 +156,7 @@ Function: satcheck_precosatt::set_assignment
 
 void satcheck_precosatt::set_assignment(literalt a, bool value)
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -212,6 +212,6 @@ void satcheck_precosatt::set_assumptions(const bvt &bv)
   assumptions=bv;
 
   forall_literals(it, assumptions)
-    assert(!it->is_constant());
+    ASSERT(!it->is_constant());
 }
 */

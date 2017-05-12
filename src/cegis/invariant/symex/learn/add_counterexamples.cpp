@@ -110,7 +110,7 @@ public:
           use_x0_ce)
   {
     const invariant_programt::invariant_loopst loops(prog.get_loops());
-    assert(!loops.empty());
+    ASSERT(!loops.empty());
     pos=begin_pos;
     ++pos;
     if (use_x0_ce)

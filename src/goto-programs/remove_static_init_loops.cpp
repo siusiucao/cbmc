@@ -63,7 +63,7 @@ void remove_static_init_loopst::unwind_enum_static(
         const symbolt &function_name=symbol_table.lookup(ins.function);
         if(!(function_name.mode==ID_java && has_suffix(fname, java_clinit)))
           continue;
-        assert(
+        ASSERT(
           class_prefix_length!=std::string::npos &&
           "could not identify class name");
         const std::string &classname=fname.substr(0, class_prefix_length);

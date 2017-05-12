@@ -95,7 +95,7 @@ Function: guardt::add
 
 void guardt::add(const exprt &expr)
 {
-  assert(expr.type().id()==ID_bool);
+  ASSERT(expr.type().id()==ID_bool);
 
   if(is_false() || expr.is_true())
     return;

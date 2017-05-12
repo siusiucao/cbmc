@@ -49,7 +49,7 @@ static void build_ssa_identifier_rec(
 
     mp_integer idx;
     if(to_integer(to_constant_expr(index.index()), idx))
-      assert(false);
+      ASSERT(false);
 
     os << '[' << idx << ']';
   }
@@ -75,7 +75,7 @@ static void build_ssa_identifier_rec(
       os << '#' << l2;
   }
   else
-    assert(false);
+    ASSERT(false);
 }
 
 /* Used to determine whether or not an identifier can be built

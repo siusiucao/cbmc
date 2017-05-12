@@ -271,7 +271,7 @@ format_token_listt parse_format_string(const std::string &arg_string)
       for( ; it!=arg_string.end() && *it!='%'; it++)
         tmp+=*it;
 
-      assert(!token_list.empty());
+      ASSERT(!token_list.empty());
       token_list.back().value=tmp;
     }
   }

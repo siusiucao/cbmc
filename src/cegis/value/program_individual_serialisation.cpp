@@ -79,14 +79,14 @@ program_individualt to_program_individual(const danger_programt &prog,
   if (!prog.loops.empty() && prog.loops.front().skolem_choices.empty())
   {
     const size_t num_progs=individual.programs.size();
-    assert(num_progs == prog.use_ranking ? 2 : 1);
+    ASSERT(num_progs == prog.use_ranking ? 2 : 1);
     individual.programs.push_back(empty);
   }
   if (!prog.use_ranking)
   {
-    assert(individual.programs.size() == 2);
+    ASSERT(individual.programs.size() == 2);
     individual.programs.insert(std::next(individual.programs.begin()), empty);
-    assert(individual.programs.at(1).empty());
+    ASSERT(individual.programs.at(1).empty());
   }
   danger_read_x0(individual, prog, trace);
   return individual;
@@ -147,7 +147,7 @@ void deserialise(program_individualt &individual, const irept &sdu)
   const irept::named_subt &named_sub=sdu.get_named_sub();
   typedef irept::named_subt::const_iterator const_iterator;
   const const_iterator programs=named_sub.find(PROGRAMS);
-  assert(named_sub.end() != programs);
+  ASSERT(named_sub.end() != programs);
   for (const irept &program : programs->second.get_sub())
   {
     program_individualt::programt prog;
@@ -157,7 +157,7 @@ void deserialise(program_individualt &individual, const irept &sdu)
       instr.opcode=instruction.get_long_long(OPCODE);
       const irept::named_subt &named_sub=instruction.get_named_sub();
       const const_iterator ops=named_sub.find(OPS);
-      assert(named_sub.end() != ops);
+      ASSERT(named_sub.end() != ops);
       for (const irept &op : ops->second.get_sub())
         instr.ops.push_back(get_value(op));
       prog.push_back(instr);
@@ -165,7 +165,7 @@ void deserialise(program_individualt &individual, const irept &sdu)
     individual.programs.push_back(prog);
   }
   const irept::named_subt::const_iterator x0=named_sub.find(X0);
-  assert(named_sub.end() != x0);
+  ASSERT(named_sub.end() != x0);
   for (const irept &value : x0->second.get_sub())
     individual.x0.push_back(get_value(value));
   individual.fitness=sdu.get_long_long(FITNESS);

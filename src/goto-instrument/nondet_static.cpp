@@ -37,7 +37,7 @@ void nondet_static(
 {
   goto_functionst::function_mapt::iterator
     i_it=goto_functions.function_map.find(fct_name);
-  assert(i_it!=goto_functions.function_map.end());
+  ASSERT(i_it!=goto_functions.function_map.end());
 
   goto_programt &init=i_it->second.body;
 

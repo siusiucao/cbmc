@@ -193,7 +193,7 @@ bvt boolbvt::convert_index(const index_exprt &expr)
         if(index_equality.rhs().is_nil())
           throw "number conversion failed (1)";
 
-        assert(it != array.operands().end());
+        ASSERT(it != array.operands().end());
 
         value_equality.rhs()=*it++;
 
@@ -273,7 +273,7 @@ bvt boolbvt::convert_index(const index_exprt &expr)
 
       typet constant_type=index.type(); // type of index operand
 
-      assert(array_size>0);
+      ASSERT(array_size>0);
 
       for(mp_integer i=0; i<array_size; i=i+1)
       {
@@ -349,7 +349,7 @@ bvt boolbvt::convert_index(
     // The assertion below is disabled as we want to be able
     // to run CBMC without simplifier.
     // Expression simplification should remove these cases
-    // assert(array.id()!=ID_array_of &&
+    // ASSERT(array.id()!=ID_array_of &&
     //       array.id()!=ID_array);
     // If not there are large improvements possible as above
 

@@ -118,7 +118,7 @@ protected:
     auto lower_bound=inverse_memory_map.lower_bound(address);
     if(lower_bound->first!=address)
     {
-      assert(lower_bound!=inverse_memory_map.begin());
+      ASSERT(lower_bound!=inverse_memory_map.begin());
       --lower_bound;
     }
     return *lower_bound;
@@ -136,7 +136,7 @@ protected:
 
   std::size_t base_address_to_alloc_size(std::size_t address) const
   {
-    assert(address_to_offset(address)==0);
+    ASSERT(address_to_offset(address)==0);
     auto upper_bound=inverse_memory_map.upper_bound(address);
     std::size_t next_alloc_address=
       upper_bound==inverse_memory_map.end() ?

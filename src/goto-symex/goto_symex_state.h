@@ -62,7 +62,7 @@ public:
 
     void increase_counter(const irep_idt &identifier)
     {
-      assert(current_names.find(identifier)!=current_names.end());
+      ASSERT(current_names.find(identifier)!=current_names.end());
       ++current_names[identifier].second;
     }
 
@@ -109,7 +109,7 @@ public:
           current_names.insert(it, *ito);
         else if(it!=current_names.end())
         {
-          assert(it->first==ito->first);
+          ASSERT(it->first==ito->first);
           it->second=ito->second;
           ++it;
         }
@@ -276,25 +276,25 @@ public:
 
   call_stackt &call_stack()
   {
-    assert(source.thread_nr<threads.size());
+    ASSERT(source.thread_nr<threads.size());
     return threads[source.thread_nr].call_stack;
   }
 
   const call_stackt &call_stack() const
   {
-    assert(source.thread_nr<threads.size());
+    ASSERT(source.thread_nr<threads.size());
     return threads[source.thread_nr].call_stack;
   }
 
   framet &top()
   {
-    assert(!call_stack().empty());
+    ASSERT(!call_stack().empty());
     return call_stack().back();
   }
 
   const framet &top() const
   {
-    assert(!call_stack().empty());
+    ASSERT(!call_stack().empty());
     return call_stack().back();
   }
 

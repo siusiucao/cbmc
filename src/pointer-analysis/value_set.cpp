@@ -296,7 +296,7 @@ bool value_sett::make_union(const value_sett::valuest &new_values)
       continue;
     }
 
-    assert(v_it->first==it->first);
+    ASSERT(v_it->first==it->first);
 
     entryt &e=v_it->second;
     const entryt &new_e=it->second;
@@ -358,7 +358,7 @@ bool value_sett::eval_pointer_offset(
 
   if(expr.id()==ID_pointer_offset)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     object_mapt reference_set;
     get_value_set(expr.op0(), reference_set, ns, true);
@@ -493,22 +493,22 @@ void value_sett::get_value_set_rec(
   }
   else if(expr.id()==ID_index)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     const typet &type=ns.follow(expr.op0().type());
 
-    assert(type.id()==ID_array ||
+    ASSERT(type.id()==ID_array ||
            type.id()==ID_incomplete_array);
 
     get_value_set_rec(expr.op0(), dest, "[]"+suffix, original_type, ns);
   }
   else if(expr.id()==ID_member)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     const typet &type=ns.follow(expr.op0().type());
 
-    assert(type.id()==ID_struct ||
+    ASSERT(type.id()==ID_struct ||
            type.id()==ID_union ||
            type.id()==ID_incomplete_struct ||
            type.id()==ID_incomplete_union);
@@ -793,7 +793,7 @@ void value_sett::get_value_set_rec(
     }
     else if(statement==ID_malloc)
     {
-      assert(suffix=="");
+      ASSERT(suffix=="");
 
       const typet &dynamic_type=
         static_cast<const typet &>(expr.find("#type"));
@@ -808,8 +808,8 @@ void value_sett::get_value_set_rec(
     else if(statement==ID_cpp_new ||
             statement==ID_cpp_new_array)
     {
-      assert(suffix=="");
-      assert(expr_type.id()==ID_pointer);
+      ASSERT(suffix=="");
+      ASSERT(expr_type.id()==ID_pointer);
 
       dynamic_object_exprt dynamic_object(expr_type.subtype());
       dynamic_object.instance()=
@@ -829,7 +829,7 @@ void value_sett::get_value_set_rec(
   }
   else if(expr.id()==ID_with)
   {
-    assert(expr.operands().size()==3);
+    ASSERT(expr.operands().size()==3);
 
     // this is the array/struct
     object_mapt tmp_map0;
@@ -887,7 +887,7 @@ void value_sett::get_value_set_rec(
   else if(expr.id()==ID_array_of)
   {
     // an array constructor, possibly containing an address
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     get_value_set_rec(expr.op0(), dest, suffix, original_type, ns);
   }
   else if(expr.id()==ID_dynamic_object)
@@ -1024,7 +1024,7 @@ void value_sett::dereference_rec(
   // remove pointer typecasts
   if(src.id()==ID_typecast)
   {
-    assert(src.type().id()==ID_pointer);
+    ASSERT(src.type().id()==ID_pointer);
 
     if(src.operands().size()!=1)
       throw "typecast expects one operand";
@@ -1122,7 +1122,7 @@ void value_sett::get_reference_set_rec(
     const exprt &offset=index_expr.index();
     const typet &array_type=ns.follow(array.type());
 
-    assert(array_type.id()==ID_array ||
+    ASSERT(array_type.id()==ID_array ||
            array_type.id()==ID_incomplete_array);
 
     object_mapt array_references;
@@ -1325,7 +1325,7 @@ void value_sett::assign(
 
       if(rhs.id()==ID_array_of)
       {
-        assert(rhs.operands().size()==1);
+        ASSERT(rhs.operands().size()==1);
         assign(lhs_index, rhs.op0(), ns, is_simplified, add_to_sets);
       }
       else if(rhs.id()==ID_array ||
@@ -1339,7 +1339,7 @@ void value_sett::assign(
       }
       else if(rhs.id()==ID_with)
       {
-        assert(rhs.operands().size()==3);
+        ASSERT(rhs.operands().size()==3);
 
         exprt op0_index(ID_index, type.subtype());
         op0_index.copy_to_operands(rhs.op0(), exprt(ID_unknown, index_type()));
@@ -1542,7 +1542,7 @@ void value_sett::assign_rec(
 
     const typet &type=ns.follow(lhs.op0().type());
 
-    assert(type.id()==ID_array || type.id()==ID_incomplete_array);
+    ASSERT(type.id()==ID_array || type.id()==ID_incomplete_array);
 
     assign_rec(lhs.op0(), values_rhs, "[]"+suffix, ns, true);
   }
@@ -1555,7 +1555,7 @@ void value_sett::assign_rec(
 
     const typet &type=ns.follow(lhs.op0().type());
 
-    assert(type.id()==ID_struct ||
+    ASSERT(type.id()==ID_struct ||
            type.id()==ID_union ||
            type.id()==ID_incomplete_struct ||
            type.id()==ID_incomplete_union);
@@ -1590,7 +1590,7 @@ void value_sett::assign_rec(
   else if(lhs.id()==ID_byte_extract_little_endian ||
           lhs.id()==ID_byte_extract_big_endian)
   {
-    assert(lhs.operands().size()==2);
+    ASSERT(lhs.operands().size()==2);
     assign_rec(lhs.op0(), values_rhs, suffix, ns, true);
   }
   else if(lhs.id()==ID_integer_address)
@@ -1710,7 +1710,7 @@ void value_sett::apply_code(
   else if(statement==ID_function_call)
   {
     // shouldn't be here
-    assert(false);
+    ASSERT(false);
   }
   else if(statement==ID_assign ||
           statement==ID_init)
@@ -1860,7 +1860,7 @@ void value_sett::guard(
   }
   else if(expr.id()==ID_dynamic_object)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     dynamic_object_exprt dynamic_object(unsigned_char_type());
     // dynamic_object.instance()=
@@ -1898,12 +1898,12 @@ exprt value_sett::make_member(
      src.id()==ID_constant)
   {
     std::size_t no=struct_union_type.component_number(component_name);
-    assert(no<src.operands().size());
+    ASSERT(no<src.operands().size());
     return src.operands()[no];
   }
   else if(src.id()==ID_with)
   {
-    assert(src.operands().size()==3);
+    ASSERT(src.operands().size()==3);
 
     // see if op1 is the member we want
     const exprt &member_operand=src.op1();
@@ -1918,7 +1918,7 @@ exprt value_sett::make_member(
   else if(src.id()==ID_typecast)
   {
     // push through typecast
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     return make_member(src.op0(), component_name, ns);
   }
 

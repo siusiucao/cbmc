@@ -64,9 +64,9 @@ bvt boolbvt::convert_struct(const struct_exprt &expr)
     {
       const bvt &op_bv=convert_bv(op);
 
-      assert(offset<width);
-      assert(op_bv.size()==subtype_width);
-      assert(offset+op_bv.size()<=width);
+      ASSERT(offset<width);
+      ASSERT(op_bv.size()==subtype_width);
+      ASSERT(offset+op_bv.size()<=width);
 
       for(std::size_t j=0; j<op_bv.size(); j++)
         bv[offset+j]=op_bv[j];
@@ -77,7 +77,7 @@ bvt boolbvt::convert_struct(const struct_exprt &expr)
     ++op_it;
   }
 
-  assert(offset==width);
+  ASSERT(offset==width);
 
   return bv;
 }

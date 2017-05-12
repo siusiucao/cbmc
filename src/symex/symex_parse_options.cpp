@@ -575,7 +575,7 @@ void symex_parse_optionst::report_success()
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -612,7 +612,7 @@ void symex_parse_optionst::show_counterexample(
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -647,7 +647,7 @@ void symex_parse_optionst::report_failure()
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }
 

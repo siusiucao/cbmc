@@ -552,10 +552,10 @@ mp_integer compute_pointer_offset(
   }
   else if(expr.id()==ID_index)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     const typet &array_type=ns.follow(expr.op0().type());
-    assert(array_type.id()==ID_array);
+    ASSERT(array_type.id()==ID_array);
 
     mp_integer o=compute_pointer_offset(expr.op0(), ns);
 
@@ -574,10 +574,10 @@ mp_integer compute_pointer_offset(
   }
   else if(expr.id()==ID_member)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     const typet &type=ns.follow(expr.op0().type());
 
-    assert(type.id()==ID_struct ||
+    ASSERT(type.id()==ID_struct ||
            type.id()==ID_union);
 
     mp_integer o=compute_pointer_offset(expr.op0(), ns);
@@ -627,7 +627,7 @@ exprt build_sizeof_expr(
      (type_size==0 && val>0))
     return nil_exprt();
 
-  assert(address_bits(val+1)<=config.ansi_c.pointer_width);
+  ASSERT(address_bits(val+1)<=config.ansi_c.pointer_width);
   const unsignedbv_typet t(config.ansi_c.pointer_width);
 
   mp_integer remainder=0;

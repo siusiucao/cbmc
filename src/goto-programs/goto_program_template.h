@@ -63,7 +63,7 @@ public:
   goto_program_templatet(const goto_program_templatet &src)
   {
     // DO NOT COPY ME! I HAVE POINTERS IN ME!
-    assert(src.instructions.empty());
+    ASSERT(src.instructions.empty());
   }
 
   /*! \brief assignment operator
@@ -73,7 +73,7 @@ public:
   goto_program_templatet &operator=(const goto_program_templatet &src)
   {
     // DO NOT COPY ME! I HAVE POINTERS IN ME!
-    assert(src.instructions.empty());
+    ASSERT(src.instructions.empty());
     instructions.clear();
     update();
     return *this;
@@ -110,7 +110,7 @@ public:
     // for the usual case of a single target
     targett get_target() const
     {
-      assert(targets.size()==1);
+      ASSERT(targets.size()==1);
       return targets.front();
     }
 
@@ -300,7 +300,7 @@ public:
   static const irep_idt get_function_id(
     const goto_program_templatet<codeT, guardT> &p)
   {
-    assert(!p.empty());
+    ASSERT(!p.empty());
 
     return get_function_id(--p.instructions.end());
   }
@@ -318,7 +318,7 @@ public:
   //! Insertion that preserves jumps to "target".
   void insert_before_swap(targett target)
   {
-    assert(target!=instructions.end());
+    ASSERT(target!=instructions.end());
     targett next=target;
     next++;
     instructions.insert(next, instructiont())->swap(*target);
@@ -338,7 +338,7 @@ public:
     targett target,
     goto_program_templatet<codeT, guardT> &p)
   {
-    assert(target!=instructions.end());
+    ASSERT(target!=instructions.end());
     if(p.instructions.empty())
       return;
     insert_before_swap(target, p.instructions.front());
@@ -493,9 +493,9 @@ public:
 
   targett get_end_function()
   {
-    assert(!instructions.empty());
+    ASSERT(!instructions.empty());
     targett end_function=--instructions.end();
-    assert(end_function->is_end_function());
+    ASSERT(end_function->is_end_function());
     return end_function;
   }
 
@@ -666,7 +666,7 @@ void goto_program_templatet<codeT, guardT>::compute_target_numbers()
     if(i.is_target())
     {
       i.target_number=++cnt;
-      assert(i.target_number!=0);
+      ASSERT(i.target_number!=0);
     }
   }
 
@@ -679,8 +679,8 @@ void goto_program_templatet<codeT, guardT>::compute_target_numbers()
     {
       if(t!=instructions.end())
       {
-        assert(t->target_number!=0);
-        assert(t->target_number!=instructiont::nil_target);
+        ASSERT(t->target_number!=0);
+        ASSERT(t->target_number!=instructiont::nil_target);
       }
     }
   }

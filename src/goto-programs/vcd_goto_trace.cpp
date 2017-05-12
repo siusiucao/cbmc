@@ -66,7 +66,7 @@ std::string as_vcd_binary(
   }
   else if(expr.id()==ID_union)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return as_vcd_binary(expr.op0(), ns);
   }
 

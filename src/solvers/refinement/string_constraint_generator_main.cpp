@@ -195,7 +195,7 @@ Function: string_constraint_generatort::get_string_expr
 
 string_exprt string_constraint_generatort::get_string_expr(const exprt &expr)
 {
-  assert(refined_string_typet::is_refined_string_type(expr.type()));
+  ASSERT(refined_string_typet::is_refined_string_type(expr.type()));
 
   if(expr.id()==ID_symbol)
   {
@@ -224,11 +224,11 @@ Function: string_constraint_generatort::convert_java_string_to_string_exprt
 string_exprt string_constraint_generatort::convert_java_string_to_string_exprt(
     const exprt &jls)
 {
-  assert(jls.id()==ID_struct);
+  ASSERT(jls.id()==ID_struct);
 
   exprt length(to_struct_expr(jls).op1());
   // TODO: Add assertion on the type.
-  // assert(length.type()==refined_string_typet::index_type());
+  // ASSERT(length.type()==refined_string_typet::index_type());
   exprt java_content(to_struct_expr(jls).op2());
   if(java_content.id()==ID_address_of)
   {
@@ -300,11 +300,11 @@ Function: string_constraint_generatort::add_axioms_for_refined_string
 string_exprt string_constraint_generatort::add_axioms_for_refined_string(
   const exprt &string)
 {
-  assert(refined_string_typet::is_refined_string_type(string.type()));
+  ASSERT(refined_string_typet::is_refined_string_type(string.type()));
   refined_string_typet type=to_refined_string_type(string.type());
 
   // Function applications should have been removed before
-  assert(string.id()!=ID_function_application);
+  ASSERT(string.id()!=ID_function_application);
 
   if(string.id()==ID_symbol)
   {
@@ -352,10 +352,10 @@ Function: string_constraint_generatort::add_axioms_for_if
 string_exprt string_constraint_generatort::add_axioms_for_if(
   const if_exprt &expr)
 {
-  assert(
+  ASSERT(
     refined_string_typet::is_refined_string_type(expr.true_case().type()));
   string_exprt t=get_string_expr(expr.true_case());
-  assert(
+  ASSERT(
     refined_string_typet::is_refined_string_type(expr.false_case().type()));
   string_exprt f=get_string_expr(expr.false_case());
   const refined_string_typet &ref_type=to_refined_string_type(t.type());
@@ -418,7 +418,7 @@ exprt string_constraint_generatort::add_axioms_for_function_application(
   const function_application_exprt &expr)
 {
   const exprt &name=expr.function();
-  assert(name.id()==ID_symbol);
+  ASSERT(name.id()==ID_symbol);
 
   const irep_idt &id=is_ssa_expr(name)?to_ssa_expr(name).get_object_name():
     to_symbol_expr(name).get_identifier();
@@ -632,7 +632,7 @@ string_exprt string_constraint_generatort::add_axioms_for_copy(
   }
   else
   {
-    assert(args.size()==3);
+    ASSERT(args.size()==3);
     string_exprt s1=get_string_expr(args[0]);
     exprt offset=args[1];
     exprt count=args[2];
@@ -684,7 +684,7 @@ exprt string_constraint_generatort::add_axioms_for_char_pointer(
   if(char_pointer.id()==ID_index)
     return char_pointer.op0();
   // TODO: we do not know what to do in the other cases
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -727,7 +727,7 @@ string_exprt string_constraint_generatort::add_axioms_from_char_array(
   const exprt &offset,
   const exprt &count)
 {
-  assert(false); // deprecated, we should use add_axioms_for_substring instead
+  ASSERT(false); // deprecated, we should use add_axioms_for_substring instead
   const typet &char_type=to_array_type(data.type()).subtype();
   const typet &index_type=length.type();
   refined_string_typet ref_type(index_type, char_type);
@@ -739,7 +739,7 @@ string_exprt string_constraint_generatort::add_axioms_from_char_array(
 
   symbol_exprt qvar=fresh_univ_index("QA_string_of_char_array", index_type);
   exprt char_in_tab=data;
-  assert(char_in_tab.id()==ID_index);
+  ASSERT(char_in_tab.id()==ID_index);
   char_in_tab.op1()=plus_exprt_with_overflow_check(qvar, offset);
 
   string_constraintt a1(qvar, count, equal_exprt(str[qvar], char_in_tab));
@@ -766,7 +766,7 @@ Function: string_constraint_generatort::add_axioms_from_char_array
 string_exprt string_constraint_generatort::add_axioms_from_char_array(
   const function_application_exprt &f)
 {
-  assert(false); // deprecated, we should use add_axioms_for_substring instead
+  ASSERT(false); // deprecated, we should use add_axioms_for_substring instead
   exprt offset;
   exprt count;
   if(f.arguments().size()==4)
@@ -776,7 +776,7 @@ string_exprt string_constraint_generatort::add_axioms_from_char_array(
   }
   else
   {
-    assert(f.arguments().size()==2);
+    ASSERT(f.arguments().size()==2);
     count=f.arguments()[0];
     offset=from_integer(0, count.type());
   }
@@ -819,7 +819,7 @@ exprt string_constraint_generatort::add_axioms_for_char_literal(
   const function_application_exprt &f)
 {
   const function_application_exprt::argumentst &args=f.arguments();
-  assert(args.size()==1); // there should be exactly 1 argument to char literal
+  ASSERT(args.size()==1); // there should be exactly 1 argument to char literal
 
   const exprt &arg=args[0];
   // for C programs argument to char literal should be one string constant
@@ -831,7 +831,7 @@ exprt string_constraint_generatort::add_axioms_for_char_literal(
   {
     const string_constantt s=to_string_constant(arg.op0().op0().op0());
     irep_idt sval=s.get_value();
-    assert(sval.size()==1);
+    ASSERT(sval.size()==1);
     return from_integer(unsigned(sval[0]), arg.type());
   }
   else

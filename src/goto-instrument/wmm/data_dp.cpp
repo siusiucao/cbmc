@@ -192,7 +192,7 @@ void data_dpt::dp_merge()
       it3->eq_class=to;
 
   /* strictly monotonous => converges */
-  assert(initial_size>size());
+  ASSERT(initial_size>size());
 
   /* repeat until classes are disjunct */
   dp_merge();

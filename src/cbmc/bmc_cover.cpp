@@ -264,7 +264,7 @@ bool bmc_covert::operator()()
   {
     if(it->is_assert())
     {
-      assert(it->source.pc->is_assert());
+      ASSERT(it->source.pc->is_assert());
       exprt c=
         conjunction({ // NOLINT(whitespace/braces)
           literal_exprt(it->guard_literal),
@@ -286,7 +286,7 @@ bool bmc_covert::operator()()
     cover_goals.add(l);
   }
 
-  assert(cover_goals.size()==goal_map.size());
+  ASSERT(cover_goals.size()==goal_map.size());
 
   status() << "Running " << solver.decision_procedure_text() << eom;
 

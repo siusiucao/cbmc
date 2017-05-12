@@ -87,7 +87,7 @@ exprt string_constraint_generatort::add_axioms_for_is_prefix(
   const function_application_exprt &f, bool swap_arguments)
 {
   const function_application_exprt::argumentst &args=f.arguments();
-  assert(f.type()==bool_typet() || f.type().id()==ID_c_bool);
+  ASSERT(f.type()==bool_typet() || f.type().id()==ID_c_bool);
   string_exprt s0=get_string_expr(args[swap_arguments?1:0]);
   string_exprt s1=get_string_expr(args[swap_arguments?0:1]);
   exprt offset;
@@ -114,7 +114,7 @@ Function: string_constraint_generatort::add_axioms_for_is_empty
 exprt string_constraint_generatort::add_axioms_for_is_empty(
   const function_application_exprt &f)
 {
-  assert(f.type()==bool_typet() || f.type().id()==ID_c_bool);
+  ASSERT(f.type()==bool_typet() || f.type().id()==ID_c_bool);
 
   // We add axioms:
   // a1 : is_empty => |s0| = 0
@@ -145,8 +145,8 @@ exprt string_constraint_generatort::add_axioms_for_is_suffix(
   const function_application_exprt &f, bool swap_arguments)
 {
   const function_application_exprt::argumentst &args=f.arguments();
-  assert(args.size()==2); // bad args to string issuffix?
-  assert(f.type()==bool_typet() || f.type().id()==ID_c_bool);
+  ASSERT(args.size()==2); // bad args to string issuffix?
+  ASSERT(f.type()==bool_typet() || f.type().id()==ID_c_bool);
 
   symbol_exprt issuffix=fresh_boolean("issuffix");
   typecast_exprt tc_issuffix(issuffix, f.type());
@@ -205,7 +205,7 @@ Function: string_constraint_generatort::add_axioms_for_contains
 exprt string_constraint_generatort::add_axioms_for_contains(
   const function_application_exprt &f)
 {
-  assert(f.type()==bool_typet() || f.type().id()==ID_c_bool);
+  ASSERT(f.type()==bool_typet() || f.type().id()==ID_c_bool);
   symbol_exprt contains=fresh_boolean("contains");
   typecast_exprt tc_contains(contains, f.type());
   string_exprt s0=get_string_expr(args(f, 2)[0]);

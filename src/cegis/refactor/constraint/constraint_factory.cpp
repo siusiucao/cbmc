@@ -41,13 +41,13 @@ void create_or_redirect_entry(symbol_tablet &st, goto_functionst &gf)
   if (fmap.end() == it)
   {
     config.main=CONSTRAINT_CALLER;
-    assert(!java_entry_point(st, ID_empty, msg, false, 0));
+    ASSERT(!java_entry_point(st, ID_empty, msg, false, 0));
     goto_convert(CPROVER_INIT, st, gf, msg);
     goto_convert(goto_functionst::entry_point(), st, gf, msg);
   } else
   {
     // TODO: Implement
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -64,7 +64,7 @@ void add_to_symbol_table(symbol_tablet &st, const std::string &name,
   new_symbol.mode=ID_C;
   new_symbol.module=CEGIS_MODULE;
   new_symbol.value=code_blockt();
-  assert(!st.add(new_symbol));
+  ASSERT(!st.add(new_symbol));
 }
 }
 

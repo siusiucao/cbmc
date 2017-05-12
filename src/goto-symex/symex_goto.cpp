@@ -56,7 +56,7 @@ void goto_symext::symex_goto(statet &state)
 
   target.goto_instruction(state.guard.as_expr(), new_guard, state.source);
 
-  assert(!instruction.targets.empty());
+  ASSERT(!instruction.targets.empty());
 
   // we only do deterministic gotos for now
   if(instruction.targets.size()!=1)

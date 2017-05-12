@@ -111,7 +111,7 @@ bvt boolbvt::convert_add_sub(const exprt &expr)
 
         for(std::size_t j=0; j<tmp_op.size(); j++)
         {
-          assert(i*sub_width+j<op.size());
+          ASSERT(i*sub_width+j<op.size());
           tmp_op[j]=op[i*sub_width+j];
         }
 
@@ -120,7 +120,7 @@ bvt boolbvt::convert_add_sub(const exprt &expr)
 
         for(std::size_t j=0; j<tmp_result.size(); j++)
         {
-          assert(i*sub_width+j<bv.size());
+          ASSERT(i*sub_width+j<bv.size());
           tmp_result[j]=bv[i*sub_width+j];
         }
 
@@ -133,11 +133,11 @@ bvt boolbvt::convert_add_sub(const exprt &expr)
         else
           tmp_result=bv_utils.add_sub(tmp_result, tmp_op, subtract);
 
-        assert(tmp_result.size()==sub_width);
+        ASSERT(tmp_result.size()==sub_width);
 
         for(std::size_t j=0; j<tmp_result.size(); j++)
         {
-          assert(i*sub_width+j<bv.size());
+          ASSERT(i*sub_width+j<bv.size());
           bv[i*sub_width+j]=tmp_result[j];
         }
       }

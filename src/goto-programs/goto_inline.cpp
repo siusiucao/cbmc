@@ -77,7 +77,7 @@ void goto_inline(
       return;
 
     goto_functiont &goto_function=it->second;
-    assert(goto_function.body_available());
+    ASSERT(goto_function.body_available());
 
     // gather all calls
     // we use non-transitive inlining to avoid the goto program
@@ -226,7 +226,7 @@ void goto_partial_inline(
       if(goto_function.is_inlined() ||
          goto_program.instructions.size()<=smallfunc_limit)
       {
-        assert(goto_inlinet::is_call(i_it));
+        ASSERT(goto_inlinet::is_call(i_it));
         call_list.push_back(goto_inlinet::callt(i_it, false));
       }
     }

@@ -56,7 +56,7 @@ void parameter_assignmentst::do_function_calls(
 
       // add x=y for f(y) where x is the parameter
 
-      assert(function_call.function().id()==ID_symbol);
+      ASSERT(function_call.function().id()==ID_symbol);
 
       const irep_idt &identifier=
         to_symbol_expr(function_call.function()).get_identifier();

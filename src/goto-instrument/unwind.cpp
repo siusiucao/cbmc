@@ -32,11 +32,11 @@ Function: parse_unwindset
 
 void parse_unwindset(const std::string &us, unwind_sett &unwind_set)
 {
-  assert(unwind_set.empty());
+  ASSERT(unwind_set.empty());
 
   std::vector<std::string> result;
   split_string(us, ',', result, true, true);
-  assert(!result.empty());
+  ASSERT(!result.empty());
 
   if(result.front().empty()) // allow empty string as unwindset
     return;
@@ -81,8 +81,8 @@ void goto_unwindt::copy_segment(
   const goto_programt::const_targett end, // exclusive
   goto_programt &goto_program) // result
 {
-  assert(start->location_number<end->location_number);
-  assert(goto_program.empty());
+  ASSERT(start->location_number<end->location_number);
+  ASSERT(goto_program.empty());
 
   // build map for branch targets inside the loop
   typedef std::map<goto_programt::const_targett, unsigned> target_mapt;
@@ -96,7 +96,7 @@ void goto_unwindt::copy_segment(
   // make a copy
   std::vector<goto_programt::targett> target_vector;
   target_vector.reserve(target_map.size());
-  assert(target_vector.empty());
+  ASSERT(target_vector.empty());
 
   for(goto_programt::const_targett t=start; t!=end; t++)
   {
@@ -106,7 +106,7 @@ void goto_unwindt::copy_segment(
     target_vector.push_back(t_new); // store copied instruction
   }
 
-  assert(goto_program.instructions.size()==target_vector.size());
+  ASSERT(goto_program.instructions.size()==target_vector.size());
 
   // adjust intra-segment gotos
   for(std::size_t i=0; i<target_vector.size(); i++)
@@ -124,7 +124,7 @@ void goto_unwindt::copy_segment(
     {
       unsigned j=m_it->second;
 
-      assert(j<target_vector.size());
+      ASSERT(j<target_vector.size());
       t->set_target(target_vector[j]);
     }
   }
@@ -174,8 +174,8 @@ void goto_unwindt::unwind(
   const unwind_strategyt unwind_strategy,
   std::vector<goto_programt::targett> &iteration_points)
 {
-  assert(iteration_points.empty());
-  assert(loop_head->location_number<loop_exit->location_number);
+  ASSERT(iteration_points.empty());
+  ASSERT(loop_head->location_number<loop_exit->location_number);
 
   // rest program after unwound part
   goto_programt rest_program;
@@ -198,7 +198,7 @@ void goto_unwindt::unwind(
   {
     goto_programt::const_targett t=loop_exit;
     t--;
-    assert(t->is_backwards_goto());
+    ASSERT(t->is_backwards_goto());
 
     exprt exit_cond;
     exit_cond.make_false(); // default is false
@@ -221,7 +221,7 @@ void goto_unwindt::unwind(
     else if(unwind_strategy==ASSUME)
       new_t->make_assumption(exit_cond);
     else
-      assert(false);
+      ASSERT(false);
 
     new_t->source_location=loop_head->source_location;
     new_t->function=loop_head->function;
@@ -229,7 +229,7 @@ void goto_unwindt::unwind(
     unwind_log.insert(new_t, loop_head->location_number);
   }
 
-  assert(!rest_program.empty());
+  ASSERT(!rest_program.empty());
 
   // to be filled with copies of the loop body
   goto_programt copies;
@@ -289,7 +289,7 @@ void goto_unwindt::unwind(
     {
       goto_programt tmp_program;
       copy_segment(loop_head, loop_exit, tmp_program);
-      assert(!tmp_program.instructions.empty());
+      ASSERT(!tmp_program.instructions.empty());
 
       iteration_points[i]=--tmp_program.instructions.end();
 
@@ -352,7 +352,7 @@ int goto_unwindt::get_k(
   const int global_k,
   const unwind_sett &unwind_set) const
 {
-  assert(global_k>=-1);
+  ASSERT(global_k>=-1);
 
   unwind_sett::const_iterator f_it=unwind_set.find(func);
   if(f_it==unwind_set.end())
@@ -364,7 +364,7 @@ int goto_unwindt::get_k(
     return global_k;
 
   int k=l_it->second;
-  assert(k>=-1);
+  ASSERT(k>=-1);
 
   return k;
 }
@@ -387,7 +387,7 @@ void goto_unwindt::unwind(
   const int k,
   const unwind_strategyt unwind_strategy)
 {
-  assert(k>=-1);
+  ASSERT(k>=-1);
 
   for(goto_programt::const_targett i_it=goto_program.instructions.begin();
       i_it!=goto_program.instructions.end();)
@@ -406,7 +406,7 @@ void goto_unwindt::unwind(
     }
 
     const irep_idt func=i_it->function;
-    assert(!func.empty());
+    ASSERT(!func.empty());
 
     unsigned loop_number=i_it->loop_number;
 
@@ -421,7 +421,7 @@ void goto_unwindt::unwind(
     goto_programt::const_targett loop_head=i_it->get_target();
     goto_programt::const_targett loop_exit=i_it;
     loop_exit++;
-    assert(loop_exit!=goto_program.instructions.end());
+    ASSERT(loop_exit!=goto_program.instructions.end());
 
     unwind(goto_program, loop_head, loop_exit, final_k, unwind_strategy);
 
@@ -448,7 +448,7 @@ void goto_unwindt::operator()(
   const int k,
   const unwind_strategyt unwind_strategy)
 {
-  assert(k>=-1);
+  ASSERT(k>=-1);
 
   Forall_goto_functions(it, goto_functions)
   {

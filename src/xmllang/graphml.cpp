@@ -82,7 +82,7 @@ static bool build_graph_rec(
         e_it!=xml.elements.end();
         e_it++)
     {
-      assert(e_it->name=="data");
+      ASSERT(e_it->name=="data");
 
       if(e_it->get_attribute("key")=="violation" &&
          e_it->data=="true")
@@ -161,7 +161,7 @@ static bool build_graph_rec(
   }
   else
   {
-    assert(false);
+    ASSERT(false);
     return true;
   }
 
@@ -185,7 +185,7 @@ static bool build_graph(
   graphmlt &dest,
   graphmlt::node_indext &entry)
 {
-  assert(dest.size()==0);
+  ASSERT(dest.size()==0);
 
   name_mapt name_to_node;
   std::map<std::string, std::map<std::string, std::string> > defaults;
@@ -203,12 +203,12 @@ static bool build_graph(
   {
     const graphmlt::nodet &n=dest[i];
 
-    assert(!n.node_name.empty());
+    ASSERT(!n.node_name.empty());
   }
 
-  assert(!entrynode.empty());
+  ASSERT(!entrynode.empty());
   name_mapt::const_iterator it=name_to_node.find(entrynode);
-  assert(it!=name_to_node.end());
+  ASSERT(it!=name_to_node.end());
   entry=it->second;
 
   return err;

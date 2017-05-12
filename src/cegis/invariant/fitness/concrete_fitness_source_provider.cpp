@@ -45,7 +45,7 @@ void add_danger_execute(std::string &source, const size_t num_vars,
   const char result_op[]=
       "    *(unsigned int *)" CEGIS_RESULT_OPS "[i]=result;\n  }\n";
   const std::string::size_type pos=text.find(result_op);
-  assert(std::string::npos != pos);
+  ASSERT(std::string::npos != pos);
   text.insert(pos + strlen(result_op),
       "if (size <= 0 || size >= " CEGIS_PREFIX "max_solution_size) return 0;\n"
       "int diff=" CEGIS_PREFIX "max_solution_size-size;\n"
@@ -208,7 +208,7 @@ bool handle_internals(const std::string &line)
       || contains(line, "__CPROVER_rounding_mode =")
       || contains(line, "__CPROVER_thread_id =")
       || contains(line, "__CPROVER_threads_exited =")
-      || "  assert((_Bool)0);" == line || "void assert(void);" == line
+      || "  ASSERT((_Bool)0);" == line || "void ASSERT(void);" == line
       || "static signed int assert#return_value;" == line;
 }
 

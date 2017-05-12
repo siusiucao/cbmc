@@ -72,7 +72,7 @@ void prop_minimizet::fix_objectives()
     }
   }
 
-  assert(found);
+  ASSERT(found);
 }
 
 /*******************************************************************\
@@ -134,7 +134,7 @@ Function: prop_minimizet::operator()
 void prop_minimizet::operator()()
 {
   // we need to use assumptions
-  assert(prop_conv.has_set_assumptions());
+  ASSERT(prop_conv.has_set_assumptions());
 
   _iterations=0;
   _number_satisfied=0;

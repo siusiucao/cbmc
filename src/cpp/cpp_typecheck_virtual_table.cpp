@@ -21,7 +21,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 void cpp_typecheckt::do_virtual_table(const symbolt &symbol)
 {
-  assert(symbol.type.id()==ID_struct);
+  ASSERT(symbol.type.id()==ID_struct);
 
   // builds virtual-table value maps: (class x virtual_name x value)
   std::map<irep_idt, std::map<irep_idt, exprt> > vt_value_maps;
@@ -35,7 +35,7 @@ void cpp_typecheckt::do_virtual_table(const symbolt &symbol)
       continue;
 
     const code_typet &code_type=to_code_type(compo.type());
-    assert(code_type.parameters().size() > 0);
+    ASSERT(code_type.parameters().size() > 0);
 
     const pointer_typet &pointer_type =
       static_cast<const pointer_typet&>(code_type.parameters()[0].type());
@@ -94,14 +94,14 @@ void cpp_typecheckt::do_virtual_table(const symbolt &symbol)
       const struct_typet::componentt &compo=vt_type.components()[i];
       std::map<irep_idt, exprt>::const_iterator cit2 =
         value_map.find(compo.get("base_name"));
-      assert(cit2!=value_map.end());
+      ASSERT(cit2!=value_map.end());
       const exprt &value=cit2->second;
-      assert(value.type()==compo.type());
+      ASSERT(value.type()==compo.type());
       values.operands().push_back(value);
     }
     vt_symb_var.value=values;
 
     bool failed=symbol_table.move(vt_symb_var);
-    assert(!failed);
+    ASSERT(!failed);
   }
 }

@@ -42,7 +42,7 @@ Function: propt::set_assignment
 
 void propt::set_assignment(literalt a, bool value)
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -59,7 +59,7 @@ Function: propt::copy_assignment_from
 
 void propt::copy_assignment_from(const propt &src)
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -76,7 +76,7 @@ Function: propt::is_in_conflict
 
 bool propt::is_in_conflict(literalt l) const
 {
-  assert(false);
+  ASSERT(false);
   return false;
 }
 

@@ -40,7 +40,7 @@ static bool insert_at_label(
     if(l.get_label()!=label)
       continue;
 
-    assert(l.code().get_statement()==ID_skip);
+    ASSERT(l.code().get_statement()==ID_skip);
     l.code()=code;
 
     return false;

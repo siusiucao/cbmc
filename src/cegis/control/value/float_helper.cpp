@@ -26,7 +26,7 @@ double to_control_float(const constant_exprt &expr)
   if (ID_fixedbv == data_type.id())
   {
     // TODO: Implement
-    assert(false);
+    ASSERT(false);
   }
   ieee_floatt ieee_float(expr);
   ieee_float.change_spec(ieee_float_spect::double_precision());

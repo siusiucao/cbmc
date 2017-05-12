@@ -66,7 +66,7 @@ Function: path_symex_statet::get_pc
 
 loc_reft path_symex_statet::get_pc() const
 {
-  assert(current_thread<threads.size());
+  ASSERT(current_thread<threads.size());
   return threads[current_thread].pc;
 }
 
@@ -131,7 +131,7 @@ Function: path_symex_statet::get_var_state
 path_symex_statet::var_statet &path_symex_statet::get_var_state(
   const var_mapt::var_infot &var_info)
 {
-  assert(current_thread<threads.size());
+  ASSERT(current_thread<threads.size());
 
   var_valt &var_val=
     var_info.is_shared()?shared_vars:threads[current_thread].local_vars;
@@ -170,7 +170,7 @@ void path_symex_statet::record_step()
   stept &step=*history;
 
   // copy PC
-  assert(current_thread<threads.size());
+  ASSERT(current_thread<threads.size());
   step.pc=threads[current_thread].pc;
   step.thread_nr=current_thread;
 }
@@ -224,7 +224,7 @@ bool path_symex_statet::check_assertion(
   const goto_programt::instructiont &instruction=*get_instruction();
 
   // assert that this is an assertion
-  assert(instruction.is_assert());
+  ASSERT(instruction.is_assert());
 
   // the assertion in SSA
   exprt assertion=read(instruction.guard);

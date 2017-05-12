@@ -32,9 +32,9 @@ bv_refinementt::bv_refinementt(
   do_arithmetic_refinement(true)
 {
   // check features we need
-  assert(prop.has_set_assumptions());
-  assert(prop.has_set_to());
-  assert(prop.has_is_in_conflict());
+  ASSERT(prop.has_set_assumptions());
+  ASSERT(prop.has_set_to());
+  ASSERT(prop.has_is_in_conflict());
 }
 
 /*******************************************************************\

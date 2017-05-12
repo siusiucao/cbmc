@@ -101,7 +101,7 @@ exprt build_full_lhs_rec(
           id==ID_byte_extract_big_endian)
   {
     exprt tmp=src_original;
-    assert(tmp.operands().size()==2);
+    ASSERT(tmp.operands().size()==2);
     tmp.op0()=build_full_lhs_rec(prop_conv, ns, tmp.op0(), src_ssa.op0());
 
     // re-write into big case-split
@@ -276,7 +276,7 @@ void build_goto_trace(
       else if(it->is_atomic_end() && current_time<0)
         current_time*=-1;
 
-      assert(current_time>=0);
+      ASSERT(current_time>=0);
       // move any steps gathered in an atomic section
 
       if(time_before<0)

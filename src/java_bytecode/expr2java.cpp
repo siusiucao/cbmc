@@ -131,7 +131,7 @@ std::string expr2javat::convert_struct(
   const struct_typet::componentst &components=
     struct_type.components();
 
-  assert(components.size()==src.operands().size());
+  ASSERT(components.size()==src.operands().size());
 
   exprt::operandst::const_iterator o_it=src.operands().begin();
 
@@ -216,7 +216,7 @@ std::string expr2javat::convert_constant(
 
     mp_integer int_value;
     if(to_integer(src, int_value))
-      assert(false);
+      ASSERT(false);
 
     dest+="(char)'";
 
@@ -239,7 +239,7 @@ std::string expr2javat::convert_constant(
     // No byte-literals in Java, so just cast:
     mp_integer int_value;
     if(to_integer(src, int_value))
-      assert(false);
+      ASSERT(false);
     std::string dest="(byte)";
     dest+=integer2string(int_value);
     return dest;
@@ -249,7 +249,7 @@ std::string expr2javat::convert_constant(
     // No short-literals in Java, so just cast:
     mp_integer int_value;
     if(to_integer(src, int_value))
-      assert(false);
+      ASSERT(false);
     std::string dest="(short)";
     dest+=integer2string(int_value);
     return dest;
@@ -259,7 +259,7 @@ std::string expr2javat::convert_constant(
     // long integer literals must have 'L' at the end
     mp_integer int_value;
     if(to_integer(src, int_value))
-      assert(false);
+      ASSERT(false);
     std::string dest=integer2string(int_value);
     dest+='L';
     return dest;

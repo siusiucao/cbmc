@@ -29,9 +29,9 @@ bvt boolbvt::convert_array(const exprt &expr)
 
   if(expr.type().id()==ID_array)
   {
-    assert(expr.has_operands());
+    ASSERT(expr.has_operands());
     const exprt::operandst &operands=expr.operands();
-    assert(!operands.empty());
+    ASSERT(!operands.empty());
     std::size_t op_width=width/operands.size();
 
     bvt bv;

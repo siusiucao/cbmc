@@ -550,10 +550,10 @@ void cvc_propt::lcnf(const bvt &bv)
     if(s.find(!*it)!=s.end())
       return; // clause satisfied
 
-    assert(it->var_no()<_no_variables);
+    ASSERT(it->var_no()<_no_variables);
   }
 
-  assert(!new_bv.empty());
+  ASSERT(!new_bv.empty());
 
   out << "%% lcnf" << std::endl;
   out << "ASSERT ";

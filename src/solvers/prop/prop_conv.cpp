@@ -34,7 +34,7 @@ Function: prop_convt::is_in_conflict
 
 bool prop_convt::is_in_conflict(literalt l) const
 {
-  assert(false);
+  ASSERT(false);
   return false;
 }
 
@@ -52,7 +52,7 @@ Function: prop_convt::set_assumptions
 
 void prop_convt::set_assumptions(const bvt &)
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -69,7 +69,7 @@ Function: prop_convt::set_frozen
 
 void prop_convt::set_frozen(const literalt)
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -105,7 +105,7 @@ Function: prop_conv_solvert::literal
 
 bool prop_conv_solvert::literal(const exprt &expr, literalt &dest) const
 {
-  assert(expr.type().id()==ID_bool);
+  ASSERT(expr.type().id()==ID_bool);
 
   if(expr.id()==ID_symbol)
   {
@@ -591,7 +591,7 @@ void prop_conv_solvert::set_to(const exprt &expr, bool value)
         // set_to_false
         if(expr.id()==ID_implies) // !(a=>b)  ==  (a && !b)
         {
-          assert(expr.operands().size()==2);
+          ASSERT(expr.operands().size()==2);
           set_to_true(expr.op0());
           set_to_false(expr.op1());
           return;

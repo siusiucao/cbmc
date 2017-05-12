@@ -50,7 +50,7 @@ void jsa_symex_learnt::process(const size_t max_solution_size)
   counterexamplet &counterexample=counterexamples.front();
   for (const goto_programt::targett &pos : original_program.counterexample_locations)
   {
-    assert(pos->labels.size() == 1u);
+    ASSERT(pos->labels.size() == 1u);
     const irep_idt &key=pos->labels.front();
     const typet &type=get_affected_type(*pos);
     const source_locationt &loc=pos->source_location;

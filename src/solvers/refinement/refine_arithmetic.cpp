@@ -109,7 +109,7 @@ bvt bv_refinementt::convert_mult(const exprt &expr)
 
   const typet &type=ns.follow(expr.type());
 
-  assert(operands.size()>=2);
+  ASSERT(operands.size()>=2);
 
   if(operands.size()>2)
     return convert_mult(make_binary(expr)); // make binary
@@ -165,7 +165,7 @@ bvt bv_refinementt::convert_div(const div_exprt &expr)
   // we catch any division
   // unless it's integer division by a constant
 
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(expr.op1().is_constant())
     return SUB::convert_div(expr);
@@ -195,7 +195,7 @@ bvt bv_refinementt::convert_mod(const mod_exprt &expr)
   // we catch any mod
   // unless it's integer + constant
 
-  assert(expr.operands().size()==2);
+  ASSERT(expr.operands().size()==2);
 
   if(expr.op1().is_constant())
     return SUB::convert_mod(expr);
@@ -235,7 +235,7 @@ void bv_refinementt::get_values(approximationt &a)
     a.op2_value=get_value(a.op2_bv);
   }
   else
-    assert(0);
+    ASSERT(0);
 
   a.result_value=get_value(a.result_bv);
 }
@@ -265,7 +265,7 @@ void bv_refinementt::check_SAT(approximationt &a)
   if(type.id()==ID_floatbv)
   {
     // these are all trinary
-    assert(a.expr.operands().size()==3);
+    ASSERT(a.expr.operands().size()==3);
 
     if(a.over_state==MAX_STATE)
       return;
@@ -297,7 +297,7 @@ void bv_refinementt::check_SAT(approximationt &a)
     else if(a.expr.id()==ID_floatbv_div)
       result/=o1;
     else
-      assert(false);
+      ASSERT(false);
 
     if(result.pack()==a.result_value) // ok
       return;
@@ -365,9 +365,9 @@ void bv_refinementt::check_SAT(approximationt &a)
       else if(a.expr.id()==ID_floatbv_div)
         r=float_utils.div(op0, op1);
       else
-        assert(0);
+        ASSERT(0);
 
-      assert(r.size()==res.size());
+      ASSERT(r.size()==res.size());
       bv_utils.set_equal(r, res);
     }
   }
@@ -375,7 +375,7 @@ void bv_refinementt::check_SAT(approximationt &a)
           type.id()==ID_unsignedbv)
   {
     // these are all binary
-    assert(a.expr.operands().size()==2);
+    ASSERT(a.expr.operands().size()==2);
 
     // already full interpretation?
     if(a.over_state>0)
@@ -399,7 +399,7 @@ void bv_refinementt::check_SAT(approximationt &a)
     else if(a.expr.id()==ID_mod)
       o0%=o1;
     else
-      assert(false);
+      ASSERT(false);
 
     if(o0.pack()==a.result_value) // ok
       return;
@@ -430,21 +430,21 @@ void bv_refinementt::check_SAT(approximationt &a)
             bv_utilst::SIGNED:bv_utilst::UNSIGNED);
       }
       else
-        assert(0);
+        ASSERT(0);
 
       bv_utils.set_equal(r, a.result_bv);
     }
     else
-      assert(0);
+      ASSERT(0);
   }
   else if(type.id()==ID_fixedbv)
   {
     // TODO: not implemented
-    assert(0);
+    ASSERT(0);
   }
   else
   {
-    assert(0);
+    ASSERT(0);
   }
 
   status() << "Found spurious `" << a.as_string()
@@ -477,7 +477,7 @@ void bv_refinementt::check_UNSAT(approximationt &a)
   status() << "Found assumption for `" << a.as_string()
            << "' in proof (state " << a.under_state << ")" << eom;
 
-  assert(!a.under_assumptions.empty());
+  ASSERT(!a.under_assumptions.empty());
 
   a.under_assumptions.clear();
 
@@ -623,7 +623,7 @@ bv_refinementt::add_approximation(
   approximationt &a=approximations.back(); // stable!
 
   std::size_t width=boolbv_width(expr.type());
-  assert(width!=0);
+  ASSERT(width!=0);
 
   a.expr=expr;
   a.result_bv=prop.new_variables(width);
@@ -652,7 +652,7 @@ bv_refinementt::add_approximation(
     set_frozen(a.op2_bv);
   }
   else
-    assert(false);
+    ASSERT(false);
 
   bv=a.result_bv;
 

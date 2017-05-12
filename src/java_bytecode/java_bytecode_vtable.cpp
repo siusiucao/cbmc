@@ -108,7 +108,7 @@ public:
     const is_virtual_name_equalt pred(implementation);
     const class_typet::methodst::const_iterator ifc_method(
         std::find_if(methods.begin(), methods.end(), pred));
-    assert(methods.end()!=ifc_method);
+    ASSERT(methods.end()!=ifc_method);
     symbolt &vtable_type_symbol(get_vt_type_symbol(implementor));
     class_typet &vtable_type(to_class_type(vtable_type_symbol.type));
     const irep_idt &ifc_name(ifc_method->get_name());
@@ -132,7 +132,7 @@ public:
     const typet &type(static_cast<const typet &>(base.find(ID_type)));
     const symbol_typet &symbol_type(to_symbol_type(type));
     const irep_idt &base_class_name(symbol_type.get_identifier());
-    assert(symbol_table.has_symbol(base_class_name));
+    ASSERT(symbol_table.has_symbol(base_class_name));
     const symbolt &base_class_symbol(ns.lookup(base_class_name));
     return to_class_type(base_class_symbol.type);
   }
@@ -229,7 +229,7 @@ public:
     for(const class_typet::methodst::value_type &m : methods)
       create_vtable_entry(vtable_value, class_type, m);
     set_vtable_value(vtable_symbol, class_type, vtable_value);
-    assert(!symbol_table.add(vtable_symbol));
+    ASSERT(!symbol_table.add(vtable_symbol));
   }
 };
 
@@ -277,7 +277,7 @@ static void create_vtable_type(
   vt_symb_type.type=struct_typet();
   vt_symb_type.type.set(ID_name, vt_symb_type.name);
   vt_symb_type.is_type=true;
-  assert(!symbol_table.add(vt_symb_type));
+  ASSERT(!symbol_table.add(vt_symb_type));
 }
 
 #define ID_vtable_pointer "@vtable_pointer"
@@ -390,7 +390,7 @@ static exprt get_ref(
   const irep_idt &type_id(type.id());
   if(ID_symbol==type_id)
     return get_ref(address_of_exprt(this_obj), target_type);
-  assert(ID_pointer==type_id);
+  ASSERT(ID_pointer==type_id);
   const typecast_exprt cast(this_obj, pointer_typet(target_type));
   return dereference_exprt(cast, target_type);
 }

@@ -29,7 +29,7 @@ public:
     locationt from,
     locationt to)
   {
-    // assert(src.reachable);
+    // ASSERT(src.reachable);
 
     if(!src.reachable)
       return false;
@@ -50,7 +50,7 @@ public:
     ai_baset &ai,
     const namespacet &ns) final
   {
-    // assert(reachable);
+    // ASSERT(reachable);
 
     if(!reachable)
       return;

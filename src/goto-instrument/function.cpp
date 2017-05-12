@@ -57,7 +57,7 @@ code_function_callt function_to_call(
     symbol_table.move(new_symbol);
 
     s_it=symbol_table.symbols.find(id);
-    assert(s_it!=symbol_table.symbols.end());
+    ASSERT(s_it!=symbol_table.symbols.end());
   }
 
   // signature is expected to be
@@ -180,7 +180,7 @@ void function_exit(
     // exiting without return
     goto_programt::targett last=body.instructions.end();
     last--;
-    assert(last->is_end_function());
+    ASSERT(last->is_end_function());
 
     // is there already a return?
     bool has_return=false;

@@ -139,7 +139,7 @@ std::size_t goto_cc_cmdlinet::get_optnr(const std::string &opt_string)
   }
   else
   {
-    assert(false);
+    ASSERT(false);
     return -1;
   }
 

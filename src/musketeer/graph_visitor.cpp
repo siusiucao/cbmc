@@ -40,7 +40,7 @@ void const_graph_visitort::graph_explore(
     for( ; next_it!=old_path.end() && it!=old_path.end(); ++it, ++next_it)
     {
       /* it should be a po_s, and not a po_s^+ */
-      assert(egraph.has_po_edge(*it, *next_it));
+      ASSERT(egraph.has_po_edge(*it, *next_it));
       edges.insert(fence_inserter.add_edge(edget(*it, *next_it)));
     }
   }
@@ -93,7 +93,7 @@ void const_graph_visitort::const_graph_explore(
     for( ; next_it!=old_path.end() && it!=old_path.end(); ++it, ++next_it)
     {
       /* it should be a po_s, and not a po_s^+ */
-      assert(egraph.has_po_edge(*it, *next_it));
+      ASSERT(egraph.has_po_edge(*it, *next_it));
       fence_inserter.add_edge(edget(*it, *next_it));
     }
   }
@@ -139,7 +139,7 @@ void const_graph_visitort::graph_explore_BC(
   bool porw)
 {
   /* TODO: restricts to C_1 U ... U C_n for perf improvement */
-  assert(old_path.size()>0);
+  ASSERT(old_path.size()>0);
 
   fence_inserter.instrumenter.message.debug() << "(BC) explore "
                                               << old_path.front()
@@ -177,7 +177,7 @@ void const_graph_visitort::graph_explore_BC(
           e2.operation==abstract_eventt::Write))
         edges.insert(fence_inserter.add_edge(edget(*it, *next_it)));
     }
-    assert(it!=old_path.end());
+    ASSERT(it!=old_path.end());
   }
   else
   {
@@ -211,7 +211,7 @@ void const_graph_visitort::const_graph_explore_BC(
   std::list<event_idt> &old_path)
 {
   /* TODO: restricts to C_1 U ... U C_n */
-  assert(old_path.size() > 0);
+  ASSERT(old_path.size() > 0);
 
   if(visited_nodes.find(next)!=visited_nodes.end())
      return;
@@ -244,7 +244,7 @@ void const_graph_visitort::const_graph_explore_BC(
         fence_inserter.add_edge(edget(*it, *next_it));
     }
     // NEW
-    assert(it!=old_path.end());
+    ASSERT(it!=old_path.end());
   }
   else
   {
@@ -280,7 +280,7 @@ void const_graph_visitort::graph_explore_AC(
   bool porw)
 {
   /* TODO: restricts to C_1 U ... U C_n */
-  assert(old_path.size() > 0);
+  ASSERT(old_path.size() > 0);
 
   fence_inserter.instrumenter.message.debug() << "(AC) explore "
     << old_path.front() << " --...--> " << next << messaget::eom;
@@ -316,7 +316,7 @@ void const_graph_visitort::graph_explore_AC(
           e2.operation==abstract_eventt::Write))
         edges.insert(fence_inserter.add_edge(edget(*next_it, *it)));
     }
-    assert(it!=old_path.end());
+    ASSERT(it!=old_path.end());
   }
   else
   {
@@ -350,7 +350,7 @@ void const_graph_visitort::const_graph_explore_AC(
   std::list<event_idt> &old_path)
 {
   /* TODO: restricts to C_1 U ... U C_n */
-  assert(old_path.size() > 0);
+  ASSERT(old_path.size() > 0);
 
   if(visited_nodes.find(next)!=visited_nodes.end())
      return;
@@ -384,7 +384,7 @@ void const_graph_visitort::const_graph_explore_AC(
         fence_inserter.add_edge(edget(*next_it, *it));
     }
     // NEW
-    assert(it!=old_path.end());
+    ASSERT(it!=old_path.end());
   }
   else
   {
@@ -475,7 +475,7 @@ void const_graph_visitort::CT(
   /* the edge can be in the reversed order (back-edge) */
   const abstract_eventt &test_first=egraph[edge.first];
   const abstract_eventt &test_second=egraph[edge.second];
-  assert(test_first.operation!=test_second.operation);
+  ASSERT(test_first.operation!=test_second.operation);
 
   const event_idt first=
     (test_first.operation==abstract_eventt::Write?edge.first:edge.second);
@@ -536,7 +536,7 @@ void const_graph_visitort::CT_not_powr(
   /* the edge can be in the reversed order (back-edge) */
   const abstract_eventt &test_first=egraph[edge.first];
   const abstract_eventt &test_second=egraph[edge.second];
-  assert(test_first.operation!=test_second.operation);
+  ASSERT(test_first.operation!=test_second.operation);
 
   const event_idt first=
     (test_first.operation==abstract_eventt::Write?edge.first:edge.second);

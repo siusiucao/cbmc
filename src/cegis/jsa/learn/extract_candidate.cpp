@@ -58,7 +58,7 @@ bool find_prog(encoded_programt &result,
     sz_name+= JSA_SIZE_SUFFIX;
     goto_tracet::stepst::const_iterator sz;
     for (sz=first; id2string(sz->lhs_object.get_identifier()) != sz_name; --sz)
-      assert(sz != origin);
+      ASSERT(sz != origin);
     const bv_arithmetict bv(sz->full_lhs_value);
     result.first=bv.to_integer().to_ulong();
     result.second=to_array_expr(first++->full_lhs_value);
@@ -74,7 +74,7 @@ std::vector<__CPROVER_jsa_pred_instructiont> to_genetic_pred(const encoded_progr
   for (size_t i=0; i < result.size(); ++i)
   {
     const struct_exprt::operandst &members=to_struct_expr(ops[i]).operands();
-    assert(members.size() == 4u);
+    ASSERT(members.size() == 4u);
     __CPROVER_jsa_pred_instruction &instr=result[i];
     struct_exprt::operandst::const_iterator member=members.begin();
     instr.opcode=bv_arithmetict(*member++).to_integer().to_ulong();
@@ -92,7 +92,7 @@ std::vector<__CPROVER_jsa_query_instructiont> to_genetic_query(const encoded_pro
   for (size_t i=0; i < result.size(); ++i)
   {
     const struct_exprt::operandst &members=to_struct_expr(ops[i]).operands();
-    assert(members.size() == 3u);
+    ASSERT(members.size() == 3u);
     __CPROVER_jsa_query_instructiont &instr=result[i];
     struct_exprt::operandst::const_iterator member=members.begin();
     instr.opcode=bv_arithmetict(*member++).to_integer().to_ulong();
@@ -109,7 +109,7 @@ std::vector<__CPROVER_jsa_invariant_instructiont> to_genetic_inv(const encoded_p
   for (size_t i=0; i < result.size(); ++i)
   {
     const struct_exprt::operandst &members=to_struct_expr(ops[i]).operands();
-    assert(members.size() == 1u);
+    ASSERT(members.size() == 1u);
     __CPROVER_jsa_invariant_instructiont &instr=result[i];
     instr.opcode=bv_arithmetict(members.front()).to_integer().to_ulong();
   }
@@ -130,9 +130,9 @@ void extract_jsa_genetic_candidate(jsa_genetic_solutiont &solution,
     last_pred=first;
   }
   first=last_pred;
-  assert(find_prog(tmp, first, last, JSA_QUERY));
+  ASSERT(find_prog(tmp, first, last, JSA_QUERY));
   solution.query=to_genetic_query(tmp);
-  assert(find_prog(tmp, first, last, JSA_INV));
+  ASSERT(find_prog(tmp, first, last, JSA_INV));
   solution.invariant=to_genetic_inv(tmp);
 }
 

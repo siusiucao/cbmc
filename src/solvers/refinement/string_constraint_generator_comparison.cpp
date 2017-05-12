@@ -27,7 +27,7 @@ Function: string_constraint_generatort::add_axioms_for_equals
 exprt string_constraint_generatort::add_axioms_for_equals(
   const function_application_exprt &f)
 {
-  assert(f.type()==bool_typet() || f.type().id()==ID_c_bool);
+  ASSERT(f.type()==bool_typet() || f.type().id()==ID_c_bool);
   symbol_exprt eq=fresh_boolean("equal");
   typecast_exprt tc_eq(eq, f.type());
 
@@ -120,7 +120,7 @@ Function: string_constraint_generatort::add_axioms_for_equals_ignore_case
 exprt string_constraint_generatort::add_axioms_for_equals_ignore_case(
   const function_application_exprt &f)
 {
-  assert(f.type()==bool_typet() || f.type().id()==ID_c_bool);
+  ASSERT(f.type()==bool_typet() || f.type().id()==ID_c_bool);
 
   symbol_exprt eq=fresh_boolean("equal_ignore_case");
   typecast_exprt tc_eq(eq, f.type());
@@ -247,7 +247,7 @@ exprt string_constraint_generatort::add_axioms_for_compare_to(
   //       (|s1|<|s2| &&x=|s1|) || (|s1| > |s2| &&x=|s2|) &&res=|s1|-|s2|)
   // a4 : forall i'<x. res!=0 => s1[i]=s2[i]
 
-  assert(return_type.id()==ID_signedbv);
+  ASSERT(return_type.id()==ID_signedbv);
 
   equal_exprt res_null=equal_exprt(res, from_integer(0, return_type));
   implies_exprt a1(res_null, s1.axiom_for_has_same_length_as(s2));

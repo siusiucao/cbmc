@@ -45,7 +45,7 @@ void ansi_c_declaratort::build(irept &src)
     else if(t.id()==irep_idt() ||
             t.is_nil())
     {
-      assert(0);
+      ASSERT(0);
     }
     else if(t.id()==ID_abstract)
     {
@@ -55,7 +55,7 @@ void ansi_c_declaratort::build(irept &src)
     else if(t.id()==ID_merged_type)
     {
       // we always walk down the _last_ member of a merged type
-      assert(!t.subtypes().empty());
+      ASSERT(!t.subtypes().empty());
       p=&(t.subtypes().back());
     }
     else
@@ -137,11 +137,11 @@ typet ansi_c_declarationt::full_type(
     else if(p->id()==ID_merged_type)
     {
       // we always go down on the right-most subtype
-      assert(!p->subtypes().empty());
+      ASSERT(!p->subtypes().empty());
       p=&(p->subtypes().back());
     }
     else
-      assert(false);
+      ASSERT(false);
   }
 
   *p=type();

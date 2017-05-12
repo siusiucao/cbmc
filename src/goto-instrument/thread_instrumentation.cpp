@@ -53,7 +53,7 @@ void thread_exit_instrumentation(goto_programt &goto_program)
   goto_programt::targett end=goto_program.instructions.end();
   end--;
 
-  assert(end->is_end_function());
+  ASSERT(end->is_end_function());
 
   source_locationt source_location=end->source_location;
   irep_idt function=end->function;

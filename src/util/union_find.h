@@ -63,7 +63,7 @@ public:
   void resize(size_type size)
   {
     // We only enlarge. Shrinking is yet to be implemented.
-    assert(nodes.size()<=size);
+    ASSERT(nodes.size()<=size);
     nodes.reserve(size);
     while(nodes.size()<size)
       nodes.push_back(nodet(nodes.size()));
@@ -228,7 +228,7 @@ public:
     if(n>=uuf.size())
       uuf.resize(this->size());
 
-    assert(uuf.size()==this->size());
+    ASSERT(uuf.size()==this->size());
 
     return n;
   }

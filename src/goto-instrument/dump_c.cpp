@@ -116,14 +116,14 @@ void dump_ct::operator()(std::ostream &os)
     if((symbol.type.id()==ID_union || symbol.type.id()==ID_struct) &&
        symbol.type.get(ID_tag).empty())
     {
-      assert(symbol.is_type);
+      ASSERT(symbol.is_type);
       symbol.type.set(ID_tag, ID_anonymous);
       tag_added=true;
     }
     else if(symbol.type.id()==ID_c_enum &&
             symbol.type.find(ID_tag).get(ID_C_base_name).empty())
     {
-      assert(symbol.is_type);
+      ASSERT(symbol.is_type);
       symbol.type.add(ID_tag).set(ID_C_base_name, ID_anonymous);
       tag_added=true;
     }
@@ -168,7 +168,7 @@ void dump_ct::operator()(std::ostream &os)
       continue;
 
     if(!symbols_sorted.insert(name_str).second)
-      assert(false);
+      ASSERT(false);
   }
 
   // collect all declarations we might need, include local static variables
@@ -343,7 +343,7 @@ void dump_ct::convert_compound(
   {
     const symbolt &symbol=
       ns.lookup(to_symbol_type(type).get_identifier());
-    assert(symbol.is_type);
+    ASSERT(symbol.is_type);
 
     if(!system_symbols.is_symbol_internal_symbol(symbol, system_headers))
       convert_compound(symbol.type, unresolved, recursive, os);
@@ -352,7 +352,7 @@ void dump_ct::convert_compound(
   {
     const symbolt &symbol=
       ns.lookup(to_c_enum_tag_type(type).get_identifier());
-    assert(symbol.is_type);
+    ASSERT(symbol.is_type);
 
     if(!system_symbols.is_symbol_internal_symbol(symbol, system_headers))
       convert_compound(symbol.type, unresolved, recursive, os);
@@ -413,10 +413,10 @@ void dump_ct::convert_compound(
   std::stringstream base_decls;
   forall_irep(parent_it, bases.get_sub())
   {
-    assert(false);
+    ASSERT(false);
     /*
-    assert(parent_it->id() == ID_base);
-    assert(parent_it->get(ID_type) == ID_symbol);
+    ASSERT(parent_it->id() == ID_base);
+    ASSERT(parent_it->get(ID_type) == ID_symbol);
 
     const irep_idt &base_id=
       parent_it->find(ID_type).get(ID_identifier);
@@ -436,7 +436,7 @@ void dump_ct::convert_compound(
   string constructor_body;
 
   std::string component_name =  id2string(renaming[compo.get(ID_name)]);
-  assert(component_name != "");
+  ASSERT(component_name != "");
 
   if(it != struct_type.components().begin()) constructor_args += ", ";
 
@@ -479,7 +479,7 @@ void dump_ct::convert_compound(
     // namespace
     std::string fake_unique_name="NO/SUCH/NS::"+id2string(comp_name);
     std::string s=make_decl(fake_unique_name, comp.type());
-    assert(s.find("NO/SUCH/NS")==std::string::npos);
+    ASSERT(s.find("NO/SUCH/NS")==std::string::npos);
 
     if(comp_type.id()==ID_c_bit_field &&
        to_c_bit_field_type(comp_type).get_width()==0)
@@ -517,7 +517,7 @@ void dump_ct::convert_compound(
         struct_body << s;
     }
     else
-      assert(false);
+      ASSERT(false);
 
     struct_body << ";" << std::endl;
   }
@@ -525,7 +525,7 @@ void dump_ct::convert_compound(
   os << type_to_string(unresolved);
   if(!base_decls.str().empty())
   {
-    assert(language->id()=="cpp");
+    ASSERT(language->id()=="cpp");
     os << ": " << base_decls.str();
   }
   os << std::endl;
@@ -570,7 +570,7 @@ void dump_ct::convert_compound_enum(
   const typet &type,
   std::ostream &os)
 {
-  assert(type.id()==ID_c_enum);
+  ASSERT(type.id()==ID_c_enum);
 
   const irept &tag=type.find(ID_tag);
   const irep_idt &name=tag.get(ID_C_base_name);
@@ -657,7 +657,7 @@ void dump_ct::cleanup_decl(
     system_headers);
   p2s();
 
-  assert(b.operands().size()==1);
+  ASSERT(b.operands().size()==1);
   decl.swap(b.op0());
 }
 
@@ -707,7 +707,7 @@ void dump_ct::convert_global_variable(
         it!=syms.end();
         ++it)
       if(!symbols_sorted.insert(id2string(*it)).second)
-        assert(false);
+        ASSERT(false);
 
     for(std::set<std::string>::const_iterator
         it=symbols_sorted.begin();
@@ -731,7 +731,7 @@ void dump_ct::convert_global_variable(
 
     std::list<irep_idt> empty_static, empty_types;
     cleanup_decl(d, empty_static, empty_types);
-    assert(empty_static.empty());
+    ASSERT(empty_static.empty());
     os << expr_to_string(d) << std::endl;
   }
 }
@@ -934,7 +934,7 @@ void dump_ct::insert_local_static_decls(
   {
     local_static_declst::const_iterator d_it=
       local_static_decls.find(*it);
-    assert(d_it!=local_static_decls.end());
+    ASSERT(d_it!=local_static_decls.end());
 
     code_declt d=d_it->second;
     std::list<irep_idt> redundant;
@@ -947,7 +947,7 @@ void dump_ct::insert_local_static_decls(
     // within an if(false) { ... } block
     if(find_block_position_rec(*it, b, dest_ptr, before))
     {
-      assert(dest_ptr!=0);
+      ASSERT(dest_ptr!=0);
       dest_ptr->operands().insert(before, d);
     }
   }
@@ -996,7 +996,7 @@ void dump_ct::insert_local_type_decls(
     // has been removed by cleanup operations
     if(find_block_position_rec(*it, b, dest_ptr, before))
     {
-      assert(dest_ptr!=0);
+      ASSERT(dest_ptr!=0);
       dest_ptr->operands().insert(before, skip);
     }
   }
@@ -1032,7 +1032,7 @@ void dump_ct::cleanup_expr(exprt &expr)
     exprt::operandst old_ops;
     old_ops.swap(expr.operands());
 
-    assert(old_components.size()==old_ops.size());
+    ASSERT(old_components.size()==old_ops.size());
     exprt::operandst::iterator o_it=old_ops.begin();
     for(struct_union_typet::componentst::const_iterator
         it=old_components.begin();
@@ -1074,7 +1074,7 @@ void dump_ct::cleanup_expr(exprt &expr)
       const struct_union_typet::componentt &comp=
         u_type_f.get_component(u.get_component_name());
       const typet &u_op_type=comp.type();
-      assert(u_op_type.id()==ID_pointer);
+      ASSERT(u_op_type.id()==ID_pointer);
 
       typecast_exprt tc(u.op(), u_op_type);
       expr.swap(tc);
@@ -1194,7 +1194,7 @@ void dump_ct::cleanup_type(typet &type)
   if(type.id()==ID_array)
     cleanup_expr(to_array_type(type).size());
 
-  assert((type.id()!=ID_union && type.id()!=ID_struct) ||
+  ASSERT((type.id()!=ID_union && type.id()!=ID_struct) ||
          !type.get(ID_tag).empty());
 }
 

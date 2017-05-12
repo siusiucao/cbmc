@@ -24,7 +24,7 @@ Author: Daniel Poetzl
 #include <util/irep.h>
 #include <util/sharing_node.h>
 
-#define _sm_assert(b) assert(b)
+#define _sm_assert(b) ASSERT(b)
 //#define _sm_assert(b)
 
 #define SHARING_MAPT(R) \
@@ -225,7 +225,7 @@ Function: get_view
 
 SHARING_MAPT(void)::get_view(viewt &view) const
 {
-  assert(view.empty());
+  ASSERT(view.empty());
 
   std::stack<const node_type *> stack;
 
@@ -248,7 +248,7 @@ SHARING_MAPT(void)::get_view(viewt &view) const
     }
     else
     {
-      assert(n->is_internal());
+      ASSERT(n->is_internal());
 
       for(const auto &child : n->get_sub())
       {
@@ -296,7 +296,7 @@ SHARING_MAPT(void)::gather_all(const node_type &n, delta_viewt &delta_view)
     }
     else
     {
-      assert(n->is_internal());
+      ASSERT(n->is_internal());
 
       for(const auto &child : n->get_sub())
       {
@@ -324,7 +324,7 @@ SHARING_MAPT(void)::get_delta_view(
   delta_viewt &delta_view,
   const bool only_common) const
 {
-  assert(delta_view.empty());
+  ASSERT(delta_view.empty());
 
   typedef std::pair<const node_type *, const node_type *> stack_itemt;
   std::stack<stack_itemt> stack;
@@ -419,7 +419,7 @@ SHARING_MAPT(void)::get_delta_view(
     }
     else
     {
-      assert(false);
+      ASSERT(false);
     }
   }
   while(!stack.empty());
@@ -480,7 +480,7 @@ SHARING_MAPT2(const, node_type *)::get_container_node(const key_type &k) const
       return nullptr;
   }
 
-  assert(p->is_container());
+  ASSERT(p->is_container());
 
   return p;
 }
@@ -524,7 +524,7 @@ SHARING_MAPT2(, size_type)::erase(
   const key_type &k,
   const tvt &key_exists)
 {
-  assert(!key_exists.is_false());
+  ASSERT(!key_exists.is_false());
 
   // check if key exists
   if(key_exists.is_unknown() && !has_key(k))

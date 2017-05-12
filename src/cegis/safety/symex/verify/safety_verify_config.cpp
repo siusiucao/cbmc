@@ -30,7 +30,7 @@ void safety_verify_configt::process(const candidatet &candidate)
   quantifiers.clear();
   const safety_programt &prog=program;
   const invariant_programt::const_invariant_loopst loops(prog.get_loops());
-  assert(!loops.empty());
+  ASSERT(!loops.empty());
   const size_t offset(
       program.x0_choices.size() + loops.front()->skolem_choices.size());
   invariant_insert_constraint(quantifiers, program, create_safety_constraint,
@@ -63,7 +63,7 @@ void safety_verify_configt::convert(counterexamplest &counterexamples,
   invariant_extract_counterexample(ass, trace, quantifiers);
   const safety_programt &prog=program;
   const invariant_programt::const_invariant_loopst loops(prog.get_loops());
-  assert(!loops.empty());
+  ASSERT(!loops.empty());
   // TODO: Implement for multiple loops (change constraint, instrumentation)
   invariant_extract_counterexample(ass, trace, loops.front()->skolem_choices);
 }

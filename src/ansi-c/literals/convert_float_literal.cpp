@@ -94,7 +94,7 @@ exprt convert_float_literal(const std::string &src)
     unsigned fraction_bits;
     const irep_idt integer_bits=result.type().get(ID_integer_bits);
 
-    assert(width!=0);
+    ASSERT(width!=0);
 
     if(integer_bits==irep_idt())
       fraction_bits=width/2; // default
@@ -136,7 +136,7 @@ exprt convert_float_literal(const std::string &src)
     else if(base==2) // hex
       a.build(significand, exponent);
     else
-      assert(false);
+      ASSERT(false);
 
     result.set(
       ID_value,

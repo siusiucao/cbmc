@@ -13,7 +13,7 @@ instruction_descriptiont::instruction_descriptiont(const typest &signature,
     const instruction_factoryt &factory) :
     signature(signature), factory(factory)
 {
-  assert(!signature.empty());
+  ASSERT(!signature.empty());
 }
 
 bool instruction_descriptiont::has_result() const

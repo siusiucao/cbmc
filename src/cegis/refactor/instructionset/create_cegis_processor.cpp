@@ -76,7 +76,7 @@ void create_variable_array(symbol_tablet &st, goto_functionst &gf,
   new_symbol.module=CEGIS_MODULE;
   new_symbol.is_static_lifetime=true;
   new_symbol.is_lvalue=true;
-  assert(!st.add(new_symbol));
+  ASSERT(!st.add(new_symbol));
   goto_programt &body=get_body(gf, CPROVER_INIT);
   goto_programt::targett pos=body.instructions.begin();
   pos=body.insert_after(pos);
@@ -100,7 +100,7 @@ std::string get_next_processor_name(const symbol_tablet &st)
     if (!st.has_symbol(name)) return name;
     else name= CEGIS_PROCESSOR_FUNCTION_PREFIX;
   }
-  assert(!"Exceeded maximum number of CEGIS processors.");
+  ASSERT(!"Exceeded maximum number of CEGIS processors.");
   return "";
 }
 
@@ -135,7 +135,7 @@ symbol_typet create_instruction_type(symbol_tablet &st,
   new_symbol.mode=ID_C;
   new_symbol.module=CEGIS_MODULE;
   new_symbol.is_type=true;
-  assert(!st.add(new_symbol));
+  ASSERT(!st.add(new_symbol));
   return symbol_typet(instr_type_name);
 }
 
@@ -172,7 +172,7 @@ void add_param(symbol_tablet &st, const std::string &func,
   prog_param_symbol.is_file_local=true;
   prog_param_symbol.is_parameter=true;
   prog_param_symbol.is_state_var=true;
-  assert(!st.add(prog_param_symbol));
+  ASSERT(!st.add(prog_param_symbol));
 }
 
 void add_to_symbol_table(symbol_tablet &st, const std::string &name,
@@ -187,9 +187,9 @@ void add_to_symbol_table(symbol_tablet &st, const std::string &name,
   new_symbol.location=default_cegis_source_location();
   new_symbol.mode=ID_C;
   new_symbol.module=CEGIS_MODULE;
-  assert(!st.add(new_symbol));
+  ASSERT(!st.add(new_symbol));
   const code_typet::parameterst &params=func.type.parameters();
-  assert(2 == params.size());
+  ASSERT(2 == params.size());
   add_param(st, name, CEGIS_PROC_PROGRAM_PARAM_ID, params.front().type());
   add_param(st, name, CEGIS_PROC_PROGRAM_SIZE_PARAM_ID, params.back().type());
 }

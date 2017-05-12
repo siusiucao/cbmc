@@ -273,7 +273,7 @@ void configt::ansi_ct::set_arch_spec_i386()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -322,7 +322,7 @@ void configt::ansi_ct::set_arch_spec_x86_64()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -395,7 +395,7 @@ void configt::ansi_ct::set_arch_spec_power(const irep_idt &subarch)
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -450,7 +450,7 @@ void configt::ansi_ct::set_arch_spec_arm(const irep_idt &subarch)
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -491,7 +491,7 @@ void configt::ansi_ct::set_arch_spec_alpha()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -543,7 +543,7 @@ void configt::ansi_ct::set_arch_spec_mips(const irep_idt &subarch)
     break;
 
   case flavourt::VISUAL_STUDIO:
-    assert(false); // not supported by Visual Studio
+    ASSERT(false); // not supported by Visual Studio
     break;
 
   case flavourt::APPLE:
@@ -553,7 +553,7 @@ void configt::ansi_ct::set_arch_spec_mips(const irep_idt &subarch)
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -584,7 +584,7 @@ void configt::ansi_ct::set_arch_spec_s390()
     break;
 
   case flavourt::VISUAL_STUDIO:
-    assert(false); // not supported by Visual Studio
+    ASSERT(false); // not supported by Visual Studio
     break;
 
   case flavourt::APPLE:
@@ -594,7 +594,7 @@ void configt::ansi_ct::set_arch_spec_s390()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -624,7 +624,7 @@ void configt::ansi_ct::set_arch_spec_s390x()
     break;
 
   case flavourt::VISUAL_STUDIO:
-    assert(false); // not supported by Visual Studio
+    ASSERT(false); // not supported by Visual Studio
     break;
 
   case flavourt::APPLE:
@@ -634,7 +634,7 @@ void configt::ansi_ct::set_arch_spec_s390x()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -676,7 +676,7 @@ void configt::ansi_ct::set_arch_spec_sparc(const irep_idt &subarch)
     break;
 
   case flavourt::VISUAL_STUDIO:
-    assert(false); // not supported by Visual Studio
+    ASSERT(false); // not supported by Visual Studio
     break;
 
   case flavourt::APPLE:
@@ -686,7 +686,7 @@ void configt::ansi_ct::set_arch_spec_sparc(const irep_idt &subarch)
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -729,7 +729,7 @@ void configt::ansi_ct::set_arch_spec_ia64()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -766,7 +766,7 @@ void configt::ansi_ct::set_arch_spec_x32()
     break;
 
   case flavourt::VISUAL_STUDIO:
-    assert(false); // not supported by Visual Studio
+    ASSERT(false); // not supported by Visual Studio
     break;
 
   case flavourt::APPLE:
@@ -776,7 +776,7 @@ void configt::ansi_ct::set_arch_spec_x32()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -842,7 +842,7 @@ void configt::ansi_ct::set_arch_spec_hppa()
     break;
 
   case flavourt::VISUAL_STUDIO:
-    assert(false); // not supported by Visual Studio
+    ASSERT(false); // not supported by Visual Studio
     break;
 
   case flavourt::APPLE:
@@ -852,7 +852,7 @@ void configt::ansi_ct::set_arch_spec_hppa()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -884,7 +884,7 @@ void configt::ansi_ct::set_arch_spec_sh4()
     break;
 
   case flavourt::VISUAL_STUDIO:
-    assert(false); // not supported by Visual Studio
+    ASSERT(false); // not supported by Visual Studio
     break;
 
   case flavourt::APPLE:
@@ -894,7 +894,7 @@ void configt::ansi_ct::set_arch_spec_sh4()
     break;
 
   case flavourt::NONE:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -1234,20 +1234,20 @@ bool configt::set(const cmdlinet &cmdline)
   // the same architecture and OS that we are verifying for.
   if(arch==this_arch && os==this_os)
   {
-    assert(ansi_c.int_width==sizeof(int)*8);
-    assert(ansi_c.long_int_width==sizeof(long)*8);
-    assert(ansi_c.bool_width==sizeof(bool)*8);
-    assert(ansi_c.char_width==sizeof(char)*8);
-    assert(ansi_c.short_int_width==sizeof(short)*8);
-    assert(ansi_c.long_long_int_width==sizeof(long long)*8);
-    assert(ansi_c.pointer_width==sizeof(void *)*8);
-    assert(ansi_c.single_width==sizeof(float)*8);
-    assert(ansi_c.double_width==sizeof(double)*8);
-    assert(ansi_c.char_is_unsigned==(static_cast<char>(255)==255));
+    ASSERT(ansi_c.int_width==sizeof(int)*8);
+    ASSERT(ansi_c.long_int_width==sizeof(long)*8);
+    ASSERT(ansi_c.bool_width==sizeof(bool)*8);
+    ASSERT(ansi_c.char_width==sizeof(char)*8);
+    ASSERT(ansi_c.short_int_width==sizeof(short)*8);
+    ASSERT(ansi_c.long_long_int_width==sizeof(long long)*8);
+    ASSERT(ansi_c.pointer_width==sizeof(void *)*8);
+    ASSERT(ansi_c.single_width==sizeof(float)*8);
+    ASSERT(ansi_c.double_width==sizeof(double)*8);
+    ASSERT(ansi_c.char_is_unsigned==(static_cast<char>(255)==255));
 
     #ifndef _WIN32
     // On Windows, long double width varies by compiler
-    assert(ansi_c.long_double_width==sizeof(long double)*8);
+    ASSERT(ansi_c.long_double_width==sizeof(long double)*8);
     #endif
   }
 

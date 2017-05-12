@@ -61,7 +61,7 @@ bvt boolbvt::convert_array_of(const array_of_exprt &expr)
       bv[offset]=tmp[j];
   }
 
-  assert(offset==bv.size());
+  ASSERT(offset==bv.size());
 
   return bv;
 }

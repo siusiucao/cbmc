@@ -64,7 +64,7 @@ Function: satcheck_zchaff_baset::l_get
 
 tvt satcheck_zchaff_baset::l_get(literalt a) const
 {
-  assert(status==SAT);
+  ASSERT(status==SAT);
 
   if(a.is_true())
     return tvt(true);
@@ -73,7 +73,7 @@ tvt satcheck_zchaff_baset::l_get(literalt a) const
 
   tvt result;
 
-  assert(a.var_no()<solver->variables().size());
+  ASSERT(a.var_no()<solver->variables().size());
 
   switch(solver->variable(a.var_no()).value())
   {
@@ -119,7 +119,7 @@ Function: satcheck_zchaff_baset::copy_cnf
 
 void satcheck_zchaff_baset::copy_cnf()
 {
-  assert(status==INIT);
+  ASSERT(status==INIT);
 
   // this can only be called once
   solver->set_variable_number(no_variables());
@@ -146,7 +146,7 @@ Function: satcheck_zchaff_baset::prop_solve
 propt::resultt satcheck_zchaff_baset::prop_solve()
 {
   // this is *not* incremental
-  assert(status==INIT);
+  ASSERT(status==INIT);
 
   copy_cnf();
 
@@ -200,7 +200,7 @@ propt::resultt satcheck_zchaff_baset::prop_solve()
   {
     // see if it is complete
     for(unsigned i=1; i<solver->variables().size(); i++)
-      assert(solver->variables()[i].value()==0 ||
+      ASSERT(solver->variables()[i].value()==0 ||
              solver->variables()[i].value()==1);
   }
 

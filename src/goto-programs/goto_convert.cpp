@@ -116,7 +116,7 @@ static void finish_catch_push_targets(goto_programt &dest)
           std::map<irep_idt,
                    goto_programt::targett>::const_iterator handler_it=
             label_targets.find(handler.id());
-          assert(handler_it!=label_targets.end());
+          ASSERT(handler_it!=label_targets.end());
           // set the target
           it->targets.push_back(handler_it->second);
         }
@@ -268,8 +268,8 @@ void goto_convertt::finish_computed_gotos(goto_programt &goto_program)
     goto_programt::instructiont &i=*g_it;
     exprt destination=i.code.op0();
 
-    assert(destination.id()==ID_dereference);
-    assert(destination.operands().size()==1);
+    ASSERT(destination.id()==ID_dereference);
+    ASSERT(destination.operands().size()==1);
 
     exprt pointer=destination.op0();
 
@@ -676,7 +676,7 @@ void goto_convertt::convert(
     convert_asm(to_code_asm(code), dest);
   else if(statement==ID_static_assert)
   {
-    assert(code.operands().size()==2);
+    ASSERT(code.operands().size()==2);
     exprt assertion=code.op0();
     assertion.make_typecast(bool_typet());
     simplify(assertion, ns);
@@ -992,7 +992,7 @@ void goto_convertt::convert_assign(
 
     if(lhs.id()==ID_typecast)
     {
-      assert(lhs.operands().size()==1);
+      ASSERT(lhs.operands().size()==1);
 
       // add a typecast to the rhs
       exprt new_rhs=rhs;
@@ -1079,7 +1079,7 @@ void goto_convertt::convert_cpp_delete(
   else if(code.get_statement()==ID_cpp_delete)
     delete_identifier="__delete";
   else
-    assert(false);
+    ASSERT(false);
 
   if(destructor.is_not_nil())
   {
@@ -1098,13 +1098,13 @@ void goto_convertt::convert_cpp_delete(
       convert(tmp_code, dest);
     }
     else
-      assert(false);
+      ASSERT(false);
   }
 
   // now do "free"
   exprt delete_symbol=ns.lookup(delete_identifier).symbol_expr();
 
-  assert(to_code_type(delete_symbol.type()).parameters().size()==1);
+  ASSERT(to_code_type(delete_symbol.type()).parameters().size()==1);
 
   typet arg_type=
     to_code_type(delete_symbol.type()).parameters().front().type();
@@ -1222,7 +1222,7 @@ void goto_convertt::convert_loop_invariant(
     throw 0;
   }
 
-  assert(loop->is_goto());
+  ASSERT(loop->is_goto());
   loop->guard.add(ID_C_spec_loop_invariant).swap(invariant);
 }
 
@@ -1520,7 +1520,7 @@ exprt goto_convertt::case_guard(
     dest.move_to_operands(eq_expr);
   }
 
-  assert(!dest.operands().empty());
+  ASSERT(!dest.operands().empty());
 
   if(dest.operands().size()==1)
   {
@@ -1602,7 +1602,7 @@ void goto_convertt::convert_switch(
   {
     const caset &case_ops=case_pair.second;
 
-    assert(!case_ops.empty());
+    ASSERT(!case_ops.empty());
 
     exprt guard_expr=case_guard(argument, case_ops);
 
@@ -2145,7 +2145,7 @@ void goto_convertt::convert_bp_enforce(
     {
       if(it->is_assign())
       {
-        assert(it->code.get(ID_statement)==ID_assign);
+        ASSERT(it->code.get(ID_statement)==ID_assign);
 
         // add constrain
         codet constrain(ID_bp_constrain);
@@ -2160,7 +2160,7 @@ void goto_convertt::convert_bp_enforce(
               it->code.get(ID_statement)==ID_bp_constrain)
       {
         // add to constraint
-        assert(it->code.operands().size()==2);
+        ASSERT(it->code.operands().size()==2);
         it->code.op1()=
           and_exprt(it->code.op1(), constraint);
       }
@@ -2228,7 +2228,7 @@ void goto_convertt::convert_ifthenelse(
     throw 0;
   }
 
-  assert(code.then_case().is_not_nil());
+  ASSERT(code.then_case().is_not_nil());
 
   bool has_else=
     !code.else_case().is_nil();
@@ -2372,7 +2372,7 @@ void goto_convertt::generate_ifthenelse(
      true_case.instructions.back().labels.empty())
   {
     // The above conjunction deliberately excludes the instance
-    // if(some) { label: assert(0); }
+    // if(some) { label: ASSERT(0); }
     true_case.instructions.back().guard=boolean_negate(guard);
     dest.destructive_append(true_case);
     true_case.instructions.clear();
@@ -2385,7 +2385,7 @@ void goto_convertt::generate_ifthenelse(
      false_case.instructions.back().labels.empty())
   {
     // The above conjunction deliberately excludes the instance
-    // if(some) ... else { label: assert(0); }
+    // if(some) ... else { label: ASSERT(0); }
     false_case.instructions.back().guard=guard;
     dest.destructive_append(false_case);
     false_case.instructions.clear();
@@ -2443,7 +2443,7 @@ void goto_convertt::generate_ifthenelse(
 
   // x: goto z;
   x->make_goto(z);
-  assert(!tmp_w.instructions.empty());
+  ASSERT(!tmp_w.instructions.empty());
   x->source_location=tmp_w.instructions.back().source_location;
 
   // See if we can simplify this guarded goto later.
@@ -2550,7 +2550,7 @@ void goto_convertt::generate_conditional_branch(
 {
   if(guard.id()==ID_not)
   {
-    assert(guard.operands().size()==1);
+    ASSERT(guard.operands().size()==1);
     // simply swap targets
     generate_conditional_branch(
       guard.op0(), target_false, target_true, source_location, dest);

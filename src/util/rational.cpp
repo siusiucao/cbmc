@@ -105,7 +105,7 @@ Function: rationalt::operator/=
 
 rationalt &rationalt::operator/=(const rationalt &n)
 {
-  assert(!n.numerator.is_zero());
+  ASSERT(!n.numerator.is_zero());
   numerator*=n.denominator;
   denominator*=n.numerator;
   normalize();
@@ -183,7 +183,7 @@ Function: rationalt::invert
 
 void rationalt::invert()
 {
-  assert(numerator!=0);
+  ASSERT(numerator!=0);
   std::swap(numerator, denominator);
 }
 

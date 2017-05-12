@@ -81,7 +81,7 @@ Function: satcheck_booleforce_baset::l_get
 
 tvt satcheck_booleforce_baset::l_get(literalt a) const
 {
-  assert(status==SAT);
+  ASSERT(status==SAT);
 
   if(a.is_true())
     return tvt(true);
@@ -91,7 +91,7 @@ tvt satcheck_booleforce_baset::l_get(literalt a) const
   tvt result;
   unsigned v=a.var_no();
 
-  assert(v<no_variables());
+  ASSERT(v<no_variables());
 
   int r=booleforce_deref(v);
 
@@ -167,7 +167,7 @@ Function: satcheck_booleforce_baset::prop_solve
 
 propt::resultt satcheck_booleforce_baset::prop_solve()
 {
-  assert(status==SAT || status==INIT);
+  ASSERT(status==SAT || status==INIT);
 
   int result=booleforce_sat();
 

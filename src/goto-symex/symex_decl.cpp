@@ -122,7 +122,7 @@ void goto_symext::symex_decl(statet &state, const symbol_exprt &expr)
     state.source,
     hidden?symex_targett::HIDDEN:symex_targett::STATE);
 
-  assert(state.dirty);
+  ASSERT(state.dirty);
   if((*state.dirty)(ssa.get_object_name()) &&
      state.atomic_section_id==0)
     target.shared_write(

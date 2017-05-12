@@ -34,9 +34,9 @@ goto_programt &get_body(goto_functionst &gf, const std::string &func_name)
   const irep_idt id(func_name);
   goto_functionst::function_mapt &function_map=gf.function_map;
   const goto_functionst::function_mapt::iterator it=function_map.find(id);
-  assert(function_map.end() != it && "Danger program function missing.");
+  ASSERT(function_map.end() != it && "Danger program function missing.");
   goto_function_templatet<goto_programt> &f=it->second;
-  assert(f.body_available() && "Danger program function body missing.");
+  ASSERT(f.body_available() && "Danger program function body missing.");
   return f.body;
 }
 
@@ -52,9 +52,9 @@ const goto_programt &get_body(const goto_functionst &gf,
   const irep_idt id(func_name);
   const goto_functionst::function_mapt &function_map=gf.function_map;
   const goto_functionst::function_mapt::const_iterator it=function_map.find(id);
-  assert(function_map.end() != it && "Danger program function missing.");
+  ASSERT(function_map.end() != it && "Danger program function missing.");
   const goto_function_templatet<goto_programt> &f=it->second;
-  assert(f.body_available() && "Danger program function body missing.");
+  ASSERT(f.body_available() && "Danger program function body missing.");
   return f.body;
 }
 
@@ -148,7 +148,7 @@ const typet &get_affected_type(const goto_programt::instructiont &instr)
   case goto_program_instruction_typet::DEAD:
     return to_code_dead(instr.code).symbol().type();
   default:
-    assert(!"Only DECL, ASSIGN, DEAD allowed.");
+    ASSERT(!"Only DECL, ASSIGN, DEAD allowed.");
   }
 }
 
@@ -163,7 +163,7 @@ const irep_idt &get_affected_variable(const goto_programt::instructiont &instr)
   case goto_program_instruction_typet::DEAD:
     return to_code_dead(instr.code).get_identifier();
   default:
-    assert(!"Only DECL, ASSIGN, DEAD allowed.");
+    ASSERT(!"Only DECL, ASSIGN, DEAD allowed.");
   }
 }
 
@@ -234,7 +234,7 @@ symbolt &create_local_cegis_symbol(symbol_tablet &st,
   new_symbol.is_static_lifetime=false;
   new_symbol.is_file_local=true;
   new_symbol.is_lvalue=true;
-  assert(!st.add(new_symbol));
+  ASSERT(!st.add(new_symbol));
   return st.lookup(new_symbol.name);
 }
 
@@ -372,7 +372,7 @@ void assign_in_cprover_init(goto_functionst &gf, symbolt &symbol,
   goto_programt::instructionst &instrs=body.instructions;
   const auto p(std::mem_fun_ref(&goto_programt::instructiont::is_end_function));
   goto_programt::targett pos=std::find_if(instrs.begin(), instrs.end(), p);
-  assert(instrs.end() != pos);
+  ASSERT(instrs.end() != pos);
   pos=insert_before_preserving_source_location(body, pos);
   pos->type=goto_program_instruction_typet::ASSIGN;
   const symbol_exprt lhs(symbol.symbol_expr());

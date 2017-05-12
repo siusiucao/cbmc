@@ -190,7 +190,7 @@ Function: ai_baset::get_next
 ai_baset::locationt ai_baset::get_next(
   working_sett &working_set)
 {
-  assert(!working_set.empty());
+  ASSERT(!working_set.empty());
 
   working_sett::iterator i=working_set.begin();
   locationt l=i->second;
@@ -345,7 +345,7 @@ bool ai_baset::do_function_call(
     return merge(*tmp_state, l_call, l_return);
   }
 
-  assert(!goto_function.body.instructions.empty());
+  ASSERT(!goto_function.body.instructions.empty());
 
   // This is the edge from call site to function head.
 
@@ -375,7 +375,7 @@ bool ai_baset::do_function_call(
   {
     // get location at end of the procedure we have called
     locationt l_end=--goto_function.body.instructions.end();
-    assert(l_end->is_end_function());
+    ASSERT(l_end->is_end_function());
 
     // do edge from end of function to instruction after call
     std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(l_end)));
@@ -405,7 +405,7 @@ bool ai_baset::do_function_call_rec(
   const goto_functionst &goto_functions,
   const namespacet &ns)
 {
-  assert(!goto_functions.function_map.empty());
+  ASSERT(!goto_functions.function_map.empty());
 
   bool new_data=false;
 

@@ -114,7 +114,7 @@ Function: satcheck_picosatt::prop_solve
 
 propt::resultt satcheck_picosatt::prop_solve()
 {
-  assert(status!=ERROR);
+  ASSERT(status!=ERROR);
 
   {
     std::string msg=
@@ -138,7 +138,7 @@ propt::resultt satcheck_picosatt::prop_solve()
   }
   else
   {
-    assert(res==PICOSAT_UNSATISFIABLE);
+    ASSERT(res==PICOSAT_UNSATISFIABLE);
     msg="SAT checker: instance is UNSATISFIABLE";
     messaget::status() << msg << messaget::eom;
   }
@@ -161,7 +161,7 @@ Function: satcheck_picosatt::set_assignment
 
 void satcheck_picosatt::set_assignment(literalt a, bool value)
 {
-  assert(false);
+  ASSERT(false);
 }
 
 /*******************************************************************\
@@ -212,7 +212,7 @@ Function: satcheck_picosatt::is_in_conflict
 
 bool satcheck_picosatt::is_in_conflict(literalt a) const
 {
-  assert(!a.is_constant());
+  ASSERT(!a.is_constant());
 
   return picosat_failed_assumption(picosat, a.dimacs())!=0;
 }
@@ -234,5 +234,5 @@ void satcheck_picosatt::set_assumptions(const bvt &bv)
   assumptions=bv;
 
   forall_literals(it, assumptions)
-    assert(!it->is_constant());
+    ASSERT(!it->is_constant());
 }

@@ -36,7 +36,7 @@ static exprt build_class_identifier(
     const typet &type=ns.follow(e.type());
     const struct_typet &struct_type=to_struct_type(type);
     const struct_typet::componentst &components=struct_type.components();
-    assert(!components.empty());
+    ASSERT(!components.empty());
 
     const auto &first_member_name=components.front().get_name();
     member_exprt member_expr(
@@ -79,7 +79,7 @@ exprt get_class_identifier_field(
   // if it's void* then use the suggested type.
 
   exprt this_expr=this_expr_in;
-  assert(this_expr.type().id()==ID_pointer &&
+  ASSERT(this_expr.type().id()==ID_pointer &&
          "Non-pointer this-arg in remove-virtuals?");
   const auto &points_to=this_expr.type().subtype();
   if(points_to==empty_typet())

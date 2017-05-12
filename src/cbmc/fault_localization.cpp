@@ -103,7 +103,7 @@ fault_localizationt::get_failed_property()
        bmc.prop_conv.l_get(it->cond_literal).is_false())
       return it;
 
-  assert(false);
+  ASSERT(false);
   return bmc.equation.SSA_steps.end();
 }
 
@@ -122,7 +122,7 @@ Function: fault_localizationt::check
 bool fault_localizationt::check(const lpointst &lpoints,
                                 const lpoints_valuet &value)
 {
-  assert(value.size()==lpoints.size());
+  ASSERT(value.size()==lpoints.size());
   bvt assumptions;
   lpoints_valuet::const_iterator v_it=value.begin();
   for(const auto &l : lpoints)
@@ -220,7 +220,7 @@ void fault_localizationt::run(irep_idt goal_id)
 {
   // find failed property
   failed=get_failed_property();
-  assert(failed!=bmc.equation.SSA_steps.end());
+  ASSERT(failed!=bmc.equation.SSA_steps.end());
 
   if(goal_id==ID_nil)
     goal_id=failed->source.pc->source_location.get_property_id();

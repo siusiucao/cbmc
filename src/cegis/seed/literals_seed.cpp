@@ -259,7 +259,7 @@ public:
   const valuest &operator[](const irep_idt &id) const
   {
     pool_storaget::const_iterator it=find(pool, id);
-    assert(pool.end() != it);
+    ASSERT(pool.end() != it);
     return it->second;
   }
 

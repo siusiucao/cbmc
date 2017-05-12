@@ -55,7 +55,7 @@ void random_individualt::havoc(program_individualt::instructiont &instr,
   instr.opcode=opcode();
   const instruction_set_infot &info=info_factory.get_info();
   const instruction_set_infot::const_iterator num_ops=info.find(instr.opcode);
-  assert(info.end() != num_ops);
+  ASSERT(info.end() != num_ops);
   instr.ops.resize(num_ops->second);
   for (program_individualt::instructiont::opt &o : instr.ops)
     o=op(index);

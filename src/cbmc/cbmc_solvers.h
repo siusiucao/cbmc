@@ -74,13 +74,13 @@ public:
 
     prop_convt &prop_conv() const
     {
-      assert(prop_conv_ptr!=nullptr);
+      ASSERT(prop_conv_ptr!=nullptr);
       return *prop_conv_ptr;
     }
 
     propt &prop() const
     {
-      assert(prop_ptr!=nullptr);
+      ASSERT(prop_ptr!=nullptr);
       return *prop_ptr;
     }
 

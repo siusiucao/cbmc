@@ -100,7 +100,7 @@ Function: satcheck_glucose_baset::set_polarity
 template<typename T>
 void satcheck_glucose_baset<T>::set_polarity(literalt a, bool value)
 {
-  assert(!a.is_constant());
+  ASSERT(!a.is_constant());
   add_variables();
   solver->setPolarity(a.var_no(), value);
 }
@@ -180,7 +180,7 @@ void satcheck_glucose_baset<T>::lcnf(const bvt &bv)
     if(it->is_true())
       return;
     else if(!it->is_false())
-      assert(it->var_no()<(unsigned)solver->nVars());
+      ASSERT(it->var_no()<(unsigned)solver->nVars());
   }
 
   Glucose::vec<Glucose::Lit> c;
@@ -210,7 +210,7 @@ Function: satcheck_glucose_baset::prop_solve
 template<typename T>
 propt::resultt satcheck_glucose_baset<T>::prop_solve()
 {
-  assert(status!=ERROR);
+  ASSERT(status!=ERROR);
 
   // We start counting at 1, thus there is one variable fewer.
   {
@@ -249,7 +249,7 @@ propt::resultt satcheck_glucose_baset<T>::prop_solve()
       {
         messaget::status() <<
           "SAT checker: instance is SATISFIABLE" << eom;
-        assert(solver->model.size()!=0);
+        ASSERT(solver->model.size()!=0);
         status=SAT;
         return P_SATISFIABLE;
       }
@@ -280,7 +280,7 @@ Function: satcheck_glucose_baset::set_assignment
 template<typename T>
 void satcheck_glucose_baset<T>::set_assignment(literalt a, bool value)
 {
-  assert(!a.is_constant());
+  ASSERT(!a.is_constant());
 
   unsigned v=a.var_no();
   bool sign=a.sign();
@@ -375,7 +375,7 @@ void satcheck_glucose_baset<T>::set_assumptions(const bvt &bv)
   assumptions=bv;
 
   forall_literals(it, assumptions)
-    assert(!it->is_constant());
+    ASSERT(!it->is_constant());
 }
 
 /*******************************************************************\
@@ -447,7 +447,7 @@ Function: satcheck_glucose_simplifiert::is_eliminated
 
 bool satcheck_glucose_simplifiert::is_eliminated(literalt a) const
 {
-  assert(!a.is_constant());
+  ASSERT(!a.is_constant());
 
   return solver->isEliminated(a.var_no());
 }

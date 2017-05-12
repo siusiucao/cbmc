@@ -88,7 +88,7 @@ void event_grapht::graph_explorert::collect_cycles(
     break;
 
   case Unknown:
-    assert(false);
+    ASSERT(false);
   }
 
   if(order->empty())
@@ -518,7 +518,7 @@ bool event_grapht::graph_explorert::backtrack(
       mark[vertex]=false;
     }
 
-    assert(!point_stack.empty());
+    ASSERT(!point_stack.empty());
     point_stack.pop();
 
     /* removes variable access */
@@ -564,7 +564,7 @@ bool event_grapht::graph_explorert::backtrack(
 
       if(marked_stack.size()>0)
       {
-        assert(marked_stack.top()==vertex);
+        ASSERT(marked_stack.top()==vertex);
         mark[vertex]=true;
       }
       else

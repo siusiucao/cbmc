@@ -35,7 +35,7 @@ Function: dplib_convt::bin_zero
 
 std::string dplib_convt::bin_zero(unsigned bits)
 {
-  assert(bits!=0);
+  ASSERT(bits!=0);
   std::string result="0bin";
   while(bits!=0) { result+='0'; bits--; }
   return result;
@@ -55,7 +55,7 @@ Function: dplib_convt::dplib_pointer_type
 
 std::string dplib_convt::dplib_pointer_type()
 {
-  assert(config.ansi_c.pointer_width!=0);
+  ASSERT(config.ansi_c.pointer_width!=0);
   return "[# object: INT, offset: BITVECTOR("+
          std::to_string(config.ansi_c.pointer_width)+") #]";
 }
@@ -178,7 +178,7 @@ void dplib_convt::convert_address_of_rec(const exprt &expr)
       else if(array.type().id()==ID_array)
         convert_address_of_rec(array);
       else
-        assert(false);
+        ASSERT(false);
     }
     else
     {
@@ -191,7 +191,7 @@ void dplib_convt::convert_address_of_rec(const exprt &expr)
       else if(array.type().id()==ID_array)
         convert_address_of_rec(array);
       else
-        assert(false);
+        ASSERT(false);
 
       dplib_prop.out << " IN P WITH .offset:=BVPLUS("
                    << config.ansi_c.pointer_width
@@ -256,7 +256,7 @@ literalt dplib_convt::convert_rest(const exprt &expr)
 
   if(expr.id()==ID_equal || expr.id()==ID_notequal)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     dplib_prop.out << "ASSERT " << dplib_prop.dplib_literal(l) << " <=> (";
     convert_dplib_expr(expr.op0());
@@ -381,7 +381,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_typecast)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     const exprt &op=expr.op0();
 
     if(expr.type().id()==ID_bool)
@@ -505,7 +505,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
     const struct_typet::componentst &components=
       struct_type.components();
 
-    assert(components.size()==expr.operands().size());
+    ASSERT(components.size()==expr.operands().size());
 
     unsigned i=0;
     for(struct_typet::componentst::const_iterator
@@ -557,7 +557,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
     {
       dplib_prop.out << "ARRAY (i: " << array_index_type() << "):";
 
-      assert(!expr.operands().empty());
+      ASSERT(!expr.operands().empty());
 
       unsigned i=0;
       forall_operands(it, expr)
@@ -610,7 +610,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_bitxor)
   {
-    assert(!expr.operands().empty());
+    ASSERT(!expr.operands().empty());
 
     if(expr.operands().size()==1)
     {
@@ -626,7 +626,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
     }
     else
     {
-      assert(expr.operands().size()>=3);
+      ASSERT(expr.operands().size()>=3);
 
       exprt tmp(expr);
       tmp.operands().resize(tmp.operands().size()-1);
@@ -640,7 +640,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_bitnand)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     dplib_prop.out << "BVNAND(";
     convert_dplib_expr(expr.op0());
@@ -650,14 +650,14 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_bitnot)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     dplib_prop.out << "~(";
     convert_dplib_expr(expr.op0());
     dplib_prop.out << ")";
   }
   else if(expr.id()==ID_unary_minus)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     if(expr.type().id()==ID_unsignedbv ||
        expr.type().id()==ID_signedbv)
     {
@@ -670,7 +670,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_if)
   {
-    assert(expr.operands().size()==3);
+    ASSERT(expr.operands().size()==3);
     dplib_prop.out << "IF ";
     convert_dplib_expr(expr.op0());
     dplib_prop.out << " THEN ";
@@ -683,7 +683,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
           expr.id()==ID_or ||
           expr.id()==ID_xor)
   {
-    assert(expr.type().id()==ID_bool);
+    ASSERT(expr.type().id()==ID_bool);
 
     if(expr.operands().size()>=2)
     {
@@ -709,11 +709,11 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
       convert_dplib_expr(expr.op0());
     }
     else
-      assert(false);
+      ASSERT(false);
   }
   else if(expr.id()==ID_not)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     dplib_prop.out << "NOT (";
     convert_dplib_expr(expr.op0());
     dplib_prop.out << ")";
@@ -721,8 +721,8 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   else if(expr.id()==ID_equal ||
           expr.id()==ID_notequal)
   {
-    assert(expr.operands().size()==2);
-    assert(expr.op0().type()==expr.op1().type());
+    ASSERT(expr.operands().size()==2);
+    ASSERT(expr.op0().type()==expr.op1().type());
 
     if(expr.op0().type().id()==ID_bool)
     {
@@ -752,7 +752,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
           expr.id()==ID_ge ||
           expr.id()==ID_gt)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     const typet &op_type=expr.op0().type();
 
@@ -847,7 +847,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
       convert_dplib_expr(expr.op0());
     }
     else
-      assert(false);
+      ASSERT(false);
   }
   else if(expr.id()==ID_minus)
   {
@@ -870,11 +870,11 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
       convert_dplib_expr(expr.op0());
     }
     else
-      assert(false);
+      ASSERT(false);
   }
   else if(expr.id()==ID_div)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     if(expr.type().id()==ID_unsignedbv ||
        expr.type().id()==ID_signedbv)
@@ -895,7 +895,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_mod)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     if(expr.type().id()==ID_unsignedbv ||
        expr.type().id()==ID_signedbv)
@@ -935,26 +935,26 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
       convert_dplib_expr(expr.op0());
     }
     else
-      assert(false);
+      ASSERT(false);
   }
   else if(expr.id()==ID_address_of ||
           expr.id()=="reference_to")
   {
-    assert(expr.operands().size()==1);
-    assert(expr.type().id()==ID_pointer);
+    ASSERT(expr.operands().size()==1);
+    ASSERT(expr.type().id()==ID_pointer);
     convert_address_of_rec(expr.op0());
   }
   else if(expr.id()==ID_array_of)
   {
-    assert(expr.type().id()==ID_array);
-    assert(expr.operands().size()==1);
+    ASSERT(expr.type().id()==ID_array);
+    ASSERT(expr.operands().size()==1);
     dplib_prop.out << "(ARRAY (i: " << array_index_type() << "): ";
     convert_array_value(expr.op0());
     dplib_prop.out << ")";
   }
   else if(expr.id()==ID_index)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
     dplib_prop.out << "(";
     convert_dplib_expr(expr.op0());
     dplib_prop.out << ")[";
@@ -965,7 +965,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
           expr.id()==ID_lshr ||
           expr.id()==ID_shl)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     if(expr.type().id()==ID_unsignedbv ||
        expr.type().id()==ID_signedbv)
@@ -977,7 +977,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
       else if(expr.id()==ID_shl)
         dplib_prop.out << "BVSHL";
       else
-        assert(false);
+        ASSERT(false);
 
       dplib_prop.out << "(" << expr.type().get(ID_width) << ", ";
       convert_dplib_expr(expr.op0());
@@ -991,14 +991,14 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_with)
   {
-    assert(expr.operands().size()>=1);
+    ASSERT(expr.operands().size()>=1);
     dplib_prop.out << "(";
     convert_dplib_expr(expr.op0());
     dplib_prop.out << ")";
 
     for(unsigned i=1; i<expr.operands().size(); i+=2)
     {
-      assert((i+1)<expr.operands().size());
+      ASSERT((i+1)<expr.operands().size());
       const exprt &index=expr.operands()[i];
       const exprt &value=expr.operands()[i+1];
 
@@ -1032,14 +1032,14 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_member)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     convert_dplib_expr(expr.op0());
     dplib_prop.out << ".";
     dplib_prop.out << expr.get(ID_component_name);
   }
   else if(expr.id()==ID_pointer_offset)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     dplib_prop.out << "(";
     convert_dplib_expr(expr.op0());
     dplib_prop.out << ").offset";
@@ -1047,7 +1047,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   #if 0
   else if(expr.id()==ID_pointer_object)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     dplib_prop.out << "(";
     convert_dplib_expr(expr.op0());
     dplib_prop.out << ").object";
@@ -1060,7 +1060,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_extractbit)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     if(expr.op0().type().id()==ID_unsignedbv ||
        expr.op0().type().id()==ID_signedbv)
@@ -1080,7 +1080,7 @@ void dplib_convt::convert_dplib_expr(const exprt &expr)
   }
   else if(expr.id()==ID_replication)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     mp_integer times;
     if(to_integer(expr.op0(), times))
@@ -1133,7 +1133,7 @@ void dplib_convt::set_to(const exprt &expr, bool value)
 
   if(expr.id()==ID_equal && value)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     if(expr.op0().id()==ID_symbol)
     {

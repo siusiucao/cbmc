@@ -59,7 +59,7 @@ public:
     format_number_ranget format_lines;
     for(const auto &cover_set : block_line_cover_map)
     {
-      assert(!cover_set.second.empty());
+      ASSERT(!cover_set.second.empty());
       std::vector<unsigned>
         line_list{cover_set.second.begin(), cover_set.second.end()};
 

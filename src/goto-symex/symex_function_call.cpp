@@ -238,7 +238,7 @@ void goto_symext::symex_function_call_symbol(
 {
   target.location(state.guard.as_expr(), state.source);
 
-  assert(code.function().id()==ID_symbol);
+  ASSERT(code.function().id()==ID_symbol);
 
   const irep_idt &identifier=
     to_symbol_expr(code.function()).get_identifier();
@@ -342,7 +342,7 @@ void goto_symext::symex_function_call_code(
     state.rename(arguments[i], ns);
 
   // produce a new frame
-  assert(!state.call_stack().empty());
+  ASSERT(!state.call_stack().empty());
   goto_symex_statet::framet &frame=state.new_frame();
 
   // preserve locality of local variables
@@ -387,7 +387,7 @@ Function: goto_symext::pop_frame
 
 void goto_symext::pop_frame(statet &state)
 {
-  assert(!state.call_stack().empty());
+  ASSERT(!state.call_stack().empty());
 
   {
     statet::framet &frame=state.top();
@@ -399,7 +399,7 @@ void goto_symext::pop_frame(statet &state)
     state.level1.restore_from(frame.old_level1);
 
     // clear function-locals from L2 renaming
-    assert(state.dirty);
+    ASSERT(state.dirty);
     for(goto_symex_statet::renaming_levelt::current_namest::iterator
         c_it=state.level2.current_names.begin();
         c_it!=state.level2.current_names.end();
@@ -534,7 +534,7 @@ void goto_symext::return_assignment(statet &state)
   statet::framet &frame=state.top();
 
   const goto_programt::instructiont &instruction=*state.source.pc;
-  assert(instruction.is_return());
+  ASSERT(instruction.is_return());
   const code_returnt &code=to_code_return(instruction.code);
 
   target.location(state.guard.as_expr(), state.source);

@@ -76,7 +76,7 @@ void jsa_serialisert::operator()(jsa_genetic_solutiont &entity,
   const irept::named_subt &named_sub=sdu.get_named_sub();
   typedef irept::named_subt::const_iterator const_iterator;
   const const_iterator invariant=named_sub.find(INVARIANT);
-  assert(named_sub.end() != invariant);
+  ASSERT(named_sub.end() != invariant);
   for (const irept &instruction : invariant->second.get_sub())
   {
     jsa_genetic_solutiont::invariantt::value_type instr;
@@ -84,7 +84,7 @@ void jsa_serialisert::operator()(jsa_genetic_solutiont &entity,
     entity.invariant.push_back(instr);
   }
   const const_iterator predicates=named_sub.find(PREDICATES);
-  assert(named_sub.end() != predicates);
+  ASSERT(named_sub.end() != predicates);
   for (const irept &predicate : predicates->second.get_sub())
   {
     jsa_genetic_solutiont::predicatet pred;
@@ -100,7 +100,7 @@ void jsa_serialisert::operator()(jsa_genetic_solutiont &entity,
     entity.predicates.push_back(pred);
   }
   const const_iterator query=named_sub.find(QUERY);
-  assert(named_sub.end() != query);
+  ASSERT(named_sub.end() != query);
   for (const irept &instruction : query->second.get_sub())
   {
     jsa_genetic_solutiont::queryt::value_type instr;

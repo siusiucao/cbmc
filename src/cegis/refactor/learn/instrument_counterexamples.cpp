@@ -61,10 +61,10 @@ void create_ce_arrays(symbol_tablet &st, goto_functionst &gf,
   {
     const labelled_assignmentst::value_type::first_type loc_id=value.first;
     const array_valuest::const_iterator array_val=array_values.find(loc_id);
-    assert(array_values.end() != array_val);
+    ASSERT(array_values.end() != array_val);
     const array_exprt &array_expr=array_val->second;
     const std::string name(get_ce_array_name(loc_id));
-    assert(array_expr.operands().size() == ces.size());
+    ASSERT(array_expr.operands().size() == ces.size());
     declare_global_meta_variable(st, gf, name, array_expr);
   }
 }
@@ -142,7 +142,7 @@ void assign_ce_values(symbol_tablet &st, goto_functionst &gf,
             st.lookup(get_affected_variable(*pos)).symbol_expr(), value);
         break;
       default:
-        assert(!"Unsupported counterexample location type.");
+        ASSERT(!"Unsupported counterexample location type.");
       }
       const std::string value_index_name(get_ce_value_index_name(label));
       const symbol_exprt value_index(st.lookup(value_index_name).symbol_expr());

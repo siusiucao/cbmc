@@ -95,7 +95,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
       exprt new_src;
       if(src.id()==ID_struct) // struct constructor?
       {
-        assert(src.operands().size()==components.size());
+        ASSERT(src.operands().size()==components.size());
         new_src=src.operands()[i];
       }
       else
@@ -274,13 +274,13 @@ exprt path_symex_statet::instantiate_rec(
     exprt tmp_symbol_member_index=
       read_symbol_member_index(src, propagate);
 
-    assert(tmp_symbol_member_index.is_not_nil());
+    ASSERT(tmp_symbol_member_index.is_not_nil());
     return tmp_symbol_member_index; // yes!
   }
 
   if(src.id()==ID_address_of)
   {
-    assert(src.operands().size()==1);
+    ASSERT(src.operands().size()==1);
     exprt tmp=src;
     tmp.op0()=instantiate_rec_address(tmp.op0(), propagate);
     return tmp;
@@ -331,7 +331,7 @@ exprt path_symex_statet::instantiate_rec(
   else if(src.id()==ID_symbol)
   {
     // must be SSA already, or code
-    assert(src.type().id()==ID_code ||
+    ASSERT(src.type().id()==ID_code ||
            src.get_bool(ID_C_SSA_symbol));
   }
 
@@ -389,7 +389,7 @@ exprt path_symex_statet::read_symbol_member_index(
 
   if(final.id()==ID_if)
   {
-    assert(final.operands().size()==3);
+    ASSERT(final.operands().size()==3);
     final.op0()=instantiate_rec(final.op0(), propagate); // rec. call
     final.op1()=read_symbol_member_index(final.op1(), propagate); // rec. call
     final.op2()=read_symbol_member_index(final.op2(), propagate); // rec. call
@@ -436,11 +436,11 @@ exprt path_symex_statet::read_symbol_member_index(
       return nil_exprt();
 
     // next round
-    assert(next.is_not_nil());
+    ASSERT(next.is_not_nil());
     current=next;
   }
 
-  assert(current.id()==ID_symbol);
+  ASSERT(current.id()==ID_symbol);
 
   if(current.get_bool(ID_C_SSA_symbol))
     return nil_exprt(); // SSA already
@@ -536,7 +536,7 @@ bool path_symex_statet::is_symbol_member_index(const exprt &src) const
       return false;
 
     // next round
-    assert(next!=0);
+    ASSERT(next!=0);
     current=next;
   }
 }
@@ -638,7 +638,7 @@ exprt path_symex_statet::instantiate_rec_address(
   }
   else if(src.id()==ID_index)
   {
-    assert(src.operands().size()==2);
+    ASSERT(src.operands().size()==2);
     exprt tmp=src;
     tmp.op0()=instantiate_rec_address(src.op0(), propagate);
     tmp.op1()=instantiate_rec(src.op1(), propagate);
@@ -669,7 +669,7 @@ exprt path_symex_statet::instantiate_rec_address(
   else if(src.id()==ID_byte_extract_big_endian ||
           src.id()==ID_byte_extract_little_endian)
   {
-    assert(src.operands().size()==2);
+    ASSERT(src.operands().size()==2);
     exprt tmp=src;
     tmp.op0()=instantiate_rec_address(src.op0(), propagate);
     tmp.op1()=instantiate_rec(src.op1(), propagate);

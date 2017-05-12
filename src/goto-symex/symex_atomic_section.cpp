@@ -72,7 +72,7 @@ void goto_symext::symex_atomic_end(statet &state)
     r.set_level_2(r_it->second.first);
 
     // guard is the disjunction over reads
-    assert(!r_it->second.second.empty());
+    ASSERT(!r_it->second.second.empty());
     guardt read_guard(r_it->second.second.front());
     for(std::list<guardt>::const_iterator
         it=++(r_it->second.second.begin());
@@ -98,7 +98,7 @@ void goto_symext::symex_atomic_end(statet &state)
     w.set_level_2(state.level2.current_count(w.get_identifier()));
 
     // guard is the disjunction over writes
-    assert(!w_it->second.empty());
+    ASSERT(!w_it->second.empty());
     guardt write_guard(w_it->second.front());
     for(std::list<guardt>::const_iterator
         it=++(w_it->second.begin());

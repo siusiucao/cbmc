@@ -57,7 +57,7 @@ exprt boolbvt::get(const exprt &expr) const
 
       for(std::size_t bit_nr=0; bit_nr<width; bit_nr++)
       {
-        assert(bit_nr<map_entry.literal_map.size());
+        ASSERT(bit_nr<map_entry.literal_map.size());
 
         if(map_entry.literal_map[bit_nr].is_set)
         {
@@ -101,8 +101,8 @@ exprt boolbvt::bv_get_rec(
 
   std::size_t width=boolbv_width(type);
 
-  assert(bv.size()==unknown.size());
-  assert(bv.size()>=offset+width);
+  ASSERT(bv.size()==unknown.size());
+  ASSERT(bv.size()>=offset+width);
 
   if(type.id()==ID_bool)
   {
@@ -192,7 +192,7 @@ exprt boolbvt::bv_get_rec(
       const union_typet &union_type=to_union_type(type);
       const union_typet::componentst &components=union_type.components();
 
-      assert(!components.empty());
+      ASSERT(!components.empty());
 
       // Any idea that's better than just returning the first component?
       std::size_t component_nr=0;
@@ -258,7 +258,7 @@ exprt boolbvt::bv_get_rec(
        case tvt::tv_enumt::TV_FALSE: ch='0'; break;
        case tvt::tv_enumt::TV_TRUE:  ch='1'; break;
        case tvt::tv_enumt::TV_UNKNOWN: ch='0'; break;
-       default: assert(false);
+       default: ASSERT(false);
       }
     }
 
@@ -399,9 +399,9 @@ exprt boolbvt::bv_get_unbounded_array(const exprt &expr) const
     // get root
     number=arrays.find_number(number);
 
-    assert(number<index_map.size());
+    ASSERT(number<index_map.size());
     index_mapt::const_iterator it=index_map.find(number);
-    assert(it!=index_map.end());
+    ASSERT(it!=index_map.end());
     const index_sett &index_set=it->second;
 
     for(index_sett::const_iterator it1=
@@ -497,13 +497,13 @@ mp_integer boolbvt::get_value(
 
   for(std::size_t bit_nr=offset; bit_nr<offset+width; bit_nr++)
   {
-    assert(bit_nr<bv.size());
+    ASSERT(bit_nr<bv.size());
     switch(prop.l_get(bv[bit_nr]).get_value())
     {
      case tvt::tv_enumt::TV_FALSE:   break;
      case tvt::tv_enumt::TV_TRUE:    value+=weight; break;
      case tvt::tv_enumt::TV_UNKNOWN: break;
-     default: assert(false);
+     default: ASSERT(false);
     }
 
     weight*=2;

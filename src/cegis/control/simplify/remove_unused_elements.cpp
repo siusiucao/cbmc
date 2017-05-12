@@ -44,13 +44,13 @@ void visit_functions(std::set<irep_idt> &vars, std::set<irep_idt> &funcs,
     instr.guard.visit(visitor);
     if (goto_program_instruction_typet::FUNCTION_CALL != instr.type) continue;
     const exprt &func=to_code_function_call(instr.code).function();
-    assert(ID_symbol == func.id());
+    ASSERT(ID_symbol == func.id());
     const irep_idt &id=to_symbol_expr(func).get_identifier();
     funcs.insert(id);
     typedef goto_functionst::function_mapt fmapt;
     const fmapt &fmap=gf.function_map;
     const fmapt::const_iterator it=fmap.find(id);
-    assert(fmap.end() != it);
+    ASSERT(fmap.end() != it);
     const goto_function_templatet<goto_programt> &prog=it->second;
     if (prog.body_available()) visit_functions(vars, funcs, gf, prog.body);
   }

@@ -112,7 +112,7 @@ void cpp_typecheckt::convert_initializer(symbolt &symbol)
         to_cpp_name(static_cast<irept &>(symbol.value.op0())),
         cpp_typecheck_resolvet::BOTH, fargs);
 
-      assert(symbol.type.subtype() == resolved_expr.type());
+      ASSERT(symbol.type.subtype() == resolved_expr.type());
 
       if(resolved_expr.id()==ID_symbol)
       {
@@ -128,7 +128,7 @@ void cpp_typecheckt::convert_initializer(symbolt &symbol)
         symbol.value.type().add("to-member") = resolved_expr.op0().type();
       }
       else
-        assert(false);
+        ASSERT(false);
 
       if(symbol.type != symbol.value.type())
       {
@@ -234,8 +234,8 @@ void cpp_typecheckt::zero_initializer(
     mp_integer size;
 
     bool to_int=to_integer(size_expr, size);
-    assert(!to_int);
-    assert(size>=0);
+    ASSERT(!to_int);
+    ASSERT(size>=0);
 
     exprt::operandst empty_operands;
     for(mp_integer i=0; i<size; ++i)
@@ -258,7 +258,7 @@ void cpp_typecheckt::zero_initializer(
     {
       const exprt &component=static_cast<const exprt &>(*it);
 
-      assert(component.type().is_not_nil());
+      ASSERT(component.type().is_not_nil());
 
       if(component.type().id()==ID_code)
         continue;

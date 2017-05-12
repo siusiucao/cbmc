@@ -42,7 +42,7 @@ public:
   virtual literalt lselect(literalt a, literalt b, literalt c); // a?b:c
   virtual literalt new_variable();
   virtual size_t no_variables() const { return _no_variables; }
-  virtual void set_no_variables(size_t no) { assert(false); }
+  virtual void set_no_variables(size_t no) { ASSERT(false); }
 
   virtual void lcnf(const bvt &bv);
 

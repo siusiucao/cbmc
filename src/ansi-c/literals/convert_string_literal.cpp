@@ -32,12 +32,12 @@ Function: convert_one_string_literal
 std::basic_string<unsigned int> convert_one_string_literal(
   const std::string &src)
 {
-  assert(src.size()>=2);
+  ASSERT(src.size()>=2);
 
   if(src[0]=='u' && src[1]=='8')
   {
-    assert(src[src.size()-1]=='"');
-    assert(src[2]=='"');
+    ASSERT(src[src.size()-1]=='"');
+    ASSERT(src[2]=='"');
 
     std::basic_string<unsigned int> value=
       unescape_wide_string(std::string(src, 3, src.size()-4));
@@ -54,15 +54,15 @@ std::basic_string<unsigned int> convert_one_string_literal(
   }
   else if(src[0]=='L' || src[0]=='u' || src[0]=='U')
   {
-    assert(src[src.size()-1]=='"');
-    assert(src[1]=='"');
+    ASSERT(src[src.size()-1]=='"');
+    ASSERT(src[1]=='"');
 
     return unescape_wide_string(std::string(src, 2, src.size()-3));
   }
   else
   {
-    assert(src[0]=='"');
-    assert(src[src.size()-1]=='"');
+    ASSERT(src[0]=='"');
+    ASSERT(src[src.size()-1]=='"');
 
     std::basic_string<unsigned int> value=
       unescape_wide_string(std::string(src, 1, src.size()-2));
@@ -151,7 +151,7 @@ exprt convert_string_literal(const std::string &src)
     case 'L': subtype=wchar_t_type(); break;
     case 'u': subtype=char16_t_type(); break;
     case 'U': subtype=char32_t_type(); break;
-    default: assert(false);
+    default: ASSERT(false);
     }
 
     exprt result=exprt(ID_array);

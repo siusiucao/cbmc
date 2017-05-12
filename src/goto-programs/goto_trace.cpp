@@ -76,7 +76,7 @@ void goto_trace_stept::output(
   case goto_trace_stept::FUNCTION_RETURN: out << "FUNCTION RETURN"; break;
   default:
     out << "unknown type: " << type << std::endl;
-    assert(false);
+    ASSERT(false);
   }
 
   if(type==ASSERT || type==ASSUME || type==GOTO)
@@ -204,7 +204,7 @@ std::string trace_value_binary(
   }
   else if(expr.id()==ID_union)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
     return trace_value_binary(expr.op0(), ns);
   }
 
@@ -466,16 +466,16 @@ void show_goto_trace(
       break;
 
     case goto_trace_stept::CONSTRAINT:
-      assert(false);
+      ASSERT(false);
       break;
 
     case goto_trace_stept::SHARED_READ:
     case goto_trace_stept::SHARED_WRITE:
-      assert(false);
+      ASSERT(false);
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
   }
 }

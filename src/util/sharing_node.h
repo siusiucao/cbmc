@@ -14,7 +14,7 @@ Author: Daniel Poetzl
 #include <memory>
 #include <cassert>
 
-#define _sn_assert(b) assert(b)
+#define _sn_assert(b) ASSERT(b)
 //#define _sn_assert(b)
 
 template <class T>
@@ -232,7 +232,7 @@ public:
       }
     }
 
-    assert(false);
+    ASSERT(false);
   }
 
   // misc

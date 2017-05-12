@@ -417,11 +417,11 @@ void value_set_fivrnst::get_value_set_rec(
   }
   else if(expr.id()==ID_index)
   {
-    assert(expr.operands().size()==2);
+    ASSERT(expr.operands().size()==2);
 
     const typet &type=ns.follow(expr.op0().type());
 
-    assert(type.id()==ID_array ||
+    ASSERT(type.id()==ID_array ||
            type.id()==ID_incomplete_array);
 
     get_value_set_rec(expr.op0(), dest, "[]"+suffix, original_type, ns);
@@ -430,13 +430,13 @@ void value_set_fivrnst::get_value_set_rec(
   }
   else if(expr.id()==ID_member)
   {
-    assert(expr.operands().size()==1);
+    ASSERT(expr.operands().size()==1);
 
     if(expr.op0().is_not_nil())
     {
       const typet &type=ns.follow(expr.op0().type());
 
-      assert(type.id()==ID_struct ||
+      ASSERT(type.id()==ID_struct ||
              type.id()==ID_union ||
              type.id()==ID_incomplete_struct ||
              type.id()==ID_incomplete_union);
@@ -624,7 +624,7 @@ void value_set_fivrnst::get_value_set_rec(
       if(expr.type().id()!=ID_pointer)
         throw "malloc expected to return pointer type";
 
-      assert(suffix=="");
+      ASSERT(suffix=="");
 
       const typet &dynamic_type=
         static_cast<const typet &>(expr.find("#type"));
@@ -642,8 +642,8 @@ void value_set_fivrnst::get_value_set_rec(
     else if(statement==ID_cpp_new ||
             statement==ID_cpp_new_array)
     {
-      assert(suffix=="");
-      assert(expr.type().id()==ID_pointer);
+      ASSERT(suffix=="");
+      ASSERT(expr.type().id()==ID_pointer);
 
       dynamic_object_exprt dynamic_object(expr.type().subtype());
       // let's make up a unique number for this object...
@@ -711,7 +711,7 @@ void value_set_fivrnst::dereference_rec(
   // remove pointer typecasts
   if(src.id()==ID_typecast)
   {
-    assert(src.type().id()==ID_pointer);
+    ASSERT(src.type().id()==ID_pointer);
 
     if(src.operands().size()!=1)
       throw "typecast expects one operand";
@@ -804,7 +804,7 @@ void value_set_fivrnst::get_reference_set_rec(
     const exprt &offset=expr.op1();
     const typet &array_type=ns.follow(array.type());
 
-    assert(array_type.id()==ID_array ||
+    ASSERT(array_type.id()==ID_array ||
            array_type.id()==ID_incomplete_array);
 
 
@@ -984,12 +984,12 @@ void value_set_fivrnst::assign(
         if(rhs.id()==ID_struct ||
            rhs.id()==ID_constant)
         {
-          assert(no<rhs.operands().size());
+          ASSERT(no<rhs.operands().size());
           rhs_member=rhs.operands()[no];
         }
         else if(rhs.id()==ID_with)
         {
-          assert(rhs.operands().size()==3);
+          ASSERT(rhs.operands().size()==3);
 
           // see if op1 is the member we want
           const exprt &member_operand=rhs.op1();
@@ -1033,11 +1033,11 @@ void value_set_fivrnst::assign(
     }
     else
     {
-      assert(base_type_eq(rhs.type(), type, ns));
+      ASSERT(base_type_eq(rhs.type(), type, ns));
 
       if(rhs.id()==ID_array_of)
       {
-        assert(rhs.operands().size()==1);
+        ASSERT(rhs.operands().size()==1);
 //        std::cout << "AOF: " << rhs.op0() << std::endl;
         assign(lhs_index, rhs.op0(), ns, add_to_sets);
       }
@@ -1051,7 +1051,7 @@ void value_set_fivrnst::assign(
       }
       else if(rhs.id()==ID_with)
       {
-        assert(rhs.operands().size()==3);
+        ASSERT(rhs.operands().size()==3);
 
         exprt op0_index(ID_index, type.subtype());
         op0_index.copy_to_operands(rhs.op0(), exprt(ID_unknown, index_type()));
@@ -1260,7 +1260,7 @@ void value_set_fivrnst::assign_rec(
 
     const typet &type=ns.follow(lhs.op0().type());
 
-    assert(type.id()==ID_array || type.id()==ID_incomplete_array);
+    ASSERT(type.id()==ID_array || type.id()==ID_incomplete_array);
 
     assign_rec(lhs.op0(), values_rhs, "[]"+suffix, ns, add_to_sets);
   }
@@ -1276,7 +1276,7 @@ void value_set_fivrnst::assign_rec(
 
     const typet &type=ns.follow(lhs.op0().type());
 
-    assert(type.id()==ID_struct ||
+    ASSERT(type.id()==ID_struct ||
            type.id()==ID_union ||
            type.id()==ID_incomplete_struct ||
            type.id()==ID_incomplete_union);
@@ -1315,7 +1315,7 @@ void value_set_fivrnst::assign_rec(
   else if(lhs.id()==ID_byte_extract_little_endian ||
           lhs.id()==ID_byte_extract_big_endian)
   {
-    assert(lhs.operands().size()==2);
+    ASSERT(lhs.operands().size()==2);
     assign_rec(lhs.op0(), values_rhs, suffix, ns, true);
   }
   else
@@ -1454,7 +1454,7 @@ void value_set_fivrnst::apply_code(
   else if(statement==ID_function_call)
   {
     // shouldn't be here
-    assert(false);
+    ASSERT(false);
   }
   else if(statement==ID_assign ||
           statement==ID_init)

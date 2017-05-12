@@ -34,7 +34,7 @@ void print_instr(messaget::mstreamt &os, const namespacet &ns,
 {
   std::ostringstream oss;
   const struct_exprt::operandst &ops=instr.operands();
-  assert(!ops.empty());
+  ASSERT(!ops.empty());
   const mp_integer opcode(bv_arithmetict(ops.front()).to_integer());
   const goto_programt::instructionst &instrs=body.instructions;
   const goto_programt::const_targett end(instrs.end());
@@ -84,8 +84,8 @@ void print_refactor_candidate(messaget::mstreamt &os, const symbol_tablet &st,
     std::string func(id2string(entry.first));
     remove_suffix(func, CEGIS_REFACTOR_PROG_SUFFIX);
     const goto_functionst::function_mapt::const_iterator it=fmap.find(func);
-    assert(fmap.end() != it);
-    assert(it->second.body_available());
+    ASSERT(fmap.end() != it);
+    ASSERT(it->second.body_available());
     print_program(os, ns, it->second.body, it->first, entry);
   }
   os << "</refactor_candidate>" << messaget::eom;

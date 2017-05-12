@@ -117,7 +117,7 @@ bool static_lifetime_init(
       // adjust the type to an array of size 1
       symbol_tablet::symbolst::iterator it=
         symbol_table.symbols.find(identifier);
-      assert(it!=symbol_table.symbols.end());
+      ASSERT(it!=symbol_table.symbols.end());
 
       it->second.type=type;
       it->second.type.set(ID_size, from_integer(1, size_type()));
@@ -138,7 +138,7 @@ bool static_lifetime_init(
       {
         namespacet ns(symbol_table);
         rhs=zero_initializer(symbol.type, symbol.location, ns, message_handler);
-        assert(rhs.is_not_nil());
+        ASSERT(rhs.is_not_nil());
       }
       catch(...)
       {

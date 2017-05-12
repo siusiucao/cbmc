@@ -56,13 +56,13 @@ public:
 
   loct &operator[] (loc_reft l)
   {
-    assert(l.loc_number>=0 && l.loc_number<loc_vector.size());
+    ASSERT(l.loc_number>=0 && l.loc_number<loc_vector.size());
     return loc_vector[l.loc_number];
   }
 
   const loct &operator[] (loc_reft l) const
   {
-    assert(l.loc_number>=0 && l.loc_number<loc_vector.size());
+    ASSERT(l.loc_number>=0 && l.loc_number<loc_vector.size());
     return loc_vector[l.loc_number];
   }
 
@@ -101,7 +101,7 @@ public:
   loc_reft operator[](const goto_programt::const_targett t) const
   {
     mapt::const_iterator it=map.find(t);
-    assert(it!=map.end());
+    ASSERT(it!=map.end());
     return it->second;
   }
 

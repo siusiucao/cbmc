@@ -73,7 +73,7 @@ Function: java_bytecode_typecheckt::typecheck_expr_java_new
 
 void java_bytecode_typecheckt::typecheck_expr_java_new(side_effect_exprt &expr)
 {
-  assert(expr.operands().empty());
+  ASSERT(expr.operands().empty());
   typet &type=expr.type();
   typecheck_type(type);
 }
@@ -93,7 +93,7 @@ Function: java_bytecode_typecheckt::typecheck_expr_java_new_array
 void java_bytecode_typecheckt::typecheck_expr_java_new_array(
   side_effect_exprt &expr)
 {
-  assert(expr.operands().size()>=1); // one per dimension
+  ASSERT(expr.operands().size()>=1); // one per dimension
   typet &type=expr.type();
   typecheck_type(type);
 }
@@ -286,7 +286,7 @@ void java_bytecode_typecheckt::typecheck_expr_symbol(symbol_exprt &expr)
 
   if(s_it==symbol_table.symbols.end())
   {
-    assert(has_prefix(id2string(identifier), "java::"));
+    ASSERT(has_prefix(id2string(identifier), "java::"));
 
     // no, create the symbol
     symbolt new_symbol;
@@ -315,7 +315,7 @@ void java_bytecode_typecheckt::typecheck_expr_symbol(symbol_exprt &expr)
   else
   {
     // yes!
-    assert(!s_it->second.is_type);
+    ASSERT(!s_it->second.is_type);
 
     const symbolt &symbol=s_it->second;
 

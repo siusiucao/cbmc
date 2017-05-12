@@ -52,7 +52,7 @@ static bool skip_loops(
     goto_programt::targett loop_head=it->get_target();
     goto_programt::targett next=it;
     ++next;
-    assert(next!=goto_program.instructions.end());
+    ASSERT(next!=goto_program.instructions.end());
 
     goto_programt::targett g=goto_program.insert_before(loop_head);
     g->make_goto(next, true_exprt());

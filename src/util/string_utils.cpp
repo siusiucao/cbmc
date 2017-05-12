@@ -61,8 +61,8 @@ void split_string(
   bool strip,
   bool remove_empty)
 {
-  assert(result.empty());
-  assert(!std::isspace(delim));
+  ASSERT(result.empty());
+  ASSERT(!std::isspace(delim));
 
   if(s.empty())
   {
@@ -71,7 +71,7 @@ void split_string(
   }
 
   std::string::size_type n=s.length();
-  assert(n>0);
+  ASSERT(n>0);
 
   std::string::size_type start=0;
   std::string::size_type i;
@@ -123,7 +123,7 @@ void split_string(
   std::string &right,
   bool strip)
 {
-  assert(!std::isspace(delim));
+  ASSERT(!std::isspace(delim));
 
   std::vector<std::string> result;
 

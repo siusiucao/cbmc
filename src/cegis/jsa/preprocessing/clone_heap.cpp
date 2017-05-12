@@ -39,7 +39,7 @@ const symbol_exprt &get_user_heap(const goto_functionst &gf)
   const goto_programt::instructionst &i=get_entry_body(gf).instructions;
   const goto_programt::const_targett end(i.end());
   const goto_programt::const_targett p=std::find_if(i.begin(), end, is_heap);
-  assert(end != p);
+  ASSERT(end != p);
   return to_symbol_expr(to_code_decl(p->code).symbol());
 }
 

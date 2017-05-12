@@ -18,7 +18,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 void mini_bdd_nodet::remove_reference()
 {
-  assert(reference_counter!=0);
+  ASSERT(reference_counter!=0);
 
   reference_counter--;
 
@@ -203,8 +203,8 @@ protected:
 
 mini_bddt mini_bdd_applyt::APP(const mini_bddt &x, const mini_bddt &y)
 {
-  assert(x.is_initialized() && y.is_initialized());
-  assert(x.node->mgr==y.node->mgr);
+  ASSERT(x.is_initialized() && y.is_initialized());
+  ASSERT(x.node->mgr==y.node->mgr);
 
   // dynamic programming
   std::pair<unsigned, unsigned> key(x.node_number(), y.node_number());
@@ -299,7 +299,7 @@ mini_bddt mini_bdd_mgrt::mk(
   const mini_bddt &low,
   const mini_bddt &high)
 {
-  assert(var<=var_table.size());
+  ASSERT(var<=var_table.size());
 
   if(low.node_number()==high.node_number())
     return low;
@@ -392,7 +392,7 @@ mini_bddt restrictt::RES(const mini_bddt &u)
 {
   // replace 'var' in 'u' by constant 'value'
 
-  assert(u.is_initialized());
+  ASSERT(u.is_initialized());
   mini_bdd_mgrt *mgr=u.node->mgr;
 
   mini_bddt t;

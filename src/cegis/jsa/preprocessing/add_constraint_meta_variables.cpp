@@ -36,7 +36,7 @@ symbolt &create_jsa_symbol(symbol_tablet &st, const std::string &full_name,
   new_symbol.is_static_lifetime=false;
   new_symbol.is_file_local=true;
   new_symbol.is_lvalue=true;
-  assert(!st.add(new_symbol));
+  ASSERT(!st.add(new_symbol));
   return st.lookup(new_symbol.name);
 }
 #endif

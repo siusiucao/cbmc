@@ -97,6 +97,6 @@ void basic_blocks(goto_programt &goto_program,
       }
     }
     else
-      assert(false);
+      ASSERT(false);
   }
 }

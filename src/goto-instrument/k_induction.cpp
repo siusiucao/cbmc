@@ -65,7 +65,7 @@ void k_inductiont::process_loop(
   const goto_programt::targett loop_head,
   const loopt &loop)
 {
-  assert(!loop.empty());
+  ASSERT(!loop.empty());
 
   // save the loop guard
   const exprt loop_guard=loop_head->guard;
@@ -115,14 +115,14 @@ void k_inductiont::process_loop(
     }
 
     // now turn any assertions in iterations 0..k-1 into assumptions
-    assert(iteration_points.size()==k+1);
+    ASSERT(iteration_points.size()==k+1);
 
-    assert(k>=1);
+    ASSERT(k>=1);
     goto_programt::targett end=iteration_points[k-1];
 
     for(goto_programt::targett t=loop_head; t!=end; t++)
     {
-      assert(t!=goto_function.body.instructions.end());
+      ASSERT(t!=goto_function.body.instructions.end());
       if(t->is_assert())
         t->type=ASSUME;
     }

@@ -117,7 +117,7 @@ const typet &namespace_baset::follow(const typet &src) const
   // let's hope it's not cyclic...
   while(true)
   {
-    assert(symbol->is_type);
+    ASSERT(symbol->is_type);
     if(symbol->type.id()!=ID_symbol)
       return symbol->type;
     symbol=&lookup(symbol->type);
@@ -139,8 +139,8 @@ Function: namespace_baset::follow_tag
 const typet &namespace_baset::follow_tag(const union_tag_typet &src) const
 {
   const symbolt &symbol=lookup(src.get_identifier());
-  assert(symbol.is_type);
-  assert(symbol.type.id()==ID_union || symbol.type.id()==ID_incomplete_union);
+  ASSERT(symbol.is_type);
+  ASSERT(symbol.type.id()==ID_union || symbol.type.id()==ID_incomplete_union);
   return symbol.type;
 }
 
@@ -159,8 +159,8 @@ Function: namespace_baset::follow_tag
 const typet &namespace_baset::follow_tag(const struct_tag_typet &src) const
 {
   const symbolt &symbol=lookup(src.get_identifier());
-  assert(symbol.is_type);
-  assert(symbol.type.id()==ID_struct || symbol.type.id()==ID_incomplete_struct);
+  ASSERT(symbol.is_type);
+  ASSERT(symbol.type.id()==ID_struct || symbol.type.id()==ID_incomplete_struct);
   return symbol.type;
 }
 
@@ -179,8 +179,8 @@ Function: namespace_baset::follow_tag
 const typet &namespace_baset::follow_tag(const c_enum_tag_typet &src) const
 {
   const symbolt &symbol=lookup(src.get_identifier());
-  assert(symbol.is_type);
-  assert(symbol.type.id()==ID_c_enum || symbol.type.id()==ID_incomplete_c_enum);
+  ASSERT(symbol.is_type);
+  ASSERT(symbol.type.id()==ID_c_enum || symbol.type.id()==ID_incomplete_c_enum);
   return symbol.type;
 }
 

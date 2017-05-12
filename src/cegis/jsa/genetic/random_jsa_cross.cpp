@@ -40,7 +40,7 @@ void splice(predicatet::value_type &result, const predicatet::value_type &lhs,
   case 2: result.op1=lhs.op1;
   case 1: result.op0=lhs.op0;
   case 0: break;
-  default: assert(!"Invalid predicate instruction index.");
+  default: ASSERT(!"Invalid predicate instruction index.");
   }
 }
 
@@ -52,7 +52,7 @@ void splice(queryt::value_type &result, const queryt::value_type &lhs,
   case 2: result.op1=lhs.op1;
   case 1: result.op0=lhs.op0;
   case 0: break;
-  default: assert(!"Invalid query instruction index.");
+  default: ASSERT(!"Invalid query instruction index.");
   }
 }
 
@@ -62,7 +62,7 @@ void splice(containert &result, const containert &lhs, const containert &rhs,
 {
   const size_t rhs_size=rhs.size();
   const size_t offset_index=offset / element_size;
-  assert(rhs_size > 0);
+  ASSERT(rhs_size > 0);
   const size_t rhs_offset_index=std::min(offset_index, rhs_size - 1);
   const size_t result_size=offset_index + rhs_size - rhs_offset_index;
   result.resize(result_size);
@@ -77,11 +77,11 @@ void splice(containert &result, const containert &lhs, const containert &rhs,
 
 void check_consistency(const individualt &individual)
 {
-  assert(individual.invariant.size() == 1);
-  assert(individual.predicates.size() >= 1);
+  ASSERT(individual.invariant.size() == 1);
+  ASSERT(individual.predicates.size() >= 1);
   for (const individualt::predicatet &predicate : individual.predicates)
-    assert(predicate.size() >= 1);
-  assert(individual.query.size() >= 1);
+    ASSERT(predicate.size() >= 1);
+  ASSERT(individual.query.size() >= 1);
 }
 
 void cross(individualt &offspring, const individualt &father,
@@ -114,7 +114,7 @@ void cross(individualt &offspring, const individualt &father,
   }
   offspring.predicates=father.predicates;
   const queryt &f_query=father.query;
-  assert(offset < f_query.size() * OPERANDS_PER_JSA_QUERY_INSTRUCTION);
+  ASSERT(offset < f_query.size() * OPERANDS_PER_JSA_QUERY_INSTRUCTION);
   splice(offspring.query, f_query, mother.query, offset, OPERANDS_PER_JSA_QUERY_INSTRUCTION);
   check_consistency(offspring);
 }
@@ -123,7 +123,7 @@ void cross(individualt &offspring, const individualt &father,
 void random_jsa_crosst::operator()(const individualst &parents,
     const individualst &children) const
 {
-  assert(parents.size() >= 2 && children.size() >= 2);
+  ASSERT(parents.size() >= 2 && children.size() >= 2);
   const individualt &father=*parents.front();
   const individualt &mother=*parents[1];
   individualt &son=*children.front();

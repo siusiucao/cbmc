@@ -428,13 +428,13 @@ void cbmc_parse_optionst::get_command_line_options(optionst &options)
       }
       else
       {
-        assert(options.get_bool_option("smt2"));
+        ASSERT(options.get_bool_option("smt2"));
         options.set_option("z3", true), solver_set=true;
       }
     }
   }
   // Either have solver and standard version set, or neither.
-  assert(version_set==solver_set);
+  ASSERT(version_set==solver_set);
 
   if(cmdline.isset("beautify"))
     options.set_option("beautify", true);

@@ -51,7 +51,7 @@ public:
 
   void remove_object()
   {
-    assert(has_object);
+    ASSERT(has_object);
     operands.erase(operands.begin());
     has_object = false;
   }

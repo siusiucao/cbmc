@@ -138,7 +138,7 @@ bvt boolbvt::convert_floatbv_op(const exprt &expr)
     else if(expr.id()==ID_floatbv_rem)
       return float_utils.rem(bv0, bv1);
     else
-      assert(false);
+      ASSERT(false);
   }
   else if(type.id()==ID_vector || type.id()==ID_complex)
   {
@@ -174,10 +174,10 @@ bvt boolbvt::convert_floatbv_op(const exprt &expr)
         else if(expr.id()==ID_floatbv_div)
           tmp_bv=float_utils.div(tmp_bv0, tmp_bv1);
         else
-          assert(false);
+          ASSERT(false);
 
-        assert(tmp_bv.size()==sub_width);
-        assert(i*sub_width+sub_width-1<bv.size());
+        ASSERT(tmp_bv.size()==sub_width);
+        ASSERT(i*sub_width+sub_width-1<bv.size());
         std::copy(tmp_bv.begin(), tmp_bv.end(), bv.begin()+i*sub_width);
       }
 

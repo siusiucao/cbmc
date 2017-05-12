@@ -145,7 +145,7 @@ void rw_range_sett::get_objects_complex(
   const range_spect &size)
 {
   const exprt &op=expr.op0();
-  assert(op.type().id()==ID_complex);
+  ASSERT(op.type().id()==ID_complex);
 
   range_spect sub_size=
     to_range_spect(pointer_offset_bits(op.type().subtype(), ns));
@@ -243,7 +243,7 @@ void rw_range_sett::get_objects_byte_extract(
       be.op().type(),
       be.id()==ID_byte_extract_little_endian,
       ns);
-    assert(index<std::numeric_limits<size_t>::max());
+    ASSERT(index<std::numeric_limits<size_t>::max());
     range_spect offset=range_start + map.map_bit(integer2size_t(index));
     get_objects_rec(mode, be.op(), offset, size);
   }
@@ -301,7 +301,7 @@ void rw_range_sett::get_objects_shift(
     }
     else
     {
-      assert(src_size-dist_r>=0);
+      ASSERT(src_size-dist_r>=0);
       range_spect sh_size=std::min(size, src_size-dist_r);
 
       get_objects_rec(mode, shift.op(), range_start, sh_size);
@@ -1017,7 +1017,7 @@ void goto_rw(goto_programt::const_targett target,
   switch(target->type)
   {
   case NO_INSTRUCTION_TYPE:
-    assert(false);
+    ASSERT(false);
     break;
 
   case GOTO:

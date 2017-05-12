@@ -70,7 +70,7 @@ Function: functionst::add_function_constraints
 exprt functionst::arguments_equal(const exprt::operandst &o1,
                                   const exprt::operandst &o2)
 {
-  assert(o1.size()==o2.size());
+  ASSERT(o1.size()==o2.size());
 
   if(o1.empty())
     return true_exprt();

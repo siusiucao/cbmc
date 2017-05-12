@@ -40,7 +40,7 @@ codet cpp_typecheckt::cpp_constructor(
   typet tmp_type(object_tc.type());
   follow_symbol(tmp_type);
 
-  assert(!is_reference(tmp_type));
+  ASSERT(!is_reference(tmp_type));
 
   if(tmp_type.id()==ID_array)
   {
@@ -58,7 +58,7 @@ codet cpp_typecheckt::cpp_constructor(
       throw 0;
     }
 
-    assert(operands.empty() || operands.size()==1);
+    ASSERT(operands.empty() || operands.size()==1);
 
     if(operands.empty() && cpp_is_pod(tmp_type))
     {
@@ -187,7 +187,7 @@ codet cpp_typecheckt::cpp_constructor(
   }
   else if(tmp_type.id()==ID_union)
   {
-    assert(0); // Todo: union
+    ASSERT(0); // Todo: union
   }
   else if(tmp_type.id()==ID_struct)
   {
@@ -260,7 +260,7 @@ codet cpp_typecheckt::cpp_constructor(
     }
 
     // there is always a constructor for non-PODs
-    assert(constructor_name!="");
+    ASSERT(constructor_name!="");
 
     irept cpp_name(ID_cpp_name);
     cpp_name.get_sub().push_back(irept(ID_name));
@@ -279,19 +279,19 @@ codet cpp_typecheckt::cpp_constructor(
       function_call.op1().copy_to_operands(*it);
 
     typecheck_side_effect_function_call(function_call);
-    assert(function_call.get(ID_statement)==ID_temporary_object);
+    ASSERT(function_call.get(ID_statement)==ID_temporary_object);
 
     exprt &initializer =
       static_cast<exprt &>(function_call.add(ID_initializer));
 
-    assert(initializer.id()==ID_code &&
+    ASSERT(initializer.id()==ID_code &&
            initializer.get(ID_statement)==ID_expression);
 
     side_effect_expr_function_callt &func_ini=
       to_side_effect_expr_function_call(initializer.op0());
 
     exprt &tmp_this=func_ini.arguments().front();
-    assert(tmp_this.id()==ID_address_of
+    ASSERT(tmp_this.id()==ID_address_of
            && tmp_this.op0().id()=="new_object");
 
     exprt address_of(ID_address_of, typet(ID_pointer));
@@ -308,7 +308,7 @@ codet cpp_typecheckt::cpp_constructor(
     }
   }
   else
-    assert(false);
+    ASSERT(false);
 
   codet nil;
   nil.make_nil();

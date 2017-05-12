@@ -119,7 +119,7 @@ bool read_bin_goto_object_v3(
          rev_target_map.insert(
            rev_target_map.end(),
            std::make_pair(instruction.target_number, itarget))->second!=itarget)
-        assert(false);
+        ASSERT(false);
 
       std::size_t t_count = irepconverter.read_gb_word(in); // # of targets
       for(std::size_t i=0; i<t_count; i++)
@@ -152,7 +152,7 @@ bool read_bin_goto_object_v3(
       {
         unsigned n=*nit;
         rev_target_mapt::const_iterator entry=rev_target_map.find(n);
-        assert(entry!=rev_target_map.end());
+        ASSERT(entry!=rev_target_map.end());
         ins->targets.push_back(entry->second);
       }
     }

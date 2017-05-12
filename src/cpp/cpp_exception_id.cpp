@@ -121,6 +121,6 @@ irep_idt cpp_exception_id(
 {
   std::vector<irep_idt> ids;
   cpp_exception_list_rec(src, ns, "", ids);
-  assert(!ids.empty());
+  ASSERT(!ids.empty());
   return ids.front();
 }

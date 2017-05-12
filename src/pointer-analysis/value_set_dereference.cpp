@@ -804,7 +804,7 @@ inline static unsigned bv_width(
   if(type.id()==ID_c_enum_tag)
   {
     const typet &t=ns.follow_tag(to_c_enum_tag_type(type));
-    assert(t.id()==ID_c_enum);
+    ASSERT(t.id()==ID_c_enum);
     return bv_width(t.subtype(), ns);
   }
 

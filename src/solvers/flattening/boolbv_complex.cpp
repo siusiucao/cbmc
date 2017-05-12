@@ -80,7 +80,7 @@ bvt boolbvt::convert_complex_real(const exprt &expr)
 
   bvt bv=convert_bv(expr.op0());
 
-  assert(bv.size()==width*2);
+  ASSERT(bv.size()==width*2);
   bv.resize(width); // chop
 
   return bv;
@@ -110,7 +110,7 @@ bvt boolbvt::convert_complex_imag(const exprt &expr)
 
   bvt bv=convert_bv(expr.op0());
 
-  assert(bv.size()==width*2);
+  ASSERT(bv.size()==width*2);
   bv.erase(bv.begin(), bv.begin()+width);
 
   return bv;

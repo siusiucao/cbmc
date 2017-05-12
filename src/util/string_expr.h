@@ -129,15 +129,15 @@ public:
 
 inline string_exprt &to_string_expr(exprt &expr)
 {
-  assert(expr.id()==ID_struct);
-  assert(expr.operands().size()==2);
+  ASSERT(expr.id()==ID_struct);
+  ASSERT(expr.operands().size()==2);
   return static_cast<string_exprt &>(expr);
 }
 
 inline const string_exprt &to_string_expr(const exprt &expr)
 {
-  assert(expr.id()==ID_struct);
-  assert(expr.operands().size()==2);
+  ASSERT(expr.id()==ID_struct);
+  ASSERT(expr.operands().size()==2);
   return static_cast<const string_exprt &>(expr);
 }
 

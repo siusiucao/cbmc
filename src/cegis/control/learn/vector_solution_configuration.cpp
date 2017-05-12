@@ -62,7 +62,7 @@ const array_exprt &find_solution(const goto_tracet &trace)
 {
   const goto_tracet::stepst &steps=trace.steps;
   const auto it=std::find_if(steps.begin(), steps.end(), is_solution);
-  assert(steps.end() != it);
+  ASSERT(steps.end() != it);
   return to_array_expr(it->full_lhs_value);
 }
 }

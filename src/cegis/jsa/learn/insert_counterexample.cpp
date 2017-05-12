@@ -76,9 +76,9 @@ void add_array_declarations(jsa_programt &program,
     pos=body.insert_after(pos);
     declare_jsa_meta_variable(st, pos, base_name, array_type);
     const array_valuest::const_iterator array_val=array_values.find(loc_id);
-    assert(array_values.end() != array_val);
+    ASSERT(array_values.end() != array_val);
     const array_exprt &array_expr=array_val->second;
-    assert(array_expr.operands().size() == ces.size());
+    ASSERT(array_expr.operands().size() == ces.size());
     pos=assign_jsa_meta_variable(st, gf, pos, base_name, array_val->second);
   }
 }
@@ -141,7 +141,7 @@ void assign_ce_values(jsa_programt &prog)
   goto_functionst &gf=prog.gf;
   for (const goto_programt::targett &pos : prog.counterexample_locations)
   {
-    assert(pos->labels.size() == 1u);
+    ASSERT(pos->labels.size() == 1u);
     const index_exprt value(get_array_val_expr(st, pos->labels.front()));
     switch (pos->type)
     {
@@ -153,7 +153,7 @@ void assign_ce_values(jsa_programt &prog)
           st.lookup(get_affected_variable(*pos)).symbol_expr(), value);
       break;
     default:
-      assert(!"Unsupported counterexample location type.");
+      ASSERT(!"Unsupported counterexample location type.");
     }
   }
 }
@@ -162,8 +162,8 @@ void assign_ce_values(jsa_programt &prog)
 void insert_counterexamples(jsa_programt &program,
     const jsa_counterexamplest &ces)
 {
-  assert(!ces.empty());
-  assert(ces.front().size() == program.counterexample_locations.size());
+  ASSERT(!ces.empty());
+  ASSERT(ces.front().size() == program.counterexample_locations.size());
   add_array_declarations(program, ces);
   add_array_index(program);
   add_ce_goto(program, ces.size());

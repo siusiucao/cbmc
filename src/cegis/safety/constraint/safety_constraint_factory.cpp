@@ -39,7 +39,7 @@ notequal_exprt as_bool(const std::string &base_name)
 
 exprt create_safety_constraint(const size_t number_of_loops)
 {
-  assert(number_of_loops >= 1 && "At least one loop required.");
+  ASSERT(number_of_loops >= 1 && "At least one loop required.");
   const constant_exprt min(get_min_value());
   const notequal_exprt A_x(as_bool(get_Ax()));
   and_exprt root;

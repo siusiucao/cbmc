@@ -33,7 +33,7 @@ public:
     if(result.second) // inserted?
     {
       this->push_back(a);
-      assert(this->size()==numbers.size());
+      ASSERT(this->size()==numbers.size());
     }
 
     return (result.first)->second;
@@ -86,7 +86,7 @@ public:
     if(result.second) // inserted?
     {
       this->push_back(a);
-      assert(this->size()==numbers.size());
+      ASSERT(this->size()==numbers.size());
     }
 
     return (result.first)->second;

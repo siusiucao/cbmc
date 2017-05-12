@@ -120,7 +120,7 @@ void prop_conv_storet::constraintt::replay(prop_convt &dest) const
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }
 
@@ -151,6 +151,6 @@ void prop_conv_storet::constraintt::print(std::ostream &out) const
     break;
 
   default:
-    assert(false);
+    ASSERT(false);
   }
 }

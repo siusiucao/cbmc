@@ -103,7 +103,7 @@ bvt boolbvt::convert_case(const exprt &expr)
       break;
 
     default:
-      assert(false);
+      ASSERT(false);
     }
   }
 

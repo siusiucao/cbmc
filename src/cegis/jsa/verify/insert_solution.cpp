@@ -31,7 +31,7 @@ namespace
 {
 void add_predicates(jsa_programt &prog, const jsa_solutiont::predicatest &preds)
 {
-  assert(!preds.empty());
+  ASSERT(!preds.empty());
   symbol_tablet &st=prog.st;
   goto_functionst &gf=prog.gf;
   goto_programt &body=get_body(gf, JSA_PRED_EXEC);
@@ -55,7 +55,7 @@ void add_predicates(jsa_programt &prog, const jsa_solutiont::predicatest &preds)
   size_t idx=0;
   for (const jsa_solutiont::predicatest::value_type &pred : preds)
   {
-    assert(!pred.empty());
+    ASSERT(!pred.empty());
     pos=body.insert_after(pos);
     pos->type=goto_program_instruction_typet::GOTO;
     pos->source_location=jsa_builtin_source_location();
@@ -74,7 +74,7 @@ void add_predicates(jsa_programt &prog, const jsa_solutiont::predicatest &preds)
     pos->source_location=jsa_builtin_source_location();
     pos->targets.push_back(end);
   }
-  assert(pred_begins.size() == preds.size());
+  ASSERT(pred_begins.size() == preds.size());
   for (auto it=pred_begins.begin(); it != std::prev(pred_begins.end()); ++it)
   {
     const goto_programt::targett &pos=*it;
@@ -90,7 +90,7 @@ void add_predicates(jsa_programt &prog, const jsa_solutiont::predicatest &preds)
 void insert_invariant(const symbol_tablet &st, const goto_functionst &gf, goto_programt &body,
     goto_programt::targett pos, const goto_programt::instructionst &prog)
 {
-  assert(prog.size() == 1);
+  ASSERT(prog.size() == 1);
   const symbol_exprt v(st.lookup(get_affected_variable(*pos)).symbol_expr());
   pos=body.insert_after(pos);
   pos->source_location=jsa_builtin_source_location();
@@ -109,7 +109,7 @@ const exprt &get_iterator_arg(const codet &code)
 {
   const code_function_callt &call=to_code_function_call(code);
   const code_function_callt::argumentst &args=call.arguments();
-  assert(args.size() >= 3);
+  ASSERT(args.size() >= 3);
   return args.at(2);
 }
 
@@ -117,7 +117,7 @@ void insert_sync_call(const symbol_tablet &st, const goto_functionst &gf,
     goto_programt &body, goto_programt::targett pos,
     const goto_programt::instructionst &query)
 {
-  assert(!query.empty());
+  ASSERT(!query.empty());
   if (query.empty()) return;
   const exprt &it_arg=get_iterator_arg(query.front().code);
   code_function_callt sync;

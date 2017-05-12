@@ -122,7 +122,7 @@ static void remove_vector(exprt &expr)
       mp_integer dimension;
       to_integer(array_type.size(), dimension);
 
-      assert(expr.operands().size()==2);
+      ASSERT(expr.operands().size()==2);
       const typet subtype=array_type.subtype();
       // do component-wise:
       // x+y -> vector(x[0]+y[0],x[1]+y[1],...)
@@ -148,7 +148,7 @@ static void remove_vector(exprt &expr)
       mp_integer dimension;
       to_integer(array_type.size(), dimension);
 
-      assert(expr.operands().size()==1);
+      ASSERT(expr.operands().size()==1);
       const typet subtype=array_type.subtype();
       // do component-wise:
       // -x -> vector(-x[0],-x[1],...)

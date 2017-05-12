@@ -31,7 +31,7 @@ task_poolt::~task_poolt()
 }
 
 #ifdef _WIN32
-#define NOT_SUPPORTED() assert(!"task_poolt not supported on Windows.")
+#define NOT_SUPPORTED() ASSERT(!"task_poolt not supported on Windows.")
 #endif
 
 namespace
@@ -163,11 +163,11 @@ void task_poolt::join_all()
   for (size_t i=0; i < num_children; ++i)
   {
     const pid_t pid=waitpid(-1, &status, 0);
-    assert(pid > 0);
+    ASSERT(pid > 0);
     execute_and_remove(handlers, pid, status);
   }
   task_ids.clear();
-  assert(handlers.empty());
+  ASSERT(handlers.empty());
 #else
   NOT_SUPPORTED();
 #endif
