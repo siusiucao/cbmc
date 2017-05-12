@@ -134,8 +134,11 @@ void check_invariant(const char * const file,
 
 // The following should not be used in new code and are only intended
 // to migrate documentation and "error handling" in older code
-#define TODO           INVARIANT(0, "Todo");
-#define UNIMPLEMENTED  INVARIANT(0, "Unimplemented");
-#define UNHANDLED_CASE INVARIANT(0, "Unhandled case");
+#define TODO           INVARIANT(0, "Todo")
+#define UNIMPLEMENTED  INVARIANT(0, "Unimplemented")
+#define UNHANDLED_CASE INVARIANT(0, "Unhandled case")
+
+#define ASSERT(C)      INVARIANT((C), "Converted assertion")
+#define THROWZERO      INVARIANT(0, "Converted throw 0")
 
 #endif // CPROVER_UTIL_INVARIANT_H
