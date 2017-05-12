@@ -451,7 +451,7 @@ void linkingt::link_error(
           << "' " << new_symbol.location << '\n'
           << type_to_string_verbose(ns, new_symbol) << eom;
 
-  throw 0;
+  THROWZERO;
 }
 
 /*******************************************************************\

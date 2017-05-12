@@ -140,7 +140,7 @@ symbolt &cpp_declarator_convertert::convert(
                               << "' not found in scope `"
                               << scope->identifier << "'"
                               << messaget::eom;
-        throw 0;
+        THROWZERO;
       }
     }
 
@@ -169,7 +169,7 @@ symbolt &cpp_declarator_convertert::convert(
         cpp_typecheck.error().source_location=name.source_location();
         cpp_typecheck.error() << "error: expected type"
                               << messaget::eom;
-        throw 0;
+        THROWZERO;
       }
 
       irep_idt identifier=symbol_expr.type().get(ID_identifier);
@@ -209,7 +209,7 @@ symbolt &cpp_declarator_convertert::convert(
       cpp_typecheck.error().source_location=declarator.name().source_location();
       cpp_typecheck.error() << "function must have return type"
                             << messaget::eom;
-      throw 0;
+      THROWZERO;
     }
 
     // already there?
@@ -307,7 +307,7 @@ void cpp_declarator_convertert::combine_types(
                                   << cpp_typecheck.to_string(
                                        decl_parameter.type())
                                   << messaget::eom;
-            throw 0;
+            THROWZERO;
           }
         }
 
@@ -343,7 +343,7 @@ void cpp_declarator_convertert::combine_types(
                         << "\n     new: "
                         << cpp_typecheck.to_string(final_type)
                         << messaget::eom;
-  throw 0;
+  THROWZERO;
 }
 
 /*******************************************************************\
@@ -426,7 +426,7 @@ void cpp_declarator_convertert::handle_initializer(
                         << symbol.display_name()
                         << "' already has an initializer";
 
-    throw 0;
+    THROWZERO;
     #endif
   }
 }
@@ -565,7 +565,7 @@ symbolt &cpp_declarator_convertert::convert_new_symbol(
           cpp_typecheck.error().source_location=storage_spec.location();
           cpp_typecheck.error() << "external storage not permitted here"
                                 << messaget::eom;
-          throw 0;
+          THROWZERO;
         }
       }
     }
@@ -583,7 +583,7 @@ symbolt &cpp_declarator_convertert::convert_new_symbol(
     cpp_typecheck.error()
       << "cpp_typecheckt::convert_declarator: symbol_table.move() failed"
       << messaget::eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(!is_code)
@@ -608,7 +608,7 @@ symbolt &cpp_declarator_convertert::convert_new_symbol(
         cpp_typecheck.error() << "`" << base_name
                               << "' already in scope"
                               << messaget::eom;
-        throw 0;
+        THROWZERO;
       }
     }
   }
@@ -718,7 +718,7 @@ void cpp_declarator_convertert::main_function_rules(
     {
       cpp_typecheck.error().source_location=symbol.location;
       cpp_typecheck.error() << "main must be function" << messaget::eom;
-      throw 0;
+      THROWZERO;
     }
 
     const typet &return_type=

@@ -42,7 +42,7 @@ void cpp_typecheckt::convert_initializer(symbolt &symbol)
       error().source_location=symbol.location;
       error() << "expected type as initializer for `"
               << symbol.base_name << "'" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     typecheck_type(symbol.value.type());
@@ -60,7 +60,7 @@ void cpp_typecheckt::convert_initializer(symbolt &symbol)
       error() << "`" << symbol.base_name
               << "' is declared as reference but is not initialized"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // done
@@ -136,7 +136,7 @@ void cpp_typecheckt::convert_initializer(symbolt &symbol)
         error() << "conversion from `"
                 << to_string(symbol.value.type()) << "' to `"
                 << to_string(symbol.type) << "' " << eom;
-        throw 0;
+        THROWZERO;
       }
 
       return;
@@ -317,7 +317,7 @@ void cpp_typecheckt::zero_initializer(
   {
     error().source_location=source_location;
     error() << "cannot zero-initialize incomplete compound" << eom;
-    throw 0;
+    THROWZERO;
   }
   else
   {

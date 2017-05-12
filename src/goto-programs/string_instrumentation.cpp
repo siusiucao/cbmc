@@ -398,7 +398,7 @@ void string_instrumentationt::do_sprintf(
   {
     error().source_location=target->source_location;
     error() << "sprintf expected to have two or more arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -453,7 +453,7 @@ void string_instrumentationt::do_snprintf(
     error().source_location=target->source_location;
     error() << "snprintf expected to have three or more arguments"
             << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -507,7 +507,7 @@ void string_instrumentationt::do_fscanf(
   {
     error().source_location=target->source_location;
     error() << "fscanf expected to have two or more arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -842,7 +842,7 @@ void string_instrumentationt::do_strchr(
   {
     error().source_location=target->source_location;
     error() << "strchr expected to have two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -881,7 +881,7 @@ void string_instrumentationt::do_strrchr(
   {
     error().source_location=target->source_location;
     error() << "strrchr expected to have two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -920,7 +920,7 @@ void string_instrumentationt::do_strstr(
   {
     error().source_location=target->source_location;
     error() << "strstr expected to have two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -966,7 +966,7 @@ void string_instrumentationt::do_strtok(
   {
     error().source_location=target->source_location;
     error() << "strtok expected to have two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;

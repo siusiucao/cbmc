@@ -302,7 +302,7 @@ void cpp_typecheckt::typecheck_member_initializer(codet &code)
         str << "error: constructor of `"
             << to_string(symbol_expr)
             << "' is not accessible";
-        throw 0;
+        THROWZERO;
         #endif
       }
     }
@@ -365,7 +365,7 @@ void cpp_typecheckt::typecheck_member_initializer(codet &code)
           error().source_location=code.find_source_location();
           error() << " reference `" << to_string(symbol_expr)
                   << "' expects one initializer" << eom;
-          throw 0;
+          THROWZERO;
         }
 
         reference_initializer(code.op0(), symbol_expr.type());
@@ -408,7 +408,7 @@ void cpp_typecheckt::typecheck_member_initializer(codet &code)
       error().source_location=code.find_source_location();
       error() << "invalid member initializer `"
               << to_string(symbol_expr) << "'" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 }
@@ -431,7 +431,7 @@ void cpp_typecheckt::typecheck_decl(codet &code)
   {
     error().source_location=code.find_source_location();
     error() << "declaration expected to have one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   ASSERT(code.op0().id()==ID_cpp_declaration);
@@ -454,7 +454,7 @@ void cpp_typecheckt::typecheck_decl(codet &code)
       error().source_location=code.find_source_location();
       error() << "declaration statement does not declare anything"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     convert_anonymous_union(declaration, code);
@@ -557,7 +557,7 @@ void cpp_typecheckt::typecheck_assign(codet &code)
     error().source_location=code.find_source_location();
     error() << "assignment statement expected to have two operands"
             << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // turn into a sideeffect

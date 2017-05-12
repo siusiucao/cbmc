@@ -67,7 +67,7 @@ bvt boolbvt::convert_member(const member_exprt &expr)
           error() << "member: component type does not match: "
                   << subtype.pretty() << " vs. "
                   << expr.type().pretty() << eom;
-          throw 0;
+          THROWZERO;
         }
 
         bvt bv;
@@ -86,12 +86,12 @@ bvt boolbvt::convert_member(const member_exprt &expr)
     error().source_location=expr.find_source_location();
     error() << "component " << component_name
             << " not found in structure" << eom;
-    throw 0;
+    THROWZERO;
   }
   else
   {
     error().source_location=expr.find_source_location();
     error() << "member takes struct or union operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 }

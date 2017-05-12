@@ -146,7 +146,7 @@ exprt::operandst java_bytecode_convert_methodt::pop(std::size_t n)
   if(stack.size()<n)
   {
     error() << "malformed bytecode (pop too high)" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   exprt::operandst operands;
@@ -494,7 +494,7 @@ const bytecode_infot &java_bytecode_convert_methodt::get_bytecode_info(
 
   error() << "failed to find bytecode mnemonic `"
           << statement << '\'' << eom;
-  throw 0;
+  THROWZERO;
 }
 
 static irep_idt get_if_cmp_operator(const irep_idt &stmt)
@@ -1686,7 +1686,7 @@ codet java_bytecode_convert_methodt::convert_instructions(
       else
       {
         error() << "unexpected ldc argument" << eom;
-        throw 0;
+        THROWZERO;
       }
     }
     else if(statement=="goto" || statement=="goto_w")

@@ -948,7 +948,7 @@ void goto_instrument_parse_optionst::get_goto_program()
 
   if(read_goto_binary(cmdline.args[0],
     symbol_table, goto_functions, get_message_handler()))
-    throw 0;
+    THROWZERO;
 
   config.set(cmdline);
   config.set_from_symbol_table(symbol_table);
@@ -1016,7 +1016,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
         goto_functions,
         cmdline.get_value("skip-loops"),
         get_message_handler()))
-      throw 0;
+      THROWZERO;
   }
 
   namespacet ns(symbol_table);
@@ -1034,7 +1034,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
         goto_functions,
         max_argc,
         get_message_handler()))
-      throw 0;
+      THROWZERO;
   }
 
   // we add the library in some cases, as some analyses benefit

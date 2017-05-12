@@ -105,7 +105,7 @@ void goto_convertt::do_function_call(
     error().source_location=function.find_source_location();
     error() << "unexpected function argument: " << new_function.id()
             << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 

@@ -42,7 +42,7 @@ bvt boolbvt::convert_extractbits(const extractbits_exprt &expr)
   {
     error().source_location=expr.find_source_location();
     error() << "extractbits takes three operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   mp_integer o1, o2;
@@ -66,7 +66,7 @@ bvt boolbvt::convert_extractbits(const extractbits_exprt &expr)
     error().source_location=expr.find_source_location();
     error() << "extractbits: third operand out of range: "
             << expr.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(o2>o1)
@@ -79,7 +79,7 @@ bvt boolbvt::convert_extractbits(const extractbits_exprt &expr)
     error().source_location=expr.find_source_location();
     error() << "extractbits: wrong width (expected " << (o1-o2+1)
             << " but got " << width << "): " << expr.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   std::size_t offset=integer2unsigned(o2);

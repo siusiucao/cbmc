@@ -169,7 +169,7 @@ void goto_fence_inserter_parse_optionst::get_goto_program(
 
   if(read_goto_binary(cmdline.args[0],
     symbol_table, goto_functions, get_message_handler()))
-    throw 0;
+    THROWZERO;
 
   config.set_from_symbol_table(symbol_table);
 }

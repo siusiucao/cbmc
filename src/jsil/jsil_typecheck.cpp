@@ -121,7 +121,7 @@ void jsil_typecheckt::make_type_compatible(
   {
     err_location(expr);
     error() << "make_type_compatible got empty type: " << expr.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(expr.type().id().empty() || expr.type().is_nil())
@@ -140,7 +140,7 @@ void jsil_typecheckt::make_type_compatible(
               << expr.pretty() << " with type "
               << expr.type().pretty()
               << "; required type " << type.pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
   }
   else if(!jsil_is_subtype(type, expr.type()))
@@ -195,7 +195,7 @@ void jsil_typecheckt::typecheck_type(typet &type)
       {
         error() << "failed to add parameter symbol `"
                 << new_symbol.name << "' in the symbol table" << eom;
-        throw 0;
+        THROWZERO;
       }
     }
   }
@@ -258,7 +258,7 @@ void jsil_typecheckt::typecheck_expr_main(exprt &expr)
   {
     err_location(expr);
     error() << "typecheck_expr_main got code: " << expr.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
   else if(expr.id()==ID_symbol)
     typecheck_symbol_expr(to_symbol_expr(expr));
@@ -364,7 +364,7 @@ void jsil_typecheckt::typecheck_expr_main(exprt &expr)
     {
       err_location(expr);
       error() << "unexpected expression: " << expr.pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 }
@@ -431,7 +431,7 @@ void jsil_typecheckt::typecheck_expr_proto_field(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_object_type(), true);
@@ -459,7 +459,7 @@ void jsil_typecheckt::typecheck_expr_proto_obj(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands";
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_object_type(), true);
@@ -487,7 +487,7 @@ void jsil_typecheckt::typecheck_expr_delete(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_object_type(), true);
@@ -515,7 +515,7 @@ void jsil_typecheckt::typecheck_expr_index(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_object_type(), true);
@@ -547,7 +547,7 @@ void jsil_typecheckt::typecheck_expr_has_field(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_object_type(), true);
@@ -575,7 +575,7 @@ void jsil_typecheckt::typecheck_expr_field(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects single operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_reference_type(), true);
@@ -602,7 +602,7 @@ void jsil_typecheckt::typecheck_expr_base(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects single operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_reference_type(), true);
@@ -629,7 +629,7 @@ void jsil_typecheckt::typecheck_expr_ref(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects three operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_value_type(), true);
@@ -648,7 +648,7 @@ void jsil_typecheckt::typecheck_expr_ref(exprt &expr)
     error() << "operator `" << expr.id()
             << "' expects reference type in the third parameter. Got:"
             << operand3.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 
@@ -671,7 +671,7 @@ void jsil_typecheckt::typecheck_expr_concatenation(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), string_typet(), true);
@@ -699,7 +699,7 @@ void jsil_typecheckt::typecheck_expr_subtype(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), jsil_kind(), true);
@@ -727,7 +727,7 @@ void jsil_typecheckt::typecheck_expr_binary_boolean(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), bool_typet(), true);
@@ -755,7 +755,7 @@ void jsil_typecheckt::typecheck_expr_binary_arith(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
 
@@ -784,7 +784,7 @@ void jsil_typecheckt::typecheck_exp_binary_equal(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // operands can be of any types
@@ -811,7 +811,7 @@ void jsil_typecheckt::typecheck_expr_binary_compare(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), floatbv_typet(), true);
@@ -839,7 +839,7 @@ void jsil_typecheckt::typecheck_expr_unary_boolean(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), bool_typet(), true);
@@ -866,7 +866,7 @@ void jsil_typecheckt::typecheck_expr_unary_string(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), string_typet(), true);
@@ -893,7 +893,7 @@ void jsil_typecheckt::typecheck_expr_unary_num(exprt &expr)
     err_location(expr);
     error() << "operator `" << expr.id()
             << "' expects one operand" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   make_type_compatible(expr.op0(), floatbv_typet(), true);
@@ -973,7 +973,7 @@ void jsil_typecheckt::typecheck_symbol_expr(symbol_exprt &symbol_expr)
         error() << "failed to add symbol `"
                 << new_symbol.name << "' in the symbol table"
                 << eom;
-        throw 0;
+        THROWZERO;
       }
     }
     else
@@ -1045,7 +1045,7 @@ void jsil_typecheckt::typecheck_code(codet &code)
   {
     err_location(code);
     error() << "unexpected statement: " << statement << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 

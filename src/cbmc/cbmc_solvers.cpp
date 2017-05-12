@@ -278,7 +278,7 @@ cbmc_solverst::solvert* cbmc_solverst::get_smt1(smt1_dect::solvert solver)
     if(solver==smt1_dect::GENERIC)
     {
       error() << "please use --outfile" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     smt1_dect *smt1_dec=
@@ -317,7 +317,7 @@ cbmc_solverst::solvert* cbmc_solverst::get_smt1(smt1_dect::solvert solver)
     if(!out)
     {
       error() << "failed to open " << filename << eom;
-      throw 0;
+      THROWZERO;
     }
 
     smt1_convt *smt1_conv=
@@ -358,7 +358,7 @@ cbmc_solverst::solvert* cbmc_solverst::get_smt2(smt2_dect::solvert solver)
     if(solver==smt2_dect::GENERIC)
     {
       error() << "please use --outfile" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     smt2_dect *smt2_dec=
@@ -403,7 +403,7 @@ cbmc_solverst::solvert* cbmc_solverst::get_smt2(smt2_dect::solvert solver)
     if(!*out)
     {
       error() << "failed to open " << filename << eom;
-      throw 0;
+      THROWZERO;
     }
 
     smt2_convt *smt2_conv=
@@ -441,7 +441,7 @@ void cbmc_solverst::no_beautification()
   if(options.get_bool_option("beautify"))
   {
     error() << "sorry, this solver does not support beautification" << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 
@@ -464,6 +464,6 @@ void cbmc_solverst::no_incremental_check()
      options.get_option("incremental-check")!="")
   {
     error() << "sorry, this solver does not support incremental solving" << eom;
-    throw 0;
+    THROWZERO;
   }
 }

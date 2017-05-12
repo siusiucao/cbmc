@@ -146,7 +146,7 @@ void goto_convertt::rewrite_boolean(exprt &expr)
     error().source_location=expr.find_source_location();
     error() << "`" << expr.id() << "' must be Boolean, but got "
             << expr.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // re-write "a && b" into nested a?b:0
@@ -174,7 +174,7 @@ void goto_convertt::rewrite_boolean(exprt &expr)
       error().source_location=expr.find_source_location();
       error() << "`" << expr.id() << "' takes Boolean "
               << "operands only, but got " << op.pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(expr.id()==ID_and)
@@ -247,7 +247,7 @@ void goto_convertt::clean_expr(
       error().source_location=if_expr.find_source_location();
       error() << "first argument of `if' must be boolean, but got "
               << if_expr.cond().pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
 
     const source_locationt source_location=expr.find_source_location();
@@ -374,7 +374,7 @@ void goto_convertt::clean_expr(
     {
       error().source_location=expr.find_source_location();
       error() << "typecast takes one argument" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // preserve 'result_is_used'
@@ -453,7 +453,7 @@ void goto_convertt::clean_expr(
       error().source_location=expr.find_source_location();
       error() << "no side-effects in quantified expressions allowed"
               << eom;
-      throw 0;
+      THROWZERO;
     }
     return;
   }
@@ -576,7 +576,7 @@ void goto_convertt::remove_gcc_conditional_expression(
   {
     error().source_location=expr.find_source_location();
     error() << "conditional_expression takes two operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // first remove side-effects from condition

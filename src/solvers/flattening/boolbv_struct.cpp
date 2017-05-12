@@ -35,7 +35,7 @@ bvt boolbvt::convert_struct(const struct_exprt &expr)
   {
     error().source_location=expr.find_source_location();
     error() << "struct: wrong number of arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   bvt bv;
@@ -55,7 +55,7 @@ bvt boolbvt::convert_struct(const struct_exprt &expr)
       error() << "struct: component type does not match: "
               << subtype.pretty() << " vs. "
               << op.type().pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
 
     std::size_t subtype_width=boolbv_width(subtype);

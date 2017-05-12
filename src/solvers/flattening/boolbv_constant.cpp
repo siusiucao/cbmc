@@ -45,7 +45,7 @@ bvt boolbvt::convert_constant(const constant_exprt &expr)
       {
         error().source_location=expr.find_source_location();
         error() << "convert_constant: unexpected operand width" << eom;
-        throw 0;
+        THROWZERO;
       }
 
       for(std::size_t j=0; j<op_width; j++)
@@ -96,7 +96,7 @@ bvt boolbvt::convert_constant(const constant_exprt &expr)
       error().source_location=expr.find_source_location();
       error() << "wrong value length in constant: "
               << expr.pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
 
     for(std::size_t i=0; i<width; i++)
@@ -126,7 +126,7 @@ bvt boolbvt::convert_constant(const constant_exprt &expr)
       error().source_location=expr.find_source_location();
       error() << "wrong value length in constant: "
               << expr.pretty() << eom;
-      throw 0;
+      THROWZERO;
     }
 
     for(std::size_t i=0; i<binary.size(); i++)
@@ -160,7 +160,7 @@ bvt boolbvt::convert_constant(const constant_exprt &expr)
         error().source_location=expr.find_source_location();
         error() << "unknown character in Verilog constant:"
                 << expr.pretty() << eom;
-        throw 0;
+        THROWZERO;
       }
     }
 

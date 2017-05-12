@@ -67,7 +67,7 @@ bool jsil_convertt::operator()(const jsil_parse_treet &parse_tree)
     if(symbol_table.add(new_symbol))
     {
       error() << "duplicate symbol " << new_symbol.name << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 

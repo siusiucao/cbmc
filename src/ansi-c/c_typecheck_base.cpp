@@ -71,7 +71,7 @@ void c_typecheck_baset::move_symbol(symbolt &symbol, symbolt *&new_symbol)
     error().source_location=symbol.location;
     error() << "failed to move symbol `" << symbol.name
             << "' into symbol table" << eom;
-    throw 0;
+    THROWZERO;
   }
 }
 
@@ -117,7 +117,7 @@ void c_typecheck_baset::typecheck_symbol(symbolt &symbol)
   {
     error().source_location=symbol.value.find_source_location();
     error() << "only functions can have a function body" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // set the pretty name
@@ -163,7 +163,7 @@ void c_typecheck_baset::typecheck_symbol(symbolt &symbol)
       error().source_location=symbol.location;
       error() << "redeclaration of `" << symbol.display_name()
               << "' as a different kind of symbol" << eom;
-      throw 0;
+      THROWZERO;
     }
 
     if(symbol.is_type)
@@ -277,7 +277,7 @@ void c_typecheck_baset::typecheck_redefinition_type(
       error() << "conflicting definition of type symbol `"
               << new_symbol.display_name()
               << '\'' << eom;
-      throw 0;
+      THROWZERO;
     }
   }
   else
@@ -298,7 +298,7 @@ void c_typecheck_baset::typecheck_redefinition_type(
         error() << "conflicting definition of tag symbol `"
                 << new_symbol.display_name()
                 << '\'' << eom;
-        throw 0;
+        THROWZERO;
       }
     }
     else if(config.ansi_c.os==configt::ansi_ct::ost::OS_WIN &&
@@ -325,7 +325,7 @@ void c_typecheck_baset::typecheck_redefinition_type(
                 << new_symbol.display_name() << "' defined twice:\n"
                 << "Original: " << to_string(old_symbol.type) << "\n"
                 << "     New: " << to_string(new_symbol.type) << eom;
-        throw 0;
+        THROWZERO;
       }
     }
   }
@@ -376,7 +376,7 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
       error().source_location=new_symbol.location;
       error() << "function type not allowed for K&R function parameter"
               << eom;
-      throw 0;
+      THROWZERO;
     }
 
     // fix up old symbol -- we now got the type
@@ -398,7 +398,7 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
               << "' redefined with a different type:\n"
               << "Original: " << to_string(old_symbol.type) << "\n"
               << "     New: " << to_string(new_symbol.type) << eom;
-      throw 0;
+      THROWZERO;
     }
 
     code_typet &old_ct=to_code_type(old_symbol.type);
@@ -453,7 +453,7 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
           error().source_location=new_symbol.location;
           error() << "function body `" << new_symbol.display_name()
                   << "' defined twice" << eom;
-          throw 0;
+          THROWZERO;
         }
       }
       else if(inlined)
@@ -510,7 +510,7 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
           error() << "typecheck_redefinition_non_type: "
                   << "failed to find symbol `" << identifier << "'"
                   << eom;
-          throw 0;
+          THROWZERO;
         }
 
         symbolt &symbol=s_it->second;
@@ -555,7 +555,7 @@ void c_typecheck_baset::typecheck_redefinition_non_type(
               << "' redefined with a different type:\n"
               << "Original: " << to_string(old_symbol.type) << "\n"
               << "     New: " << to_string(new_symbol.type) << eom;
-      throw 0;
+      THROWZERO;
     }
   }
   else // finals are equal
@@ -692,7 +692,7 @@ void c_typecheck_baset::typecheck_function_body(symbolt &symbol)
       error().source_location=it->second;
       error() << "branching label `" << it->first
               << "' is not defined in function" << eom;
-      throw 0;
+      THROWZERO;
     }
   }
 }
@@ -737,7 +737,7 @@ void c_typecheck_baset::apply_asm_label(
         error() << "error: replacing asm renaming "
                 << asm_label_map[orig_name] << " by "
                 << asm_label << eom;
-        throw 0;
+        THROWZERO;
       }
     }
   }
@@ -851,7 +851,7 @@ void c_typecheck_baset::typecheck_declaration(
           error().source_location=symbol.location;
           error() << "alias attribute cannot be used with a body"
                   << eom;
-          throw 0;
+          THROWZERO;
         }
 
         // alias function need not have been declared yet, thus

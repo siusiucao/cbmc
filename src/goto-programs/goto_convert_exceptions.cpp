@@ -30,7 +30,7 @@ void goto_convertt::convert_msc_try_finally(
   {
     error().source_location=code.find_source_location();
     error() << "msc_try_finally expects two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   goto_programt tmp;
@@ -80,7 +80,7 @@ void goto_convertt::convert_msc_try_except(
   {
     error().source_location=code.find_source_location();
     error() << "msc_try_except expects three arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   convert(to_code(code.op0()), dest);
@@ -108,7 +108,7 @@ void goto_convertt::convert_msc_leave(
   {
     error().source_location=code.find_source_location();
     error() << "leave without target" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // need to process destructor stack
@@ -278,7 +278,7 @@ void goto_convertt::convert_CPROVER_try_catch(
   {
     error().source_location=code.find_source_location();
     error() << "CPROVER_try_catch expects two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // this is where we go after 'throw'
@@ -376,7 +376,7 @@ void goto_convertt::convert_CPROVER_try_finally(
   {
     error().source_location=code.find_source_location();
     error() << "CPROVER_try_finally expects two arguments" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // first put 'finally' code onto destructor stack

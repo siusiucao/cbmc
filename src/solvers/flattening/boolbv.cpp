@@ -534,7 +534,7 @@ literalt boolbvt::convert_rest(const exprt &expr)
   {
     error() << "boolbvt::convert_rest got non-boolean operand: "
             << expr.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   const exprt::operandst &operands=expr.operands();
@@ -755,7 +755,7 @@ void boolbvt::set_to(const exprt &expr, bool value)
   {
     error() << "boolbvt::set_to got non-boolean operand: "
             << expr.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(value)
@@ -812,7 +812,7 @@ void boolbvt::make_free_bv_expr(const typet &type, exprt &dest)
   if(width==0)
   {
     error() << "failed to get width of " << type.pretty() << eom;
-    throw 0;
+    THROWZERO;
   }
 
   bvt bv;

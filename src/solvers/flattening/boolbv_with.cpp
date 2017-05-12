@@ -33,14 +33,14 @@ bvt boolbvt::convert_with(const exprt &expr)
   {
     error().source_location=expr.find_source_location();
     error() << "with takes at least three operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if((expr.operands().size()%2)!=1)
   {
     error().source_location=expr.find_source_location();
     error() << "with takes an odd number of operands" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   bvt bv=convert_bv(expr.op0());
@@ -54,7 +54,7 @@ bvt boolbvt::convert_with(const exprt &expr)
   {
     error().source_location=expr.find_source_location();
     error() << "unexpected operand 0 width" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   bvt prev_bv;
@@ -116,7 +116,7 @@ void boolbvt::convert_with(
 
   error().source_location=type.source_location();
   error() << "unexpected with type: " << type.id();
-  throw 0;
+  THROWZERO;
 }
 
 /*******************************************************************\
@@ -143,7 +143,7 @@ void boolbvt::convert_with_array(
     // can't do this
     error().source_location=type.source_location();
     error() << "convert_with_array called for unbounded array" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   const exprt &array_size=type.size();
@@ -154,7 +154,7 @@ void boolbvt::convert_with_array(
   {
     error().source_location=type.source_location();
     error() << "convert_with_array expects constant array size" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   const bvt &op2_bv=convert_bv(op2);
@@ -163,7 +163,7 @@ void boolbvt::convert_with_array(
   {
     error().source_location=type.source_location();
     error() << "convert_with_array: unexpected operand 2 width" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   // Is the index a constant?
@@ -291,7 +291,7 @@ void boolbvt::convert_with_struct(
                 << "' type does not match: "
                 << subtype.pretty() << " vs. "
                 << op2.type().pretty() << eom;
-        throw 0;
+        THROWZERO;
       }
 
       if(sub_width!=op2_bv.size())
@@ -299,7 +299,7 @@ void boolbvt::convert_with_struct(
         error().source_location=type.source_location();
         error() << "convert_with_struct: unexpected operand op2 width"
                 << eom;
-        throw 0;
+        THROWZERO;
       }
 
       for(std::size_t i=0; i<sub_width; i++)
@@ -339,7 +339,7 @@ void boolbvt::convert_with_union(
   {
     error().source_location=type.source_location();
     error() << "convert_with_union: unexpected operand op2 width" << eom;
-    throw 0;
+    THROWZERO;
   }
 
   if(config.ansi_c.endianness==configt::ansi_ct::endiannesst::IS_LITTLE_ENDIAN)
