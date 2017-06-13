@@ -40,6 +40,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/link_to_library.h>
 #include <goto-programs/remove_returns.h>
 #include <goto-programs/remove_asm.h>
+#include <goto-programs/remove_calls_nobody.h>
 #include <goto-programs/remove_unused_functions.h>
 #include <goto-programs/parameter_assignments.h>
 #include <goto-programs/slice_global_inits.h>
@@ -731,6 +732,10 @@ int goto_instrument_parse_optionst::doit()
       status() << "Performing full inlining" << eom;
       goto_inline(goto_model, get_message_handler());
 
+      status() << "Removing calls to functions without a body" << eom;
+      remove_calls_nobodyt rcn;
+      rcn.remove_calls_nobody(goto_model.goto_functions);
+
       status() << "Accelerating" << eom;
       accelerate_functions(
         goto_model, get_message_handler(), cmdline.isset("z3"));
@@ -1116,6 +1121,17 @@ void goto_instrument_parse_optionst::instrument_goto_program()
 
     status() << "Partial inlining" << eom;
     goto_partial_inline(goto_model.goto_functions, ns, ui_message_handler, 0, true);
+
+    goto_model.goto_functions.update();
+    goto_model.goto_functions.compute_loop_numbers();
+  }
+
+  if(cmdline.isset("remove-calls-nobody"))
+  {
+    status() << "Removing calls to functions without a body" << eom;
+
+    remove_calls_nobodyt rcn;
+    rcn.remove_calls_nobody(goto_model.goto_functions);
 
     goto_model.goto_functions.update();
     goto_model.goto_functions.compute_loop_numbers();
