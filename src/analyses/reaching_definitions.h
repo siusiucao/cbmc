@@ -252,12 +252,15 @@ class reaching_definitions_analysist:
 {
 public:
   // constructor
-  explicit reaching_definitions_analysist(const namespacet &_ns):
-    concurrency_aware_ait<rd_range_domaint>(),
-    ns(_ns),
-    value_sets(0),
-    is_threaded(0),
-    is_dirty(0)
+  explicit reaching_definitions_analysist(
+    const namespacet &_ns,
+    const goto_functionst &goto_functions):
+      concurrency_aware_ait<rd_range_domaint>(),
+      ns(_ns),
+      goto_functions(goto_functions),
+      value_sets(0),
+      is_threaded(0),
+      is_dirty(0)
   {
   }
 
@@ -296,8 +299,15 @@ public:
     return *is_dirty;
   }
 
+  const goto_functionst &get_goto_functions() const
+  {
+    return goto_functions;
+  }
+
 protected:
   const namespacet &ns;
+  const goto_functionst &goto_functions;
+
   value_setst * value_sets;
   is_threadedt * is_threaded;
   dirtyt * is_dirty;
