@@ -145,6 +145,8 @@ void variable_sensitivity_domaint::transform(
         abstract_state.abstract_object_factory(param.type(), ns, true, false),
         ns);
     }
+
+
     break;
   }
 
@@ -186,6 +188,8 @@ void variable_sensitivity_domaint::transform(
   default:
     throw "unrecognised instruction type";
   }
+
+  output(std::cout, ai, ns);
 
   assert(abstract_state.verify());
 }
@@ -291,6 +295,7 @@ bool variable_sensitivity_domaint::merge(
 
   // Use the abstract_environment merge
   bool any_changes=abstract_state.merge(b.abstract_state);
+  pre_function_state=b.pre_function_state;
 
   assert(abstract_state.verify());
   return any_changes;
@@ -401,6 +406,9 @@ void variable_sensitivity_domaint::transform_function_call(
 
   const code_function_callt &function_call=to_code_function_call(from->code);
   const exprt &function=function_call.function();
+
+  pre_function_state=abstract_state;
+
 
   const locationt next=std::next(from);
 
