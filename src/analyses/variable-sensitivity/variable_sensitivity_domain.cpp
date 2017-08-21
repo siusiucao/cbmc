@@ -539,3 +539,14 @@ bool variable_sensitivity_domaint::ignore_function_call_transform(
     ignored_internal_function.cend();
 }
 
+void variable_sensitivity_domaint::restore_domain(std::vector<symbol_exprt> modified_symbols,   
+  variable_sensitivity_domaint &target,
+  const namespacet &ns) const
+{
+    for (const auto &symbol : modified_symbols)
+    {
+        auto value = abstract_state.eval(symbol, ns);
+        target.abstract_state.assign(symbol, value, ns);
+    }
+}
+
