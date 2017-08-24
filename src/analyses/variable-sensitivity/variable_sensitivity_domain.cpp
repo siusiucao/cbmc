@@ -17,8 +17,6 @@ Date: April 2016
 #include "variable_sensitivity_domain.h"
 #include <util/cprover_prefix.h>
 
-#define DEBUG
-
 #ifdef DEBUG
 #include <iostream>
 #endif
@@ -189,8 +187,6 @@ void variable_sensitivity_domaint::transform(
     throw "unrecognised instruction type";
   }
 
-  output(std::cout, ai, ns);
-
   assert(abstract_state.verify());
 }
 
@@ -287,11 +283,6 @@ bool variable_sensitivity_domaint::merge(
             << from->location_number << " --> "
             << to->location_number << std::endl;
   #endif
-
-  if(from->location_number==43)
-  {
-
-  }
 
   // Use the abstract_environment merge
   bool any_changes=abstract_state.merge(b.abstract_state);
