@@ -86,6 +86,7 @@ Author: Daniel Kroening, kroening@kroening.com
   "(remove-function-body):"\
   "(remove-calls-nobody)" \
   "(splice-call):" \
+  "(store-goto-locations)" \
 
 
 class goto_instrument_parse_optionst:
