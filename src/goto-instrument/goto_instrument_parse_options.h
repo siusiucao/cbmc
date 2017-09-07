@@ -90,6 +90,7 @@ Author: Daniel Kroening, kroening@kroening.com
   "(undefined-function-is-assume-false)" \
   "(remove-function-body):"\
   "(splice-call):" \
+  "(store-goto-locations)" \
   OPT_REMOVE_CALLS_NO_BODY
 // clang-format on
 

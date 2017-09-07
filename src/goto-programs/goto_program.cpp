@@ -37,7 +37,16 @@ std::ostream &goto_programt::output_instruction(
   std::ostream &out,
   const instructiont &instruction) const
 {
-  out << "        // " << instruction.location_number << " ";
+  auto original_location=instruction.source_location.get_goto_location();
+  if(original_location!="")
+  {
+    out << "        // " << instruction.location_number << " "
+        << "(Original GOTO location: " << original_location << ") ";
+  }
+  else
+  {
+    out << "        // " << instruction.location_number << " ";
+  }
 
   if(!instruction.source_location.is_nil())
     out << instruction.source_location.as_string();
