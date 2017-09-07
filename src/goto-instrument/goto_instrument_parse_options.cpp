@@ -99,6 +99,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "undefined_functions.h"
 #include "remove_function.h"
 #include "splice_call.h"
+#include "store_goto_location.h"
 
 void goto_instrument_parse_optionst::eval_verbosity()
 {
@@ -420,6 +421,15 @@ int goto_instrument_parse_optionst::doit()
       do_indirect_call_and_rtti_removal();
       show_call_sequences(goto_model);
       return CPROVER_EXIT_SUCCESS;
+    }
+
+    if(cmdline.isset("store-goto-locations"))
+    {
+      Forall_goto_functions(it, goto_functions)
+      {
+        auto &function_body = it->second.body;
+        store_goto_locations(function_body);
+      }
     }
 
     if(cmdline.isset("check-call-sequence"))
