@@ -87,6 +87,10 @@ template<typename maybe_lazy_goto_modelt>
 void rebuild_goto_start_function_baset<maybe_lazy_goto_modelt>::
 remove_existing_entry_point()
 {
+  // If no existing entry point, we don't need to remove it
+  if(!goto_model.symbol_table.has_symbol(goto_functionst::entry_point()))
+    return;
+
   // Remove the function itself
   goto_model.symbol_table.remove(goto_functionst::entry_point());
 
