@@ -269,8 +269,7 @@ void custom_bitvector_domaint::transform(
   locationt from,
   locationt to,
   ai_baset &ai,
-  const namespacet &ns,
-  ai_domain_baset::edge_typet edge_type)
+  const namespacet &ns)
 {
   // upcast of ai
   custom_bitvector_analysist &cba=
@@ -396,8 +395,11 @@ void custom_bitvector_domaint::transform(
         }
         else
         {
+          goto_programt::const_targett next=from;
+          ++next;
+
           // only if there is an actual call, i.e., we have a body
-          if(edge_type != ai_domain_baset::edge_typet::FUNCTION_LOCAL)
+          if(next!=to)
           {
             const code_typet &code_type=
               to_code_type(ns.lookup(identifier).type);
