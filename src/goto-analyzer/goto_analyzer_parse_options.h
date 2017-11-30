@@ -149,6 +149,7 @@ class optionst;
   "(show)(verify)(simplify):" \
   "(location-sensitive)(concurrent)" \
   "(no-simplify-slicing)" \
+  "(ignore-unresolved-calls)" \
   JAVA_BYTECODE_LANGUAGE_OPTIONS
 // clang-format on
 

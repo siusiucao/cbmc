@@ -152,8 +152,11 @@ protected:
 class constant_propagator_ait:public ait<constant_propagator_domaint>
 {
 public:
-  explicit constant_propagator_ait(const goto_functionst &goto_functions):
-    dirty(goto_functions)
+  explicit constant_propagator_ait(
+    const goto_functionst &goto_functions,
+    const bool ignore_unresolved_calls=false) :
+    dirty(goto_functions),
+    ignore_unresolved_calls(ignore_unresolved_calls)
   {
   }
 
@@ -174,6 +177,7 @@ public:
   }
 
   dirtyt dirty;
+  bool ignore_unresolved_calls;
 
 protected:
   friend class constant_propagator_domaint;
