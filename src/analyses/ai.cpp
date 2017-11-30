@@ -285,13 +285,13 @@ void ai_baset::finalize()
   // Nothing to do per default
 }
 
-ai_baset::locationt ai_baset::get_next(
+ai_baset::historyt ai_baset::get_next(
   working_sett &working_set)
 {
   assert(!working_set.empty());
 
   working_sett::iterator i=working_set.begin();
-  locationt l=i->second;
+  historyt l=i->second;
   working_set.erase(i);
 
   return l;
@@ -308,23 +308,24 @@ bool ai_baset::fixedpoint(
   if(!goto_program.empty())
     put_in_working_set(
       working_set,
-      goto_program.instructions.begin());
+      start_history(goto_program.instructions.begin()));
 
   bool new_data=false;
 
   while(!working_set.empty())
   {
-    locationt l=get_next(working_set);
+    historyt h=get_next(working_set);
 
-    if(visit(l, working_set, goto_program, goto_functions, ns))
+    if(visit(h, working_set, goto_program, goto_functions, ns))
       new_data=true;
   }
 
   return new_data;
 }
 
+// WORKING
 bool ai_baset::visit(
-  locationt l,
+  historyt h,
   working_sett &working_set,
   const goto_programt &goto_program,
   const goto_functionst &goto_functions,
@@ -332,13 +333,18 @@ bool ai_baset::visit(
 {
   bool new_data=false;
 
-  statet &current=get_state(l);
-
+  statet &current=get_state(h);
+  locationt l=h.current_instruction_pointer();
+  
   for(const auto &to_l : goto_program.get_successors(l))
   {
     if(to_l==goto_program.instructions.end())
       continue;
 
+    // Let's make history
+    historyt to_h(h);
+    to_h.step(l, to_l);
+    
     std::unique_ptr<statet> tmp_state(
       make_temporary_state(current));
 
@@ -354,7 +360,7 @@ bool ai_baset::visit(
         to_code_function_call(l->code);
 
       if(do_function_call_rec(
-          l, to_l,
+          h, to_h,
           code.function(),
           code.arguments(),
           goto_functions, ns))
@@ -363,18 +369,18 @@ bool ai_baset::visit(
     else
     {
       // initialize state, if necessary
-      get_state(to_l);
+      get_state(to_h);
 
-      new_values.transform(l, to_l, *this, ns);
+      new_values.transform(h, to_h, *this, ns);
 
-      if(merge(new_values, l, to_l))
+      if(merge(new_values, h, to_h))
         have_new_values=true;
     }
 
     if(have_new_values)
     {
       new_data=true;
-      put_in_working_set(working_set, to_l);
+      put_in_working_set(working_set, to_h);
     }
   }
 
