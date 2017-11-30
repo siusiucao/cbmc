@@ -109,11 +109,114 @@ public:
     const namespacet &ns) const;
 };
 
+
+/// This is the base of tracking location and / or context in the
+/// abstract interpretter.  It stores an abstraction / representation of
+/// the history of the control-flow of the program.
+class ai_history_baset {
+public:
+  typedef goto_programt::const_targett locationt;
+  typedef irep_idt function_namet;
+  
+  /// Create a new history starting from a given location
+  /// PRECONDITION(current.is_dereferenceable());
+  ai_history_baset(locationt) {}
+
+  ai_history_baset(const ai_history_baset &) {}
+  
+  /// The current location
+  virtual const locationt & current_instruction_location(void) const = 0;
+
+  /// The current function
+  virtual function_namet current_function(void) const = 0;
+
+  /// Move from "from" to "to"
+  /// PRECONDITION(from.is_dereferenceable() && to.id_dereferenceable());
+  virtual void step(locationt from, locationt to) = 0;
+
+  /// Histories are used to index maps of domains in some analyzers
+  virtual bool operator==(const ai_history_baset &) const = 0;
+  virtual size_t hash(void) const = 0;
+
+  virtual bool equivalent(const ai_history_baset &op) const
+  {
+    return *this == op;
+  }
+  
+  /// Domains with a substantial height may need to widen when merging
+  /// this method allows the history to provide a hint on when to do this
+  virtual bool widen(const ai_history_baset &other) const = 0;
+
+  /// For backwards compatability allow implicit casts to locationt
+  operator const locationt &(void) const
+  {
+    return current_instruction_location();
+  }
+}
+
+
+/// The common case of history is to only care about where you are now,
+/// not how you got there!
+/// Invariants are not checkable due to C++...
+class ahistoricalt : public ai_history_baset {
+private:
+  // DATA_INVARIANT(current.is_dereferenceable(), "Must not be _::end()")
+  locationt current;
+
+public:
+  ai_history_baset(locationt i) : current(i) {}
+  ai_history_baset(const ai_history_baset &old) : current(old.current) {}
+  
+  virtual const locationt & current_instruction_location(void) const override
+  {
+    return current;
+  }
+
+  virtual function_namet current_function(void) const override
+  {
+    return current->function;     // Safe due to data invariant
+  }
+
+  virtual void step(locationt from, locationt to) override
+  {
+    INVARIANT(current == from, "Can only step from the current location");
+    current = to;
+    return;
+  }
+
+  virtual bool operator==(const ai_history_baset &op) const override
+  {
+    // It would be nice to:
+    //  return this->current == op.current
+    // But they may point to different goto_programs, giving undefined behaviour in C++
+    // So (safe due to data invariant)
+    return pointee_address_equal(this->current, op.current);
+  }
+  
+  virtual size_t hash(void) const override
+  {
+    // Safe due to data invariant
+    return this->current.location_number;
+  }
+  
+  virtual bool widen(const ai_history_baset &other) const
+  {
+    // Without history there is no reason to say any location is better than
+    // another to widen.
+    return false;
+  }
+}
+
+/// TODO class calling_context_historyt : public ai_history_baset { ... }
+
+
+
 // don't use me -- I am just a base class
 // use ait instead
 class ai_baset
 {
 public:
+  typedef ai_history_baset historyt;
   typedef ai_domain_baset statet;
   typedef goto_programt::const_targett locationt;
 
@@ -292,16 +395,16 @@ protected:
 
 
   // the work-queue is sorted by location number
-  typedef std::map<unsigned, locationt> working_sett;
+  typedef std::map<unsigned, historyt> working_sett;
 
-  locationt get_next(working_sett &working_set);
+  historyt get_next(working_sett &working_set);
 
   void put_in_working_set(
     working_sett &working_set,
-    locationt l)
+    historyt &h)
   {
     working_set.insert(
-      std::pair<unsigned, locationt>(l->location_number, l));
+      std::pair<unsigned, historyt>(h.current_instruction_location()->location_number, h));
   }
 
   // true = found something new
@@ -323,7 +426,7 @@ protected:
 
   // true = found something new
   bool visit(
-    locationt l,
+    historyt h,
     working_sett &working_set,
     const goto_programt &goto_program,
     const goto_functionst &goto_functions,
@@ -331,14 +434,14 @@ protected:
 
   // function calls
   bool do_function_call_rec(
-    locationt l_call, locationt l_return,
+    historyt h_call, historyt h_return,
     const exprt &function,
     const exprt::operandst &arguments,
     const goto_functionst &goto_functions,
     const namespacet &ns);
 
   bool do_function_call(
-    locationt l_call, locationt l_return,
+    historyt h_call, historyt h_return,
     const goto_functionst &goto_functions,
     const goto_functionst::function_mapt::const_iterator f_it,
     const exprt::operandst &arguments,
@@ -353,9 +456,10 @@ protected:
     locationt from,
     locationt to,
     const namespacet &ns)=0;
-  virtual statet &get_state(locationt l)=0;
-  virtual const statet &find_state(locationt l) const=0;
+  virtual statet &get_state(historyt h)=0;
+  virtual const statet &find_state(historyt h) const=0;
   virtual std::unique_ptr<statet> make_temporary_state(const statet &s)=0;
+  historyt start_history(locationt bang) const = 0;
 };
 
 // domainT is expected to be derived from ai_domain_baseT
