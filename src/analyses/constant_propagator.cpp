@@ -65,6 +65,10 @@ void constant_propagator_domaint::transform(
   const constant_propagator_ait *cp=
     dynamic_cast<constant_propagator_ait *>(&ai);
   bool have_dirty=(cp!=nullptr);
+  bool ignore_unresolved_calls=false;
+
+  if(have_dirty)
+    ignore_unresolved_calls=cp->ignore_unresolved_calls;
 
   // Transform on a domain that is bottom is possible
   // if a branch is impossible the target can still wind
@@ -144,10 +148,13 @@ void constant_propagator_domaint::transform(
         }
         else
         {
-          if(have_dirty)
-            values.set_dirty_to_top(cp->dirty, ns);
-          else
-            values.set_to_top();
+          if(!ignore_unresolved_calls)
+          {
+            if(have_dirty)
+              values.set_dirty_to_top(cp->dirty, ns);
+            else
+              values.set_to_top();
+          }
         }
       }
       else
@@ -182,10 +189,13 @@ void constant_propagator_domaint::transform(
         from->function == to->function,
         "Unresolved call can only be approximated if a skip");
 
-      if(have_dirty)
-        values.set_dirty_to_top(cp->dirty, ns);
-      else
-        values.set_to_top();
+      if(!ignore_unresolved_calls)
+      {
+        if(have_dirty)
+          values.set_dirty_to_top(cp->dirty, ns);
+        else
+          values.set_to_top();
+      }
     }
   }
   else if(from->is_end_function())
