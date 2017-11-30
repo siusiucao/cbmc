@@ -307,6 +307,9 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
       }
     }
   }
+
+  if(cmdline.isset("ignore-unresolved-calls"))
+    options.set_option("ignore-unresolved-calls", true);
 }
 
 /// For the task, build the appropriate kind of analyzer
@@ -321,7 +324,8 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(const optionst &options)
     if(options.get_bool_option("constants"))
     {
       // constant_propagator_ait derives from ait<constant_propagator_domaint>
-      domain=new constant_propagator_ait(goto_model.goto_functions);
+      domain=new constant_propagator_ait(goto_model.goto_functions,
+        options.get_bool_option("ignore-unresolved-calls"));
     }
     else if(options.get_bool_option("dependence-graph"))
     {
