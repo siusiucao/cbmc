@@ -700,7 +700,7 @@ int goto_instrument_parse_optionst::doit()
 
       status() << "Removing calls to functions without a body" << eom;
       remove_calls_nobodyt rcn;
-      rcn.remove_calls_nobody(goto_functions);
+      rcn.remove_calls_nobody(goto_model.goto_functions);
 
       status() << "Accelerating" << eom;
       accelerate_functions(goto_model, cmdline.isset("z3"));
@@ -1085,7 +1085,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     do_indirect_call_and_rtti_removal(/*force=*/true);
 
     status() << "Partial inlining" << eom;
-    goto_partial_inline(goto_functions, ns, ui_message_handler, 0, true);
+    goto_partial_inline(goto_model.goto_functions, ns, ui_message_handler, 0, true);
 
     goto_model.goto_functions.update();
     goto_model.goto_functions.compute_loop_numbers();
@@ -1096,10 +1096,10 @@ void goto_instrument_parse_optionst::instrument_goto_program()
     status() << "Removing calls to functions without a body" << eom;
 
     remove_calls_nobodyt rcn;
-    rcn.remove_calls_nobody(goto_functions);
+    rcn.remove_calls_nobody(goto_model.goto_functions);
 
-    goto_functions.update();
-    goto_functions.compute_loop_numbers();
+    goto_model.goto_functions.update();
+    goto_model.goto_functions.compute_loop_numbers();
   }
 
   if(cmdline.isset("constant-propagator"))
