@@ -18,7 +18,7 @@ Author: Daniel Kroening, kroening@cs.cmu.edu
 #include <util/config.h>
 #include <util/replace_symbol.h>
 #include <util/get_base_name.h>
-
+#include <util/cmdline.h>
 #include <linking/linking.h>
 
 #include <ansi-c/ansi_c_entry_point.h>

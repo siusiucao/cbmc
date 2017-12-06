@@ -22,10 +22,25 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/string_constant.h>
 #include <util/symbol.h>
 
+#include <ansi-c/ansi_c_language.h>
+
 #include <goto-programs/goto_functions.h>
 #include <linking/static_lifetime_init.h>
 
 #include "c_nondet_symbol_factory.h"
+
+// Build and return a while(true) statement nesting the function call
+// passed as a parameter.
+code_whilet wrap_entry_point_in_while(code_function_callt &call_main)
+{
+  exprt true_expr;
+  code_whilet while_expr;
+  true_expr.make_true();
+  while_expr.cond()=true_expr;
+  while_expr.body()=call_main;
+
+  return while_expr;
+}
 
 exprt::operandst build_function_environment(
   const code_typet::parameterst &parameters,
@@ -444,7 +459,15 @@ bool generate_ansi_c_start_function(
         message_handler);
   }
 
-  init_code.move_to_operands(call_main);
+  if(config.ansi_c.wrap_entry_point_in_while)
+  {
+    code_whilet wrapped_main=wrap_entry_point_in_while(call_main);
+    init_code.move_to_operands(wrapped_main);
+  }
+  else
+  {
+    init_code.move_to_operands(call_main);
+  }
 
   // TODO: add read/modified (recursively in call graph) globals as INPUT/OUTPUT
 

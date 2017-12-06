@@ -17,6 +17,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/timestamper.h>
 
 #include <langapi/language.h>
+#include <util/config.h>
 
 #include <analyses/goto_check.h>
 
@@ -72,6 +73,7 @@ class optionst;
   "(round-to-nearest)(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)" \
   "(localize-faults)(localize-faults-method):" \
   OPT_GOTO_TRACE \
+  WRAP_ENTRY_POINT_IN_WHILE_TRUE \
   "(claim):(show-claims)(fixedbv)(floatbv)(all-claims)(all-properties)" // legacy, and will eventually disappear // NOLINT(whitespace/line_length)
 // clang-format on
 
