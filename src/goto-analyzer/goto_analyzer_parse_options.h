@@ -139,6 +139,9 @@ class optionst;
   "(reachable-functions)" \
   "(intervals)(show-intervals)" \
   "(non-null)(show-non-null)" \
+  "(variable)" \
+  "(variable-sensitivity)" \
+  "(pointers)(arrays)(structs)" \
   "(constants)" \
   "(dependence-graph)" \
   "(show)(verify)(simplify):" \

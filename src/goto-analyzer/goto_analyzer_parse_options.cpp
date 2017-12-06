@@ -46,6 +46,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <analyses/constant_propagator.h>
 #include <analyses/dependence_graph.h>
 #include <analyses/interval_domain.h>
+#include <analyses/variable-sensitivity/variable_sensitivity_domain.h>
 
 #include <langapi/mode.h>
 
@@ -55,6 +56,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/string2int.h>
 #include <util/unicode.h>
 #include <util/exit_codes.h>
+
+#include <analyses/variable-sensitivity/variable_sensitivity_object_factory.h>
 
 #include <cbmc/version.h>
 
@@ -308,6 +311,17 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
       options.set_option("non-null", true);
       options.set_option("domain set", true);
     }
+    // "variable" is deprecated but still supported
+    else if(cmdline.isset("variable") || cmdline.isset("variable-sensitivity"))
+    {
+      options.set_option("variable-sensitivity", true);
+      options.set_option("domain set", true);
+
+      // Configuration of variable sensitivity
+      options.set_option("pointers", cmdline.isset("pointers"));
+      options.set_option("arrays", cmdline.isset("arrays"));
+      options.set_option("structs", cmdline.isset("structs"));
+    }
 
     // Reachability questions, when given with a domain swap from specific
     // to general tasks so that they can use the domain & parameterisations.
@@ -364,6 +378,10 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(const optionst &options)
       domain=new ait<non_null_domaint>();
     }
 #endif
+    else if(options.get_bool_option("variable-sensitivity"))
+    {
+      domain=new ait<variable_sensitivity_domaint>();
+    }
   }
   else if(options.get_bool_option("concurrent"))
   {
@@ -388,6 +406,10 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(const optionst &options)
       domain=new concurrency_aware_ait<non_null_domaint>();
     }
 #endif
+    else if(options.get_bool_option("variable-sensitivity"))
+    {
+      domain=new concurrency_aware_ait<variable_sensitivity_domaint>();
+    }
 #endif
   }
 
@@ -687,6 +709,9 @@ int goto_analyzer_parse_optionst::perform_analysis(const optionst &options)
   if(options.get_bool_option("general-analysis"))
   {
 
+    // Store options in static variable_sensitivity_object_factory object
+    variable_sensitivity_object_factoryt::instance().set_options(options);
+
     // Output file factory
     const std::string outfile=options.get_option("outfile");
     std::ofstream output_stream;
@@ -930,6 +955,7 @@ void goto_analyzer_parse_optionst::help()
     " --intervals                  interval domain\n"
     " --non-null                   non-null domain\n"
     " --dependence-graph           data and control dependencies between instructions\n" // NOLINT(*)
+    " --variable-sensitivity       a highly configurable non-relational domain"
     "\n"
     "Output options:\n"
     " --text file_name             output results in plain text to given file\n"

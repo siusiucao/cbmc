@@ -107,6 +107,18 @@ public:
   virtual bool ai_simplify_lhs(
     exprt &condition,
     const namespacet &ns) const;
+
+  // Applies the changes between the start and end to the domain
+  virtual void merge_three_way_function_return(
+    const ai_domain_baset &function_call,
+    const ai_domain_baset &function_start,
+    const ai_domain_baset &function_end,
+    const namespacet &ns)
+  {
+    // Take the state at the end of the function as a over-approximation
+    // of applying the changes in the function
+  }
+
 };
 
 // don't use me -- I am just a base class
@@ -347,6 +359,7 @@ protected:
   // abstract methods
 
   virtual bool merge(const statet &src, locationt from, locationt to)=0;
+
   // for concurrent fixedpoint
   virtual bool merge_shared(
     const statet &src,
@@ -420,6 +433,18 @@ protected:
     return it->second;
   }
 
+  /// Takes a state \p src, gets another state from the \p to location
+  /// source_state (param)
+  /// dest_state (built from to)
+  /// Merge the source state into the destination state
+  ///
+
+  ///
+  /// \param src
+  /// \param from
+  /// \param to
+  /// \return
+  ///
   bool merge(const statet &src, locationt from, locationt to) override
   {
     statet &dest=get_state(to);
