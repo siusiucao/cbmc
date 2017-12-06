@@ -64,6 +64,8 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <langapi/mode.h>
 
+#include <ansi-c/ansi_c_language.h>
+
 #include "cbmc_solvers.h"
 #include "bmc.h"
 #include "version.h"
@@ -969,6 +971,7 @@ void cbmc_parse_optionst::help()
     " --round-to-minus-inf         rounding towards minus infinity\n"
     " --round-to-zero              rounding towards zero\n"
     HELP_FUNCTIONS
+    HELP_WRAP_ENTRY_POINT_IN_WHILE_TRUE
     "\n"
     "Program representations:\n"
     " --show-parse-tree            show parse tree\n"

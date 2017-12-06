@@ -16,6 +16,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/parse_options.h>
 
 #include <langapi/language.h>
+#include <util/config.h>
 
 #include <analyses/goto_check.h>
 
@@ -70,6 +71,7 @@ class optionst;
   "(graphml-witness):" \
   "(localize-faults)(localize-faults-method):" \
   OPT_GOTO_TRACE \
+  WRAP_ENTRY_POINT_IN_WHILE_TRUE \
   "(fixedbv)(floatbv)(all-claims)(all-properties)" // legacy, and will eventually disappear // NOLINT(whitespace/line_length)
 // clang-format on
 
