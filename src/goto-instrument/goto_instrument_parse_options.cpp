@@ -426,7 +426,7 @@ int goto_instrument_parse_optionst::doit()
 
     if(cmdline.isset("store-goto-locations"))
     {
-      for(auto &function : goto_functions.function_map)
+      for(auto &function : goto_model.goto_functions.function_map)
       {
         store_goto_locations(function.second.body);
       }
@@ -1464,7 +1464,7 @@ void goto_instrument_parse_optionst::instrument_goto_program()
      cmdline.isset("function") ||
      cmdline.isset(WRAP_ENTRY_POINT_IN_WHILE_TRUE_STRING))
   {
-    if(goto_functions.function_map.count(goto_functionst::entry_point())==0)
+    if(goto_model.goto_functions.function_map.count(goto_functionst::entry_point())==0)
     {
       // TODO(tkiley): Currently supplying an entry point does not allow
       // for generating an entry point from scratch as we do not know
@@ -1484,23 +1484,23 @@ void goto_instrument_parse_optionst::instrument_goto_program()
       status() << "Wrapping entry point in while(true) loop" << eom;
       // Get the last function call in the entry function (i.e. the users
       // function being used as the entry point).
-      function_id=get_entry_function_id(goto_functions);
+      function_id=get_entry_function_id(goto_model.goto_functions);
     }
 
     rebuild_goto_start_functiont start_function_rebuilder(
       get_message_handler(),
       cmdline,
-      symbol_table,
-      goto_functions);
+      goto_model.symbol_table,
+      goto_model.goto_functions);
 
-    if(start_function_rebuilder(function_id))
+    if(start_function_rebuilder())
     {
       throw std::runtime_error("regenerating entry point did not work");
     }
 
     // TODO(tkiley): If we used here the goto_model this call probably
     // wouldn't be required.
-    goto_convert(symbol_table, goto_functions, get_message_handler());
+    goto_convert(goto_model.symbol_table, goto_model.goto_functions, get_message_handler());
 
   }
 
