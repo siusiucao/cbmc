@@ -1,0 +1,10 @@
+CORE
+main.c
+--wrap-entry-point-in-while --unwind 100
+^EXIT=10$
+^SIGNAL=0$
+^\[main.assertion.1\] assertion g == 0: FAILURE$
+^VERIFICATION FAILED$
+--
+^VERIFICATION SUCCESSFUL$
+--

@@ -15,6 +15,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/ui_message.h>
 #include <util/parse_options.h>
 #include <util/language.h>
+#include <util/config.h>
 
 #include <analyses/goto_check.h>
 
@@ -65,6 +66,7 @@ class optionst;
   "(round-to-nearest)(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)" \
   "(graphml-witness):" \
   "(localize-faults)(localize-faults-method):" \
+  WRAP_ENTRY_POINT_IN_WHILE_TRUE \
   "(fixedbv)(floatbv)(all-claims)(all-properties)" // legacy, and will eventually disappear // NOLINT(whitespace/line_length)
 
 class cbmc_parse_optionst:

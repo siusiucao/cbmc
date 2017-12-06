@@ -1,0 +1,9 @@
+CORE
+main.c
+--wrap-entry-point-in-while --show-goto-functions
+^EXIT=6$
+^SIGNAL=0$
+^     1: IF FALSE THEN GOTO 2$
+^        main\(\);$
+^        GOTO 1$
+--

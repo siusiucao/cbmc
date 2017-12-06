@@ -104,6 +104,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/ui_message.h>
 #include <util/parse_options.h>
 #include <util/language.h>
+#include <util/config.h>
 
 #include <goto-programs/goto_model.h>
 #include <goto-programs/show_goto_functions.h>
@@ -147,6 +148,7 @@ class optionst;
   "(unwind-bounds)" \
   "(unwind-bounds-threshold):" \
   "(unwindset)" \
+  WRAP_ENTRY_POINT_IN_WHILE_TRUE \
   "(functions-ignore)" \
   "(functions-full)" \
   JAVA_BYTECODE_LANGUAGE_OPTIONS

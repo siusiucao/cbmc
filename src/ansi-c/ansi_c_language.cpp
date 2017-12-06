@@ -14,6 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/config.h>
 #include <util/get_base_name.h>
+#include <util/cmdline.h>
 
 #include <linking/linking.h>
 #include <linking/remove_internal_symbols.h>
