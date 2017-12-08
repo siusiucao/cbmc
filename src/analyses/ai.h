@@ -23,17 +23,27 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <goto-programs/goto_model.h>
 
+#include "ai_history.h"
+
+
 // forward reference
 class ai_baset;
+
+class default_domain_optionst
+{
+#warning "You should actually finish this at some point"  
+}
 
 // don't use me -- I am just a base class
 // please derive from me
 class ai_domain_baset
 {
 public:
+  typedef default_domain_optionst domain_optionst;
+  
   // The constructor is expected to produce 'false'
   // or 'bottom'
-  ai_domain_baset()
+  ai_domain_baset(domain_optionst)
   {
   }
 
@@ -49,6 +59,7 @@ public:
   //    of the function to the instruction _following_ the call site
   //    (this also needs to set the LHS, if applicable)
 
+  #warning "You said you would fix iterator comparison in the transform"
   virtual void transform(
     locationt from,
     locationt to,
@@ -84,6 +95,7 @@ public:
 
   virtual bool is_top() const=0;
 
+  #warning "ADDITION : If you don't change the signature of merge, the widen method is pointless"
   // also add
   //
   //   bool merge(const T &b, locationt from, locationt to);
@@ -108,107 +120,6 @@ public:
     exprt &condition,
     const namespacet &ns) const;
 };
-
-
-/// This is the base of tracking location and / or context in the
-/// abstract interpretter.  It stores an abstraction / representation of
-/// the history of the control-flow of the program.
-class ai_history_baset {
-public:
-  typedef goto_programt::const_targett locationt;
-  typedef irep_idt function_namet;
-  
-  /// Create a new history starting from a given location
-  /// PRECONDITION(current.is_dereferenceable());
-  ai_history_baset(locationt) {}
-
-  ai_history_baset(const ai_history_baset &) {}
-  
-  /// The current location
-  virtual const locationt & current_instruction_location(void) const = 0;
-
-  /// The current function
-  virtual function_namet current_function(void) const = 0;
-
-  /// Move from "from" to "to"
-  /// PRECONDITION(from.is_dereferenceable() && to.id_dereferenceable());
-  virtual void step(locationt from, locationt to) = 0;
-
-  /// Histories are used to index maps of domains in some analyzers
-  virtual bool operator==(const ai_history_baset &) const = 0;
-  virtual size_t hash(void) const = 0;
-
-  virtual bool equivalent(const ai_history_baset &op) const
-  {
-    return *this == op;
-  }
-  
-  /// Domains with a substantial height may need to widen when merging
-  /// this method allows the history to provide a hint on when to do this
-  virtual bool widen(const ai_history_baset &other) const = 0;
-
-  /// For backwards compatability allow implicit casts to locationt
-  operator const locationt &(void) const
-  {
-    return current_instruction_location();
-  }
-}
-
-
-/// The common case of history is to only care about where you are now,
-/// not how you got there!
-/// Invariants are not checkable due to C++...
-class ahistoricalt : public ai_history_baset {
-private:
-  // DATA_INVARIANT(current.is_dereferenceable(), "Must not be _::end()")
-  locationt current;
-
-public:
-  ai_history_baset(locationt i) : current(i) {}
-  ai_history_baset(const ai_history_baset &old) : current(old.current) {}
-  
-  virtual const locationt & current_instruction_location(void) const override
-  {
-    return current;
-  }
-
-  virtual function_namet current_function(void) const override
-  {
-    return current->function;     // Safe due to data invariant
-  }
-
-  virtual void step(locationt from, locationt to) override
-  {
-    INVARIANT(current == from, "Can only step from the current location");
-    current = to;
-    return;
-  }
-
-  virtual bool operator==(const ai_history_baset &op) const override
-  {
-    // It would be nice to:
-    //  return this->current == op.current
-    // But they may point to different goto_programs, giving undefined behaviour in C++
-    // So (safe due to data invariant)
-    return pointee_address_equal(this->current, op.current);
-  }
-  
-  virtual size_t hash(void) const override
-  {
-    // Safe due to data invariant
-    return this->current.location_number;
-  }
-  
-  virtual bool widen(const ai_history_baset &other) const
-  {
-    // Without history there is no reason to say any location is better than
-    // another to widen.
-    return false;
-  }
-}
-
-/// TODO class calling_context_historyt : public ai_history_baset { ... }
-
 
 
 // don't use me -- I am just a base class
@@ -462,19 +373,55 @@ protected:
   historyt start_history(locationt bang) const = 0;
 };
 
+
+
+    /***
+        ai_baset                            core algorithms
+        ait<domainT> : ai_baset             per-location storage, sequential fix-point
+        concurrent<domainT> : ait<domainT>  concurrent fix-point
+
+        ai_baset                                      core algorithms
+        ai_storage<historyT, domainT> : ai_baset      per-history storage
+        ait<domainT> : ai_storage<ahistorical, domainT> sequential fix-point
+        concurrent<domainT> : ait<domainT>            concurrent fix-point
+
+     ***/
+
+
+
 // domainT is expected to be derived from ai_domain_baseT
-template<typename domainT>
-class ait:public ai_baset
+template<typename historyT, typename domainT>
+class ai_storaget:public ai_baset
 {
 public:
+  typedef domainT::domain_optionst domain_optionst;
+  typedef goto_programt::const_targett locationt;
+
+protected:
+  domain_optionst domain_constructor_options;
+  
+public:
   // constructor
-  ait():ai_baset()
+  ai_storaget():domain_constructor_options(), ai_baset()
   {
   }
 
-  typedef goto_programt::const_targett locationt;
+  ai_storaget(const domain_optionst &o):domain_constructor_options(o), ai_baset()
+  {
+  }
+
 
   domainT &operator[](locationt l)
+  {
+    #error "TODO"
+  }
+
+  const domainT &operator[](locationt l) const
+  {
+    #error "TODO"
+  }
+  
+  domainT &operator[](historyT l)
   {
     typename state_mapt::iterator it=state_map.find(l);
     if(it==state_map.end())
@@ -483,18 +430,15 @@ public:
     return it->second;
   }
 
-  const domainT &operator[](locationt l) const
+  const domainT &operator[](historyT l) const
   {
-    typename state_mapt::const_iterator it=state_map.find(l);
-    if(it==state_map.end())
-      throw "failed to find state";
-
-    return it->second;
+    return find_state(l);
   }
 
   const ai_domain_baset & abstract_state_before(
-    goto_programt::const_targett t) const override
+    locationt t) const override
   {
+    #error "Move the default implementation to ai_baset"
     return (*this)[t];
   }
 
@@ -505,13 +449,17 @@ public:
   }
 
 protected:
-  typedef std::unordered_map<locationt, domainT, const_target_hash> state_mapt;
+  typedef std::unordered_map<historyT, domainT, ai_history_baset::hash, ai_history_baset::equal> state_mapt;
   state_mapt state_map;
 
   // this one creates states, if need be
-  virtual statet &get_state(locationt l) override
+  virtual statet &get_state(historyt l) override
   {
-    return state_map[l]; // calls default constructor
+    typename state_mapt::iterator it=state_map.find(l);                                                                      
+    if(it==state_map.end())
+      it=state_map.insert(l, domainT(domain_constructor_options) );
+    
+    return it->second;
   }
 
   // this one just finds states
@@ -536,6 +484,30 @@ protected:
     return util_make_unique<domainT>(static_cast<const domainT &>(s));
   }
 
+private:
+  // to enforce that domainT is derived from ai_domain_baset
+  void dummy(const domainT &s) { const statet &x=s; (void)x; }
+
+  // to enforce that historyT is derived from ai_history_baset
+  void dummy(const historyT &h) { const historyt &x=h; (void)x; }
+};
+
+
+// domainT is expected to be derived from ai_domain_baseT
+template<typename domainT>
+class ait:public ai_storage<ahistorical, domainT>
+{
+public:
+  // constructor
+  ait():ai_storage<ahistorical, domainT>()
+  {
+  }
+
+  ait(const domain_optionst &o):ai_storage<ahistorical, domainT>(o)
+  {
+  }
+  
+protected:
   void fixedpoint(
     const goto_functionst &goto_functions,
     const namespacet &ns) override
@@ -544,14 +516,11 @@ protected:
   }
 
 private:
-  // to enforce that domainT is derived from ai_domain_baset
-  void dummy(const domainT &s) { const statet &x=s; (void)x; }
-
   // not implemented in sequential analyses
   bool merge_shared(
     const statet &src,
-    goto_programt::const_targett from,
-    goto_programt::const_targett to,
+    locationt from,
+    locationt to,
     const namespacet &ns) override
   {
     throw "not implemented";
@@ -559,20 +528,24 @@ private:
 };
 
 template<typename domainT>
-class concurrency_aware_ait:public ait<domainT>
+class concurrency_aware_ait:public ai_storage<ahistorical, domainT>
 {
 public:
   typedef typename ait<domainT>::statet statet;
 
   // constructor
-  concurrency_aware_ait():ait<domainT>()
+  concurrency_aware_ait():ai_storage<ahistorical, domainT>()
+  {
+  }
+
+  concurrency_aware_ait(const domain_optionst &o):ai_storage<ahistorical, domainT>(o)
   {
   }
 
   bool merge_shared(
     const statet &src,
-    goto_programt::const_targett from,
-    goto_programt::const_targett to,
+    locationt from,
+    locationt to,
     const namespacet &ns) override
   {
     statet &dest=this->get_state(to);
