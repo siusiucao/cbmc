@@ -31,14 +31,18 @@ class ai_baset;
 
 class default_domain_optionst
 {
+  /// Must have a default constructor
 #warning "You should actually finish this at some point"  
 }
 
+/// The interface offered by a domain, allows code to manipulate domains without
+/// knowing their exact type.
 // don't use me -- I am just a base class
 // please derive from me
 class ai_domain_baset
 {
 public:
+  /// Overload for 
   typedef default_domain_optionst domain_optionst;
   
   // The constructor is expected to produce 'false'
@@ -122,6 +126,9 @@ public:
 };
 
 
+/// The basic interface of an abstract interpreter.  This should be enough
+/// to create, run and query an abstract interpreter.  It delegates everything
+/// specific to the particular history or domain to subclasses.
 // don't use me -- I am just a base class
 // use ait instead
 class ai_baset
@@ -139,6 +146,7 @@ public:
   {
   }
 
+  /// Running the interpretter
   void operator()(
     const goto_programt &goto_program,
     const namespacet &ns)
@@ -180,20 +188,30 @@ public:
     finalize();
   }
 
-  /// Returns the abstract state before the given instruction
-  virtual const ai_domain_baset & abstract_state_before(
-    goto_programt::const_targett t) const = 0;
-
-  /// Returns the abstract state after the given instruction
-  virtual const ai_domain_baset & abstract_state_after(
-    goto_programt::const_targett t) const
-  {
-    return abstract_state_before(std::next(t));
-  }
-
+  /// Resets the domain
   virtual void clear()
   {
+    /// Empty as all storage and state is delegated
   }
+
+  
+  /// Accessing individual domains
+  /// Returns the abstract state before the given instruction
+  virtual const ai_domain_baset & abstract_state_before(locationt l) const
+  {
+    /// PRECONDITION(l is dereferenceable)
+    return get_state(l);
+  }
+
+  /// Returns the abstract state after the given instruction
+  virtual const ai_domain_baset & abstract_state_after(locationt l) const
+  {
+    /// PRECONDITION(l is dereferenceable && std::next(l) is dereferenceable)
+    /// Check relies on a DATA_INVARIANT of goto_programs
+    INVARIANT(!l->type.is_end_function(), "No state after the last instruction");
+    return abstract_state_before(std::next(l));
+  }
+
 
   virtual void output(
     const namespacet &ns,
@@ -388,8 +406,10 @@ protected:
      ***/
 
 
-
-// domainT is expected to be derived from ai_domain_baseT
+/// Creation, storage and other operations dependent on
+/// the exact types of abstraction used
+/// historyT is expected to be derived from ai_history_baset
+/// domainT is expected to be derived from ai_domain_baset
 template<typename historyT, typename domainT>
 class ai_storaget:public ai_baset
 {
@@ -410,17 +430,6 @@ public:
   {
   }
 
-
-  domainT &operator[](locationt l)
-  {
-    #error "TODO"
-  }
-
-  const domainT &operator[](locationt l) const
-  {
-    #error "TODO"
-  }
-  
   domainT &operator[](historyT l)
   {
     typename state_mapt::iterator it=state_map.find(l);
@@ -438,7 +447,7 @@ public:
   const ai_domain_baset & abstract_state_before(
     locationt t) const override
   {
-    #error "Move the default implementation to ai_baset"
+    #error "Implement properly!"
     return (*this)[t];
   }
 
@@ -463,7 +472,7 @@ protected:
   }
 
   // this one just finds states
-  const statet &find_state(locationt l) const override
+  const statet &find_state(historyt l) const override
   {
     typename state_mapt::const_iterator it=state_map.find(l);
     if(it==state_map.end())
@@ -493,19 +502,14 @@ private:
 };
 
 
-// domainT is expected to be derived from ai_domain_baseT
-template<typename domainT>
-class ait:public ai_storage<ahistorical, domainT>
+/// Connects up the methods for sequential analysis
+/// aiT is expected to be derived from ai_baset
+template<typename aiT>
+class sequential_analysist:public aiT
 {
 public:
-  // constructor
-  ait():ai_storage<ahistorical, domainT>()
-  {
-  }
-
-  ait(const domain_optionst &o):ai_storage<ahistorical, domainT>(o)
-  {
-  }
+  // constructors
+  using aiT::aiT;
   
 protected:
   void fixedpoint(
@@ -525,23 +529,21 @@ private:
   {
     throw "not implemented";
   }
+
+  // to enforce that aiT is derived from ai_baset
+  void dummy(const aiT &a) { const ai_baset &x=a; (void)x; }
 };
 
-template<typename domainT>
-class concurrency_aware_ait:public ai_storage<ahistorical, domainT>
+
+/// Connects up the methods for concurrent analysis
+/// aiT is expected to be derived from ai_baset
+template<typename aiT>
+class concurrent_analysist:public aiT
 {
 public:
-  typedef typename ait<domainT>::statet statet;
-
-  // constructor
-  concurrency_aware_ait():ai_storage<ahistorical, domainT>()
-  {
-  }
-
-  concurrency_aware_ait(const domain_optionst &o):ai_storage<ahistorical, domainT>(o)
-  {
-  }
-
+  // constructors
+  using aiT::aiT;
+  
   bool merge_shared(
     const statet &src,
     locationt from,
@@ -560,6 +562,35 @@ protected:
   {
     this->concurrent_fixedpoint(goto_functions, ns);
   }
+
+ private:
+  // to enforce that aiT is derived from ai_baset
+  void dummy(const aiT &a) { const ai_baset &x=a; (void)x; }
+};
+
+
+/// Specific kinds of analyzer
+/// Also examples of how to combine analysis type, history and domain.
+
+/// ait : sequential, location sensitivite, context in-sensitive analysis
+// domainT is expected to be derived from ai_domain_baseT
+template<typename domainT>
+class ait:public sequential_analysis<ai_storage<ahistorical, domainT> >
+{
+  typedef sequential_analysis<ai_storage<ahistorical, domainT> > parent;
+public:
+  /// Inherit constructors
+  using parent::parent;
+};
+
+/// concurrency_aware_ait : concurrent, location sensitivite, context in-sensitive analysis
+template<typename domainT>
+class concurrency_aware_ait:public concurrent_analysist<ai_storage<ahistorical, domainT> >
+{
+  typedef concurrent_analysist<ai_storage<ahistorical, domainT> > parent;
+public:
+  /// Inherit constructors
+  using parent::parent;
 };
 
 #endif // CPROVER_ANALYSES_AI_H
