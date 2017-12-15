@@ -119,7 +119,7 @@ void ai_baset::output(
     out << "**** " << i_it->location_number << " "
         << i_it->source_location << "\n";
 
-    find_state(i_it).output(out, *this, ns);
+    abstract_state_before(i_it).output(out, *this, ns);
     out << "\n";
     #if 1
     goto_program.output_instruction(ns, identifier, out, *i_it);
@@ -170,7 +170,7 @@ jsont ai_baset::output_json(
       json_numbert(std::to_string(i_it->location_number));
     location["sourceLocation"]=
       json_stringt(i_it->source_location.as_string());
-    location["abstractState"]=find_state(i_it).output_json(*this, ns);
+    location["abstractState"]=abstract_state_before(i_it).output_json(*this, ns);
 
     // Ideally we need output_instruction_json
     std::ostringstream out;
@@ -231,7 +231,7 @@ xmlt ai_baset::output_xml(
       "source_location",
       i_it->source_location.as_string());
 
-    location.new_element(find_state(i_it).output_xml(*this, ns));
+    location.new_element(abstract_state_before(i_it).output_xml(*this, ns));
 
     // Ideally we need output_instruction_xml
     std::ostringstream out;
@@ -257,8 +257,8 @@ void ai_baset::entry_state(const goto_functionst &goto_functions)
 
 void ai_baset::entry_state(const goto_programt &goto_program)
 {
-  // The first instruction of 'goto_program' is the entry point
-  get_state(goto_program.instructions.begin()).make_entry();
+  // The first instruction of 'goto_program' is the entry point with no history
+  get_state(start_history(goto_program.instructions.begin())).make_entry();
 }
 
 void ai_baset::initialize(const goto_functionst::goto_functiont &goto_function)
@@ -268,10 +268,14 @@ void ai_baset::initialize(const goto_functionst::goto_functiont &goto_function)
 
 void ai_baset::initialize(const goto_programt &goto_program)
 {
+  // Domains are created and set to bottom on access.
+  // So we do not need to set them to be bottom before hand.
+#ifdef REMOVE_BEFORE_COMMIT
   // we mark everything as unreachable as starting point
 
   forall_goto_program_instructions(i_it, goto_program)
     get_state(i_it).make_bottom();
+#endif
 }
 
 void ai_baset::initialize(const goto_functionst &goto_functions)
@@ -288,7 +292,7 @@ void ai_baset::finalize()
 ai_baset::historyt ai_baset::get_next(
   working_sett &working_set)
 {
-  assert(!working_set.empty());
+  PRECONDITION(!working_set.empty());
 
   working_sett::iterator i=working_set.begin();
   historyt l=i->second;
@@ -323,7 +327,6 @@ bool ai_baset::fixedpoint(
   return new_data;
 }
 
-// WORKING
 bool ai_baset::visit(
   historyt h,
   working_sett &working_set,
@@ -343,7 +346,7 @@ bool ai_baset::visit(
 
     // Let's make history
     historyt to_h(h);
-    to_h.step(l, to_l);
+    to_h.step(to_l);
     
     std::unique_ptr<statet> tmp_state(
       make_temporary_state(current));
@@ -371,9 +374,16 @@ bool ai_baset::visit(
       // initialize state, if necessary
       get_state(to_h);
 
-      new_values.transform(h, to_h, *this, ns);
+      new_values.transform(
+        h.current_instruction_pointer(),
+        to_h.current_instruction_pointer(),
+        *this,
+        ns);
 
-      if(merge(new_values, h, to_h))
+      if(merge(
+           new_values,
+           h.current_instruction_pointer(),
+           to_h.current_instruction_pointer()))
         have_new_values=true;
     }
 
@@ -387,46 +397,58 @@ bool ai_baset::visit(
   return new_data;
 }
 
+/// Remember that h_call and h_return are both in the caller
 bool ai_baset::do_function_call(
-  locationt l_call, locationt l_return,
+  historyt h_call, historyt h_return,
   const goto_functionst &goto_functions,
   const goto_functionst::function_mapt::const_iterator f_it,
   const exprt::operandst &arguments,
   const namespacet &ns)
 {
   // initialize state, if necessary
-  get_state(l_return);
+  get_state(h_return);
 
   const goto_functionst::goto_functiont &goto_function=
     f_it->second;
 
   if(!goto_function.body_available())
   {
-    // if we don't have a body, we just do an edige call -> return
-    std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(l_call)));
-    tmp_state->transform(l_call, l_return, *this, ns);
+    // if we don't have a body, we just do an edge call -> return
+    std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
+    tmp_state->transform(
+      h_call.current_instruction_pointer(),
+      h_return.current_instruction_pointer(),
+      *this,
+      ns);
 
-    return merge(*tmp_state, l_call, l_return);
+    return merge(*tmp_state, h_call, h_return);
   }
 
-  assert(!goto_function.body.instructions.empty());
+  INVARIANT(!goto_function.body.instructions.empty(), "Have checked body_available()");
 
   // This is the edge from call site to function head.
 
   {
     // get the state at the beginning of the function
     locationt l_begin=goto_function.body.instructions.begin();
+    historyt h_begin(h_call);
+    h_begin.step(l_begin);
+    
     // initialize state, if necessary
-    get_state(l_begin);
+    get_state(h_begin);
 
     // do the edge from the call site to the beginning of the function
-    std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(l_call)));
-    tmp_state->transform(l_call, l_begin, *this, ns);
+    std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
+    tmp_state->transform(
+      h_call.current_instruction_pointer(),
+      h_begin.current_instruction_pointer(),
+      *this,
+      ns);
 
     bool new_data=false;
 
     // merge the new stuff
-    if(merge(*tmp_state, l_call, l_begin))
+    if(merge(*tmp_state, h_call, h_begin))
       new_data=true;
 
     // do we need to do/re-do the fixedpoint of the body?
@@ -436,22 +458,22 @@ bool ai_baset::do_function_call(
 
   // This is the edge from function end to return site.
 
-  {
+  {// WORKING
     // get location at end of the procedure we have called
-    locationt l_end=--goto_function.body.instructions.end();
-    assert(l_end->is_end_function());
+    locationt h_end=--goto_function.body.instructions.end();
+    assert(h_end->is_end_function());
 
     // do edge from end of function to instruction after call
-    const statet &end_state=get_state(l_end);
+    const statet &end_state=get_state(h_end);
 
     if(end_state.is_bottom())
       return false; // function exit point not reachable
 
     std::unique_ptr<statet> tmp_state(make_temporary_state(end_state));
-    tmp_state->transform(l_end, l_return, *this, ns);
+    tmp_state->transform(h_end, h_return, *this, ns);
 
     // Propagate those
-    return merge(*tmp_state, l_end, l_return);
+    return merge(*tmp_state, h_end, h_return);
   }
 }
 
