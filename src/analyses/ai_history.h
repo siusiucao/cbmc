@@ -25,7 +25,7 @@ class ai_history_baset {
 public:
   typedef goto_programt::const_targett locationt;
   typedef irep_idt function_namet;
-
+#warning "needs an options object?"
 
   ai_history_baset(const ai_history_baset &) {}
 
