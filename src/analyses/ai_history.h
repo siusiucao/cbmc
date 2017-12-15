@@ -17,15 +17,25 @@ Author: Martin Brain, martin.brain@cs.ox.ac.uk
 #define IMPLIES(X,Y) (!((X)) || ((Y)))
 
 
+/// This is for passsing configuration options to history objects
+/// The default one has no options.
+class ai_history_base_optionst
+{
+  ai_history_base_optionst ()
+  {
+  }
+}
+
+
 /// This is the base of tracking location and / or context in the
 /// abstract interpretter.  It stores an abstraction / representation of
 /// the history of the control-flow of the program.
 /// It has a number of different roles ...
 class ai_history_baset {
 public:
+  typedef ai_history_base_optionst history_optionst;
   typedef goto_programt::const_targett locationt;
   typedef irep_idt function_namet;
-#warning "needs an options object?"
 
   ai_history_baset(const ai_history_baset &) {}
 
@@ -34,7 +44,7 @@ public:
   
   /// Create a new history starting from a given location
   /// PRECONDITION(l.is_dereferenceable());
-  explicit ai_history_baset(locationt) {}
+  explicit ai_history_baset(const history_optionst &, locationt) {}
 
   /// Move from "from" to "to"
   /// PRECONDITION(to.id_dereferenceable());
@@ -104,6 +114,7 @@ public:
 
 
 #if 0  
+  #warning "haven't decided if we need this or not yet"
   /// For backwards compatability allow implicit casts to locationt
   operator const locationt &(void) const
   {
@@ -125,7 +136,7 @@ public:
   ahistoricalt(const ahistoricalt &old) : current(old.current) {}
 
   /// [1]. Work queue
-  ahistoricalt(locationt i) : current(i) {}
+  ahistoricalt(const history_optionst &, locationt i) : current(i) {}
   void step(locationt to) override
   {
     current = to;
@@ -170,6 +181,9 @@ public:
 template <class historyT>
 class location_insensitive_storage : public historyT
 {
+  // Use parent constructors
+  using historyT::historyT;
+  
   size_t storage_hash(void) const override
   {
     // Safe due to postcondition

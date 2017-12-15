@@ -29,10 +29,13 @@ Author: Daniel Kroening, kroening@kroening.com
 // forward reference
 class ai_baset;
 
-class default_domain_optionst
+/// This allows options to be passed to individual domains
+class ai_domain_base_optionst
 {
-  /// Must have a default constructor
-#warning "You should actually finish this at some point"  
+  ai_domain_base_optionst()
+  {
+
+  }
 }
 
 /// The interface offered by a domain, allows code to manipulate domains without
@@ -43,14 +46,20 @@ class ai_domain_baset
 {
 public:
   /// Overload for 
-  typedef default_domain_optionst domain_optionst;
+  typedef ai_domain_base_optionst domain_optionst;
   
-  // The constructor is expected to produce 'false'
-  // or 'bottom'
-  ai_domain_baset(domain_optionst)
+  // The constructor is expected to produce 'false' or 'bottom'
+  ai_domain_baset()
   {
   }
 
+  #if 0
+  #warning disabled for now to not break the object API
+  ai_domain_baset(const domain_optionst &)
+  {
+  }
+  #endif
+  
   virtual ~ai_domain_baset()
   {
   }
@@ -207,11 +216,8 @@ public:
   
   /// Accessing individual domains
   /// Returns the abstract state before the given instruction
-  virtual const ai_domain_baset & abstract_state_before(locationt l) const
-  {
-    /// PRECONDITION(l is dereferenceable)
-    return get_state(l);
-  }
+  /// PRECONDITION(l is dereferenceable)
+  virtual const ai_domain_baset & abstract_state_before(locationt l) const = 0
 
   /// Returns the abstract state after the given instruction
   virtual const ai_domain_baset & abstract_state_after(locationt l) const
@@ -395,67 +401,55 @@ protected:
     locationt from,
     locationt to,
     const namespacet &ns)=0;
-  virtual statet &get_state(historyt h)=0;
-  virtual const statet &find_state(historyt h) const=0;
+  virtual statet &get_state(const historyt &h)=0;
+  virtual const statet &find_state(const historyt &h) const=0;
   virtual std::unique_ptr<statet> make_temporary_state(const statet &s)=0;
-  historyt start_history(locationt bang) const = 0;
+  virtual historyt start_history(locationt bang) const = 0;
 };
 
 
 
-    /***
-        ai_baset                            core algorithms
-        ait<domainT> : ai_baset             per-location storage, sequential fix-point
-        concurrent<domainT> : ait<domainT>  concurrent fix-point
-
-        ai_baset                                      core algorithms
-        ai_storage<historyT, domainT> : ai_baset      per-history storage
-        ait<domainT> : ai_storage<ahistorical, domainT> sequential fix-point
-        concurrent<domainT> : ait<domainT>            concurrent fix-point
-
-     ***/
-
-
-/// Creation, storage and other operations dependent on
-/// the exact types of abstraction used
-/// historyT is expected to be derived from ai_history_baset
-/// domainT is expected to be derived from ai_domain_baset
+/// Creation, storage and other operations dependent
+/// on the exact types of abstraction used
+/// historyT is expected to be derived from ai_history_baset (a.k.a. historyt)
+/// domainT is expected to be derived from ai_domain_baset (a.k.a. domaint)
 template<typename historyT, typename domainT>
 class ai_storaget:public ai_baset
 {
 public:
+  typedef historyT::history_optionst history_optionst;
   typedef domainT::domain_optionst domain_optionst;
   typedef goto_programt::const_targett locationt;
 
 protected:
+  history_optionst history_constuctor_options;
   domain_optionst domain_constructor_options;
   
 public:
   // constructor
-  ai_storaget():domain_constructor_options(), ai_baset()
+  ai_storaget():
+  history_constructor_options(),domain_constructor_options(), ai_baset()
   {
   }
 
-  ai_storaget(const domain_optionst &o):domain_constructor_options(o), ai_baset()
+  ai_storaget(const history_optionst &ho, const domain_optionst &do):
+  history_constructor_options(ho), domain_constructor_options(do), ai_baset()
   {
   }
 
-  domainT &operator[](historyT l)
+  /// Direct access to the state map
+  domainT &operator[](const historyT &h)
   {
-    typename state_mapt::iterator it=state_map.find(l);
-    if(it==state_map.end())
-      throw "failed to find state";
-
-    return it->second;
+    return get_state(h);
   }
 
-  const domainT &operator[](historyT l) const
+  const domainT &operator[](const historyT &h) const
   {
-    return find_state(l);
+    return find_state(h);
   }
 
-  const ai_domain_baset & abstract_state_before(
-    locationt t) const override
+  /// Access to all histories that reach the given location
+  const ai_domain_baset & abstract_state_before(locationt t) const override
   {
     #error "Implement properly!"
     return (*this)[t];
@@ -468,21 +462,27 @@ public:
   }
 
 protected:
+  #warning "should be std::map<locationt, std::unordered_map<historyT, domainT, ai_history_baset::hash, ai_history_baset::equal> >"
   typedef std::unordered_map<historyT, domainT, ai_history_baset::hash, ai_history_baset::equal> state_mapt;
   state_mapt state_map;
 
+  /// Implement the storage and other type-specific methods that ai_baset delegates.
+  
   // this one creates states, if need be
-  virtual statet &get_state(historyt l) override
+  virtual statet &get_state(const historyt &l) override
   {
     typename state_mapt::iterator it=state_map.find(l);                                                                      
     if(it==state_map.end())
+    {
       it=state_map.insert(l, domainT(domain_constructor_options) );
+      it->second.make_bottom();  // Should be ensured by the domain constructor
+    }
     
     return it->second;
   }
 
-  // this one just finds states
-  const statet &find_state(historyt l) const override
+  // this one just finds states and can be used with a const ai_storage
+  const statet &find_state(const historyt &l) const override
   {
     typename state_mapt::const_iterator it=state_map.find(l);
     if(it==state_map.end())
@@ -503,6 +503,12 @@ protected:
     return util_make_unique<domainT>(static_cast<const domainT &>(s));
   }
 
+  historyt start_history(locationt bang) const
+  {
+    return historyT(history_constructor_options, bang);
+  }
+    
+  
 private:
   // to enforce that domainT is derived from ai_domain_baset
   void dummy(const domainT &s) { const statet &x=s; (void)x; }
@@ -582,7 +588,7 @@ protected:
 /// Specific kinds of analyzer
 /// Also examples of how to combine analysis type, history and domain.
 
-/// ait : sequential, location sensitivite, context in-sensitive analysis
+/// ait : sequential, location sensitive, context in-sensitive analysis
 // domainT is expected to be derived from ai_domain_baseT
 template<typename domainT>
 class ait:public sequential_analysis<ai_storage<ahistorical, domainT> >
@@ -593,7 +599,7 @@ public:
   using parent::parent;
 };
 
-/// concurrency_aware_ait : concurrent, location sensitivite, context in-sensitive analysis
+/// concurrency_aware_ait : concurrent, location sensitive, context in-sensitive analysis
 template<typename domainT>
 class concurrency_aware_ait:public concurrent_analysist<ai_storage<ahistorical, domainT> >
 {
