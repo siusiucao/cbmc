@@ -21,74 +21,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "is_threaded.h"
 
-jsont ai_domain_baset::output_json(
-  const ai_baset &ai,
-  const namespacet &ns) const
-{
-  std::ostringstream out;
-  output(out, ai, ns);
-  json_stringt json(out.str());
-  return json;
-}
-
-xmlt ai_domain_baset::output_xml(
-  const ai_baset &ai,
-  const namespacet &ns) const
-{
-  std::ostringstream out;
-  output(out, ai, ns);
-  xmlt xml("abstract_state");
-  xml.data=out.str();
-  return xml;
-}
-
-/// Use the information in the domain to simplify the expression on the LHS of
-/// an assignment. This for example won't simplify symbols to their values, but
-/// does simplify indices in arrays, members of structs and dereferencing of
-/// pointers
-/// \param condition: the expression to simplify
-/// \param ns: the namespace
-/// \return True if condition did not change. False otherwise. condition will be
-///   updated with the simplified condition if it has worked
-bool ai_domain_baset::ai_simplify_lhs(
-  exprt &condition, const namespacet &ns) const
-{
-  // Care must be taken here to give something that is still writable
-  if(condition.id()==ID_index)
-  {
-    index_exprt ie=to_index_expr(condition);
-    bool no_simplification=ai_simplify(ie.index(), ns);
-    if(!no_simplification)
-      condition=simplify_expr(ie, ns);
-
-    return no_simplification;
-  }
-  else if(condition.id()==ID_dereference)
-  {
-    dereference_exprt de=to_dereference_expr(condition);
-    bool no_simplification=ai_simplify(de.pointer(), ns);
-    if(!no_simplification)
-      condition=simplify_expr(de, ns);  // So *(&x) -> x
-
-    return no_simplification;
-  }
-  else if(condition.id()==ID_member)
-  {
-    member_exprt me=to_member_expr(condition);
-    // Since simplify_ai_lhs is required to return an addressable object
-    // (so remains a valid left hand side), to simplify
-    // `(something_simplifiable).b` we require that `something_simplifiable`
-    // must also be addressable
-    bool no_simplification=ai_simplify_lhs(me.compound(), ns);
-    if(!no_simplification)
-      condition=simplify_expr(me, ns);
-
-    return no_simplification;
-  }
-  else
-    return true;
-}
-
 void ai_baset::output(
   const namespacet &ns,
   const goto_functionst &goto_functions,
@@ -289,16 +221,15 @@ void ai_baset::finalize()
   // Nothing to do per default
 }
 
-ai_baset::historyt ai_baset::get_next(
+const tracet & ai_baset::get_next(
   working_sett &working_set)
 {
   PRECONDITION(!working_set.empty());
 
-  working_sett::iterator i=working_set.begin();
-  historyt l=i->second;
-  working_set.erase(i);
+#error "change to set"
+  const tracet &h=working_set.pop();
 
-  return l;
+  return h;
 }
 
 bool ai_baset::fixedpoint(
@@ -318,7 +249,7 @@ bool ai_baset::fixedpoint(
 
   while(!working_set.empty())
   {
-    historyt h=get_next(working_set);
+    const tracet h=get_next(working_set);
 
     if(visit(h, working_set, goto_program, goto_functions, ns))
       new_data=true;
@@ -328,7 +259,7 @@ bool ai_baset::fixedpoint(
 }
 
 bool ai_baset::visit(
-  historyt h,
+  const tracet &h,
   working_sett &working_set,
   const goto_programt &goto_program,
   const goto_functionst &goto_functions,
@@ -345,8 +276,7 @@ bool ai_baset::visit(
       continue;
 
     // Let's make history
-    historyt to_h(h);
-    to_h.step(to_l);
+    const tracet &to_h=step(h, to_l);
     
     std::unique_ptr<statet> tmp_state(
       make_temporary_state(current));
@@ -362,6 +292,7 @@ bool ai_baset::visit(
       const code_function_callt &code=
         to_code_function_call(l->code);
 
+      #warning "throws away history from called function"
       if(do_function_call_rec(
           h, to_h,
           code.function(),
@@ -374,16 +305,14 @@ bool ai_baset::visit(
       // initialize state, if necessary
       get_state(to_h);
 
+      #warning "convert transform signature"
       new_values.transform(
         h.current_instruction_pointer(),
         to_h.current_instruction_pointer(),
         *this,
         ns);
 
-      if(merge(
-           new_values,
-           h.current_instruction_pointer(),
-           to_h.current_instruction_pointer()))
+      if(merge(new_values, h, to_h))
         have_new_values=true;
     }
 
@@ -399,7 +328,8 @@ bool ai_baset::visit(
 
 /// Remember that h_call and h_return are both in the caller
 bool ai_baset::do_function_call(
-  historyt h_call, historyt h_return,
+  const tracet &h_call,
+  const tracet &h_return,
   const goto_functionst &goto_functions,
   const goto_functionst::function_mapt::const_iterator f_it,
   const exprt::operandst &arguments,
@@ -415,6 +345,7 @@ bool ai_baset::do_function_call(
   {
     // if we don't have a body, we just do an edge call -> return
     std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
+    #warning "convert transform signature"
     tmp_state->transform(
       h_call.current_instruction_pointer(),
       h_return.current_instruction_pointer(),
@@ -431,14 +362,14 @@ bool ai_baset::do_function_call(
   {
     // get the state at the beginning of the function
     locationt l_begin=goto_function.body.instructions.begin();
-    historyt h_begin(h_call);
-    h_begin.step(l_begin);
+    const tracet &h_begin=step(h_call, l_begin);
     
     // initialize state, if necessary
     get_state(h_begin);
 
     // do the edge from the call site to the beginning of the function
     std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
+    #warning "convert transform signature"
     tmp_state->transform(
       h_call.current_instruction_pointer(),
       h_begin.current_instruction_pointer(),
@@ -454,14 +385,18 @@ bool ai_baset::do_function_call(
     // do we need to do/re-do the fixedpoint of the body?
     if(new_data)
       fixedpoint(goto_function.body, goto_functions, ns);
+    #error "doesn't have the info from h_begin"
   }
 
   // This is the edge from function end to return site.
 
-  {// WORKING
+  {
+#error "unfinished"
     // get location at end of the procedure we have called
-    locationt h_end=--goto_function.body.instructions.end();
-    assert(h_end->is_end_function());
+    locationt l_end=--goto_function.body.instructions.end();
+    DATA_INVARIANT(
+      l_end->is_end_function(),
+      "the last instruction must be end_function");
 
     // do edge from end of function to instruction after call
     const statet &end_state=get_state(h_end);
@@ -470,7 +405,12 @@ bool ai_baset::do_function_call(
       return false; // function exit point not reachable
 
     std::unique_ptr<statet> tmp_state(make_temporary_state(end_state));
-    tmp_state->transform(h_end, h_return, *this, ns);
+    #warning "convert transform signature"
+    tmp_state->transform(
+      h_end.current_instruction_pointer(),
+      h_return.current_instruction_pointer(),
+      *this,
+      ns);
 
     // Propagate those
     return merge(*tmp_state, h_end, h_return);
@@ -478,14 +418,23 @@ bool ai_baset::do_function_call(
 }
 
 bool ai_baset::do_function_call_rec(
-  locationt l_call, locationt l_return,
+  const tracet &h_call, const tracet &h_return,
   const exprt &function,
   const exprt::operandst &arguments,
   const goto_functionst &goto_functions,
   const namespacet &ns)
 {
-  assert(!goto_functions.function_map.empty());
+  PRECONDITION(!goto_functions.function_map.empty());
 
+  // We can't really do this here -- we rely on
+  // these being removed by some previous analysis.
+  PRECONDIITION(function.id()!=ID_dereference);
+
+  // Can't be a function
+  DATA_INVARIANT(function.id()!="NULL-object");
+  DATA_INVARIANT(function.id()!=ID_member);
+  DATA_INVARIANT(function.id()!=ID_index);
+    
   bool new_data=false;
 
   if(function.id()==ID_symbol)
@@ -499,7 +448,7 @@ bool ai_baset::do_function_call_rec(
       throw "failed to find function "+id2string(identifier);
 
     new_data=do_function_call(
-      l_call, l_return,
+      h_call, h_return,
       goto_functions,
       it,
       arguments,
@@ -507,12 +456,11 @@ bool ai_baset::do_function_call_rec(
   }
   else if(function.id()==ID_if)
   {
-    if(function.operands().size()!=3)
-      throw "if has three operands";
+    DATA_INVARIANT(function.operands().size()!=3, "if has three operands");
 
     bool new_data1=
       do_function_call_rec(
-        l_call, l_return,
+        h_call, h_return,
         function.op1(),
         arguments,
         goto_functions,
@@ -520,7 +468,7 @@ bool ai_baset::do_function_call_rec(
 
     bool new_data2=
       do_function_call_rec(
-        l_call, l_return,
+        h_call, h_return,
         function.op2(),
         arguments,
         goto_functions,
@@ -528,19 +476,6 @@ bool ai_baset::do_function_call_rec(
 
     if(new_data1 || new_data2)
       new_data=true;
-  }
-  else if(function.id()==ID_dereference)
-  {
-    // We can't really do this here -- we rely on
-    // these being removed by some previous analysis.
-  }
-  else if(function.id()=="NULL-object")
-  {
-    // ignore, can't be a function
-  }
-  else if(function.id()==ID_member || function.id()==ID_index)
-  {
-    // ignore, can't be a function
   }
   else
   {
@@ -562,6 +497,7 @@ void ai_baset::sequential_fixedpoint(
     fixedpoint(f_it->second.body, goto_functions, ns);
 }
 
+#error "Unfinished"
 void ai_baset::concurrent_fixedpoint(
   const goto_functionst &goto_functions,
   const namespacet &ns)

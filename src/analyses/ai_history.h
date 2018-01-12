@@ -177,30 +177,7 @@ public:
 }
 
 
-#if 0
-template <class historyT>
-class location_insensitive_storage : public historyT
-{
-  // Use parent constructors
-  using historyT::historyT;
-  
-  size_t storage_hash(void) const override
-  {
-    // Safe due to postcondition
-    return string_hash(this->current_location().function)
-  }
-
-  bool storage_equivalent(const ai_history_baset &op) const override
-  {
-    // Safe due to postcondition
-    return this->current_location().function == op.current_location().function;
-  }
-  
-}
-#endif
-
-
-/// TODO class calling_context_historyt : public ahistoricalt { ... }
+/// TODO class calling_context_historyt : public ai_history_baset { ... }
 
 #undef IMPLIES
  
