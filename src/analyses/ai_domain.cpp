@@ -11,6 +11,8 @@ Author: Martin Brain, martin.brain@cs.ox.ac.uk
 
 #include "ai_domain.h"
 
+#include <util/simplify_expr.h>
+
 jsont ai_domain_baset::output_json(
   const ai_baset &ai,
   const namespacet &ns) const

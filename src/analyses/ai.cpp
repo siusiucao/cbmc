@@ -15,7 +15,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <memory>
 #include <sstream>
 
-#include <util/simplify_expr.h>
 #include <util/std_expr.h>
 #include <util/std_code.h>
 
@@ -51,7 +50,7 @@ void ai_baset::output(
     out << "**** " << i_it->location_number << " "
         << i_it->source_location << "\n";
 
-    abstract_state_before(i_it).output(out, *this, ns);
+    abstract_state_before(i_it)->output(out, *this, ns);
     out << "\n";
     #if 1
     goto_program.output_instruction(ns, identifier, out, *i_it);
@@ -102,7 +101,7 @@ jsont ai_baset::output_json(
       json_numbert(std::to_string(i_it->location_number));
     location["sourceLocation"]=
       json_stringt(i_it->source_location.as_string());
-    location["abstractState"]=abstract_state_before(i_it).output_json(*this, ns);
+    location["abstractState"]=abstract_state_before(i_it)->output_json(*this, ns);
 
     // Ideally we need output_instruction_json
     std::ostringstream out;
@@ -163,7 +162,7 @@ xmlt ai_baset::output_xml(
       "source_location",
       i_it->source_location.as_string());
 
-    location.new_element(abstract_state_before(i_it).output_xml(*this, ns));
+    location.new_element(abstract_state_before(i_it)->output_xml(*this, ns));
 
     // Ideally we need output_instruction_xml
     std::ostringstream out;
@@ -190,7 +189,8 @@ void ai_baset::entry_state(const goto_functionst &goto_functions)
 void ai_baset::entry_state(const goto_programt &goto_program)
 {
   // The first instruction of 'goto_program' is the entry point with no history
-  get_state(start_history(goto_program.instructions.begin())).make_entry();
+  const tracet &start=start_history(goto_program.instructions.begin());
+  get_state(start).make_entry();
 }
 
 void ai_baset::initialize(const goto_functionst::goto_functiont &goto_function)
@@ -202,12 +202,6 @@ void ai_baset::initialize(const goto_programt &goto_program)
 {
   // Domains are created and set to bottom on access.
   // So we do not need to set them to be bottom before hand.
-#ifdef REMOVE_BEFORE_COMMIT
-  // we mark everything as unreachable as starting point
-
-  forall_goto_program_instructions(i_it, goto_program)
-    get_state(i_it).make_bottom();
-#endif
 }
 
 void ai_baset::initialize(const goto_functionst &goto_functions)
@@ -221,15 +215,19 @@ void ai_baset::finalize()
   // Nothing to do per default
 }
 
-const tracet & ai_baset::get_next(
+const ai_baset::tracet & ai_baset::get_next(
   working_sett &working_set)
 {
   PRECONDITION(!working_set.empty());
 
-#error "change to set"
-  const tracet &h=working_set.pop();
+  // STL guarantees this will be key minimal
+  auto first=working_set.begin();
+  
+  const tracet *h=*first;
 
-  return h;
+  working_set.erase(first);
+
+  return *h;
 }
 
 bool ai_baset::fixedpoint(
@@ -241,15 +239,20 @@ bool ai_baset::fixedpoint(
 
   // Put the first location in the working set
   if(!goto_program.empty())
-    put_in_working_set(
-      working_set,
-      start_history(goto_program.instructions.begin()));
+  {
+    locationt first=goto_program.instructions.begin();
+    put_in_working_set(working_set, start_history(first));
+  #warning "should only start history once?"
 
+    call_sitest::mapped_type empty_set;
+    call_sites.insert(std::make_pair(first->function, empty_set));
+  }
+  
   bool new_data=false;
 
   while(!working_set.empty())
   {
-    const tracet h=get_next(working_set);
+    const tracet &h=get_next(working_set);
 
     if(visit(h, working_set, goto_program, goto_functions, ns))
       new_data=true;
@@ -268,58 +271,66 @@ bool ai_baset::visit(
   bool new_data=false;
 
   statet &current=get_state(h);
-  locationt l=h.current_instruction_pointer();
-  
-  for(const auto &to_l : goto_program.get_successors(l))
+  locationt l=h.current_location();
+
+  // Function call and return are special cases
+  if(l->is_function_call() && !goto_functions.function_map.empty())
   {
-    if(to_l==goto_program.instructions.end())
-      continue;
+    DATA_INVARIANT(goto_program.get_successors(l).size() == 1,
+      "function calls only have one successor...");
+    DATA_INVARIANT(*(goto_program.get_successors(l).begin()) == std::next(l),
+      "... and it is the next instruction / return location");
 
-    // Let's make history
-    const tracet &to_h=step(h, to_l);
+    const code_function_callt &code=to_code_function_call(l->code);
+
+    if(do_function_call_rec(
+         h,
+         working_set,
+         code.function(),
+         code.arguments(),
+         goto_functions, ns))
+      new_data=true;
+  }
+  else if (l->is_end_function())
+  {
+    DATA_INVARIANT(goto_program.get_successors(l).empty(),
+                   "The end function instruction should have no successors.");
+
+    if (do_function_return(h, working_set, ns))
+      new_data=true;
+  }
+  else
+  {
+    // Successors can be empty, for example assume(0).
+    for(const auto &to_l : goto_program.get_successors(l))
+    {
+      if(to_l==goto_program.instructions.end())
+        continue;
+
+      // Has history taught us not to step here...
+      const tracet *next=step(h, to_l);
+      if (next == nullptr)
+        continue;
+      const tracet &to_h=*next;
     
-    std::unique_ptr<statet> tmp_state(
-      make_temporary_state(current));
+      std::unique_ptr<statet> tmp_state(make_temporary_state(current));
+      statet &new_values=*tmp_state;
 
-    statet &new_values=*tmp_state;
-
-    bool have_new_values=false;
-
-    if(l->is_function_call() &&
-       !goto_functions.function_map.empty())
-    {
-      // this is a big special case
-      const code_function_callt &code=
-        to_code_function_call(l->code);
-
-      #warning "throws away history from called function"
-      if(do_function_call_rec(
-          h, to_h,
-          code.function(),
-          code.arguments(),
-          goto_functions, ns))
-        have_new_values=true;
-    }
-    else
-    {
       // initialize state, if necessary
       get_state(to_h);
 
-      #warning "convert transform signature"
+#warning "convert transform signature"
       new_values.transform(
-        h.current_instruction_pointer(),
-        to_h.current_instruction_pointer(),
+        h.current_location(),
+        to_h.current_location(),
         *this,
         ns);
 
       if(merge(new_values, h, to_h))
-        have_new_values=true;
-    }
-
-    if(have_new_values)
-    {
-      new_data=true;
-      put_in_working_set(working_set, to_h);
+      {
+        new_data=true;
+        put_in_working_set(working_set, to_h);
+      }
     }
   }
 
@@ -329,30 +340,48 @@ bool ai_baset::visit(
 /// Remember that h_call and h_return are both in the caller
 bool ai_baset::do_function_call(
   const tracet &h_call,
-  const tracet &h_return,
+  working_sett &working_set,
   const goto_functionst &goto_functions,
   const goto_functionst::function_mapt::const_iterator f_it,
   const exprt::operandst &arguments,
   const namespacet &ns)
 {
-  // initialize state, if necessary
-  get_state(h_return);
-
+  locationt l_call=h_call.current_location();
+  PRECONDITION(l_call->is_function_call());
+  
   const goto_functionst::goto_functiont &goto_function=
     f_it->second;
 
   if(!goto_function.body_available())
   {
+    locationt l_return = std::next(l_call);
+    
+    const tracet *next=step(h_call, l_return);
+    if (next == nullptr)   // An unusual choice but possible
+      return false;
+    const tracet &h_return=*next;
+
+    // We don't update the call_site map
+    
+    // initialize state, if necessary
+    get_state(h_return);
+    
     // if we don't have a body, we just do an edge call -> return
     std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
     #warning "convert transform signature"
     tmp_state->transform(
-      h_call.current_instruction_pointer(),
-      h_return.current_instruction_pointer(),
+      h_call.current_location(),
+      h_return.current_location(),
       *this,
       ns);
 
-    return merge(*tmp_state, h_call, h_return);
+    if (merge(*tmp_state, h_call, h_return))
+    {
+      put_in_working_set(working_set, h_return);
+      return true;
+    }
+    else
+      return false;
   }
 
   INVARIANT(!goto_function.body.instructions.empty(), "Have checked body_available()");
@@ -362,7 +391,14 @@ bool ai_baset::do_function_call(
   {
     // get the state at the beginning of the function
     locationt l_begin=goto_function.body.instructions.begin();
-    const tracet &h_begin=step(h_call, l_begin);
+
+    const tracet *next=step(h_call, l_begin);
+    if (next == nullptr)   // An unusual choice but possible
+      return false;
+    const tracet &h_begin=*next;
+
+    // Update the call map (so that the function can return here)
+    call_sites[f_it->first].insert(l_call);
     
     // initialize state, if necessary
     get_state(h_begin);
@@ -371,54 +407,25 @@ bool ai_baset::do_function_call(
     std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
     #warning "convert transform signature"
     tmp_state->transform(
-      h_call.current_instruction_pointer(),
-      h_begin.current_instruction_pointer(),
+      h_call.current_location(),
+      h_begin.current_location(),
       *this,
       ns);
-
-    bool new_data=false;
 
     // merge the new stuff
-    if(merge(*tmp_state, h_call, h_begin))
-      new_data=true;
-
-    // do we need to do/re-do the fixedpoint of the body?
-    if(new_data)
-      fixedpoint(goto_function.body, goto_functions, ns);
-    #error "doesn't have the info from h_begin"
-  }
-
-  // This is the edge from function end to return site.
-
-  {
-#error "unfinished"
-    // get location at end of the procedure we have called
-    locationt l_end=--goto_function.body.instructions.end();
-    DATA_INVARIANT(
-      l_end->is_end_function(),
-      "the last instruction must be end_function");
-
-    // do edge from end of function to instruction after call
-    const statet &end_state=get_state(h_end);
-
-    if(end_state.is_bottom())
-      return false; // function exit point not reachable
-
-    std::unique_ptr<statet> tmp_state(make_temporary_state(end_state));
-    #warning "convert transform signature"
-    tmp_state->transform(
-      h_end.current_instruction_pointer(),
-      h_return.current_instruction_pointer(),
-      *this,
-      ns);
-
-    // Propagate those
-    return merge(*tmp_state, h_end, h_return);
+    if (merge(*tmp_state, h_call, h_begin))
+    {
+      put_in_working_set(working_set, h_begin);
+      return true;
+    }
+    else
+      return false;
   }
 }
 
 bool ai_baset::do_function_call_rec(
-  const tracet &h_call, const tracet &h_return,
+  const tracet &h_call,
+  working_sett &working_set,
   const exprt &function,
   const exprt::operandst &arguments,
   const goto_functionst &goto_functions,
@@ -428,12 +435,12 @@ bool ai_baset::do_function_call_rec(
 
   // We can't really do this here -- we rely on
   // these being removed by some previous analysis.
-  PRECONDIITION(function.id()!=ID_dereference);
+  PRECONDITION(function.id()!=ID_dereference);
 
   // Can't be a function
-  DATA_INVARIANT(function.id()!="NULL-object");
-  DATA_INVARIANT(function.id()!=ID_member);
-  DATA_INVARIANT(function.id()!=ID_index);
+  DATA_INVARIANT(function.id()!="NULL-object", "Function cannot be null object");
+  DATA_INVARIANT(function.id()!=ID_member, "Function cannot be struct field");
+  DATA_INVARIANT(function.id()!=ID_index, "Function cannot be array element");
     
   bool new_data=false;
 
@@ -448,7 +455,8 @@ bool ai_baset::do_function_call_rec(
       throw "failed to find function "+id2string(identifier);
 
     new_data=do_function_call(
-      h_call, h_return,
+      h_call,
+      working_set,
       goto_functions,
       it,
       arguments,
@@ -460,7 +468,8 @@ bool ai_baset::do_function_call_rec(
 
     bool new_data1=
       do_function_call_rec(
-        h_call, h_return,
+        h_call,
+        working_set,
         function.op1(),
         arguments,
         goto_functions,
@@ -468,7 +477,8 @@ bool ai_baset::do_function_call_rec(
 
     bool new_data2=
       do_function_call_rec(
-        h_call, h_return,
+        h_call,
+        working_set,
         function.op2(),
         arguments,
         goto_functions,
@@ -486,6 +496,64 @@ bool ai_baset::do_function_call_rec(
   return new_data;
 }
 
+bool ai_baset::do_function_return(
+  const tracet &h_end,
+  working_sett &working_set,
+  const namespacet &ns)
+{
+  bool new_data=false;
+  
+  locationt l_end=h_end.current_location();
+  PRECONDITION(l_end->is_end_function());
+    
+  irep_idt function_name=l_end->function;
+
+  auto it=call_sites.find(function_name);
+  INVARIANT(it == call_sites.end(), "All functions analyzed should be listed");
+  
+  // Note that it->second.empty() => is the entry function for the analysis
+  // but not vica versa because recursion!
+  for(const auto &l_call : it->second)
+  {
+    // This is the edge from function end to return site(s).
+    
+    // We want the return location, rather than the call site itself
+    locationt l_return=std::next(l_call);
+    
+    // Find which are possible call sites for this history
+    const tracet *next=step(h_end, l_return);
+    if (next == nullptr)
+      continue;
+    const tracet &h_return=*next;
+
+    // do edge from end of function to instruction after call
+    const statet &end_state=get_state(h_end);
+
+    INVARIANT(!end_state.is_bottom(), "Only called if end is reachable");
+
+    // initialize state, if necessary
+    get_state(h_return);
+    
+    std::unique_ptr<statet> tmp_state(make_temporary_state(end_state));
+    #warning "convert transform signature"
+    tmp_state->transform(
+      h_end.current_location(),
+      h_return.current_location(),
+      *this,
+      ns);
+
+    // Propagate those
+    if (merge(*tmp_state, h_end, h_return))
+    {
+      new_data=true;
+      put_in_working_set(working_set, h_return);
+    }
+  }
+
+  return new_data;
+}
+
+
 void ai_baset::sequential_fixedpoint(
   const goto_functionst &goto_functions,
   const namespacet &ns)
@@ -497,7 +565,7 @@ void ai_baset::sequential_fixedpoint(
     fixedpoint(f_it->second.body, goto_functions, ns);
 }
 
-#error "Unfinished"
+#warning "Concurrent fixpoint is unfinished"
 void ai_baset::concurrent_fixedpoint(
   const goto_functionst &goto_functions,
   const namespacet &ns)
@@ -505,7 +573,7 @@ void ai_baset::concurrent_fixedpoint(
   sequential_fixedpoint(goto_functions, ns);
 
   is_threadedt is_threaded(goto_functions);
-
+#if 0
   // construct an initial shared state collecting the results of all
   // functions
   goto_programt tmp;
@@ -561,4 +629,5 @@ void ai_baset::concurrent_fixedpoint(
       }
     }
   }
+  #endif
 }

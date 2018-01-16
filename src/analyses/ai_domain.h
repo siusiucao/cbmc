@@ -25,11 +25,12 @@ class ai_baset;
 /// This allows options to be passed to individual domains
 class ai_domain_base_optionst
 {
+ public :
   ai_domain_base_optionst()
   {
 
   }
-}
+};
 
 /// The interface offered by a domain, allows code to manipulate domains without
 /// knowing their exact type.

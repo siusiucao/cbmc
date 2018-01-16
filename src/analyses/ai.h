@@ -92,22 +92,25 @@ public:
   /// Resets the domain
   virtual void clear()
   {
-    /// Empty as all storage and state is delegated
+    call_sites.clear();
   }
 
   
-  /// Accessing individual domains
+  /// Accessing individual domains at particular domains
+  /// (without needing to know what kind of domain or history is used)
+  /// A pointer to a copy as the method should be const and
+  /// there are some non-trivial cases including merging domains, etc.
+
   /// Returns the abstract state before the given instruction
   /// PRECONDITION(l is dereferenceable)
-  virtual const statet & abstract_state_before(locationt l) const = 0
-  #warning "may have to change to return an object, not a reference maybe even a pointer to a copy"
-
+  virtual std::unique_ptr<statet> abstract_state_before(locationt l) const = 0;
+  
   /// Returns the abstract state after the given instruction
-  virtual const statet & abstract_state_after(locationt l) const
+  virtual std::unique_ptr<statet> abstract_state_after(locationt l) const
   {
     /// PRECONDITION(l is dereferenceable && std::next(l) is dereferenceable)
     /// Check relies on a DATA_INVARIANT of goto_programs
-    INVARIANT(!l->type.is_end_function(), "No state after the last instruction");
+    INVARIANT(!l->is_end_function(), "No state after the last instruction");
     return abstract_state_before(std::next(l));
   }
 
@@ -222,8 +225,9 @@ protected:
     const irep_idt &identifier) const;
 
 
-  // the work-queue is sorted by location number
-  typedef std::set<const tracet &> working_sett;
+  // the work-queue is sorted using the history's less operator
+  // all pointers are to objects stored in the history_map
+  typedef std::set<const tracet *> working_sett;
   
   const tracet & get_next(working_sett &working_set);
 
@@ -231,8 +235,7 @@ protected:
     working_sett &working_set,
     const tracet &h)
   {
-    #error "change to set"
-    working_set.push_back(h);
+    working_set.insert(&h);
     return;
   }
 
@@ -262,19 +265,29 @@ protected:
     const namespacet &ns);
 
   // function calls
+  typedef std::map<irep_idt, std::set<locationt> > call_sitest;
+  call_sitest call_sites;
+
   bool do_function_call_rec(
-    const tracet &h_call, const tracet &h_return,
+    const tracet &h_call,
+    working_sett &working_set, 
     const exprt &function,
     const exprt::operandst &arguments,
     const goto_functionst &goto_functions,
     const namespacet &ns);
 
   bool do_function_call(
-    const tracet &h_call, const tracet &h_return,
+    const tracet &h_call,
+    working_sett &working_set,
     const goto_functionst &goto_functions,
     const goto_functionst::function_mapt::const_iterator f_it,
     const exprt::operandst &arguments,
     const namespacet &ns);
+
+  bool do_function_return(
+   const tracet &h_end,
+   working_sett &working_set,
+   const namespacet &ns);
 
   // abstract methods
   // These delegate anything that requires knowing the actual type of
@@ -290,7 +303,9 @@ protected:
   virtual statet &get_state(const tracet &h)=0;
   virtual const statet &find_state(const tracet &h) const=0;
   virtual std::unique_ptr<statet> make_temporary_state(const statet &s)=0;
+  
   virtual const tracet &start_history(locationt bang) = 0;
+  virtual const tracet *step(const tracet &t, locationt to_l) = 0;
 };
 
 
@@ -304,37 +319,51 @@ class ai_storaget:public ai_baset
 public:
   typedef historyT historyt;
   typedef domainT domaint;
-  typedef historyt::history_optionst history_optionst;
-  typedef domaint::domain_optionst domain_optionst;
+
+  typedef typename historyT::history_optionst history_optionst;
+  typedef typename domainT::domain_optionst domain_optionst;
+
+  typedef std::set<historyT> location_historyt;
 
 protected:
-  history_optionst history_constuctor_options;
+  history_optionst history_constructor_options;
   domain_optionst domain_constructor_options;
   
 public:
   // constructor
   ai_storaget():
-  history_constructor_options(),domain_constructor_options(), ai_baset()
+  ai_baset(), history_constructor_options(), domain_constructor_options()
   {
   }
 
-  ai_storaget(const history_optionst &ho, const domain_optionst &do):
-  history_constructor_options(ho), domain_constructor_options(do), ai_baset()
+  ai_storaget(const history_optionst &ho, const domain_optionst &dot):
+  ai_baset(), history_constructor_options(ho), domain_constructor_options(dot)
   {
   }
 
   /// Direct access to the state map
+  /// Unlike abstract_state_* this requires/has knowledge of the template types
   domainT &operator[](const historyT &h)
   {
-    return get_state(h);
+    return static_cast<domainT &>(get_state(h));
   }
 
   const domainT &operator[](const historyT &h) const
   {
-    return find_state(h);
+    return static_cast<const domainT &>(find_state(h));
   }
 
+  void clear() override
+  {
+    history_map.clear();
+    ai_baset::clear();
+  }
 
+  const location_historyt & get_history(locationt &l)
+  {
+    return history_map[l];
+  }
+  
 protected:
 
   /// Implement the type-specific methods that ai_baset delegates.
@@ -345,8 +374,8 @@ protected:
     statet &dest=get_state(to);
     return static_cast<domainT &>(dest).merge(
       static_cast<const domainT &>(src),
-      from.current_instruction_pointer(),
-      to.current_instruction_pointer());
+      from.current_location(),
+      to.current_location());
     #warning "convert merge signature"
   }
 
@@ -355,16 +384,20 @@ protected:
     return util_make_unique<domainT>(static_cast<const domainT &>(s));
   }
 
-  
-  std::map<locationt, std::set<historyT> > history_map;
+  /// Record which histories have reached any particular point so that
+  /// there is the option of merging with an existing one.
+  typedef std::map<locationt, location_historyt> history_mapt;
+  history_mapt history_map;
   
   const tracet & start_history(locationt bang) override
   {
-    auto it=history_map.insert(historyT(history_constructor_options, bang));
-    return *it;
+    auto it=history_map[bang].insert(historyT(history_constructor_options, bang));
+    return *it.first;
   }
 
-  const tracet &step(const trace &t, locationt to_l) override
+  /// Returns a pointer as the history is allowed to prevent some steps.
+  /// If it does, nullptr is returned.
+  const tracet *step(const tracet &t, locationt to_l) override
   {
     return static_cast<const historyT &>(t).step(to_l, history_map[to_l]);
   }
@@ -381,147 +414,247 @@ private:
 /// There are several different options of what kind of storage is used for
 /// the domains and how historys map to domains.
 
+// Ladies and gentlemen ... C++ ...
+#define INHERITANCE_IS_HARD   typedef ai_storaget<historyT, domainT> parent; \
+  using typename parent::tracet;                                        \
+  using typename parent::statet;                                        \
+  using typename parent::locationt;                                     \
+  using typename parent::historyt;                                      \
+  using typename parent::domaint;                                       \
+  using typename parent::history_optionst;                              \
+  using typename parent::domain_optionst;                               \
+  using parent::domain_constructor_options
+
+
 template<typename historyT, typename domainT>
-class location_insensitive_ait:public ai_storage<historyT, domainT>
+class location_insensitive_ait:public ai_storaget<historyT, domainT>
 {
  public:
-  using ai_storage<historyT, domainT>::ai_storage;
+  INHERITANCE_IS_HARD;
+
+  typedef std::map<irep_idt, domaint> state_mapt;
+
+  location_insensitive_ait() : ai_storaget<historyT, domainT>() {}
+  location_insensitive_ait(const history_optionst &ho,
+                           const domain_optionst &dot) :
+  ai_storaget<historyT, domainT>(ho, dot) {}
 
   void clear() override
   {
     state_map.clear();
-    ai_storage<historyT, domainT>::clear();
+    ai_storaget<historyT, domainT>::clear();
   }
 
-  const statet & abstract_state_before(locationt t) const override
+  std::unique_ptr<statet> abstract_state_before(locationt t) const override
   {
     typename state_mapt::const_iterator it=state_map.find(t->function);
     if(it==state_map.end())
     {
-      domaint d(domain_constructor_options);
-      d.make_bottom();
+      #warning "enable options"
+      std::unique_ptr<statet> d = util_make_unique<domainT>(/*domain_constructor_options*/);
+      CHECK_RETURN(d->is_bottom());
       return d;
-      #warning "suspect..."
     }
 
-    return it->second;
+    return util_make_unique<domainT>(it->second);
   }
+
+  // Additional direct access operators
+  using parent::operator[];
+  domainT &operator[](const locationt &l)
+  {
+    return static_cast<domainT &>(get_state(l->function));
+  }
+
+  const domainT &operator[](const locationt &l) const
+  {
+    return static_cast<const domainT &>(find_state(l->function));
+  }
+
+  domainT &operator[](const irep_idt &f)
+  {
+    return static_cast<domainT &>(get_state(f));
+  }
+
+  const domainT &operator[](const irep_idt &f) const
+  {
+    return static_cast<const domainT &>(find_state(f));
+  }
+
 
  protected :
   // this one creates states, if need be
-  virtual statet &get_state(const tracet &h) override
+  virtual statet &get_state(const irep_idt f)
   {
-    locationt l=h.current_instruction_location();
-    typename state_mapt::iterator it=state_map.find(l->function);
-
+    typename state_mapt::iterator it=state_map.find(f);
     if(it==state_map.end())
     {
-      it=state_map.insert(l->function, domaint(domain_constructor_options) );
-      it->second.make_bottom();  // Should be ensured by the domain constructor
+      #warning "enable options"
+      it=state_map.insert(
+        std::make_pair(f, domaint(/*domain_constructor_options*/)));
+      CHECK_RETURN(it->is_bottom());
     }
     
     return it->second;
   }
-
-  // this one just finds states and can be used with a const ai_storage
-  const statet &find_state(const tracet &l) const override
+  
+  virtual statet &get_state(const tracet &h) override
   {
-    locationt l=h.current_instruction_location();
-    typename state_mapt::const_iterator it=state_map.find(l->function);
+    return get_state(h.current_location()->function);
+  }
+
+  
+  // this one just finds states and can be used with a const ai_storage
+  virtual const statet &find_state(const irep_idt f) const
+  {
+    typename state_mapt::const_iterator it=state_map.find(f);
     if(it==state_map.end())
       throw "failed to find state";
 
     return it->second;
   }
-  
+  virtual const statet &find_state(const tracet &h) const override
+  {
+    return find_state(h.current_location()->function);
+  }
+
  private:
-  typedef std::unordered_map<irep_idt, domaint> state_mapt;
   state_mapt state_map;
 };
 
 
 template<typename historyT, typename domainT>
-class location_sensitive_ait:public ai_storage<historyT, domainT>
+class location_sensitive_ait:public ai_storaget<historyT, domainT>
 {
  public:
-  using ai_storage<historyT, domainT>::ai_storage;
+  INHERITANCE_IS_HARD;
+
+  #warning "should this be location number?"
+  typedef std::map<locationt, domaint> state_mapt;
+  
+  location_sensitive_ait() : ai_storaget<historyT, domainT>() {}
+  location_sensitive_ait(const history_optionst &ho,
+                           const domain_optionst &dot) :
+  ai_storaget<historyT, domainT>(ho, dot) {}
+
 
   void clear() override
   {
     state_map.clear();
-    ai_storage<historyT, domainT>::clear();
+    ai_storaget<historyT, domainT>::clear();
   }
 
-  const statet & abstract_state_before(locationt t) const override
+  std::unique_ptr<statet> abstract_state_before(locationt t) const override
   {
     typename state_mapt::const_iterator it=state_map.find(t);
     if(it==state_map.end())
     {
-      domaint d(domain_constructor_options);
-      d.make_bottom();
+#warning "enable options"
+      std::unique_ptr<statet> d = util_make_unique<domainT>(/*domain_constructor_options*/);
+      CHECK_RETURN(d->is_bottom());
       return d;
-      #warning "suspect..."
     }
 
-    return it->second;
+    return util_make_unique<domainT>(it->second);
   }
 
+  // Additional direct access operators
+  using parent::operator[];
+  domainT &operator[](const locationt &l)
+  {
+    return static_cast<domainT &>(get_state(l));
+  }
+
+  const domainT &operator[](const locationt &l) const
+  {
+    return static_cast<const domainT &>(find_state(l));
+  }
+
+  
  protected :
   // this one creates states, if need be
-  virtual statet &get_state(const tracet &h) override
+  virtual statet &get_state(locationt l)
   {
-    locationt l=h.current_instruction_location();
     typename state_mapt::iterator it=state_map.find(l);
 
     if(it==state_map.end())
     {
-      it=state_map.insert(l, domaint(domain_constructor_options) );
-      it->second.make_bottom();  // Should be ensured by the domain constructor
+#warning "enable options"
+      it=state_map.insert(
+        std::make_pair(l, domaint(/*domain_constructor_options*/))).first;
+      CHECK_RETURN(it->second.is_bottom());
     }
     
     return it->second;
   }
+  
+  virtual statet &get_state(const tracet &h) override
+  {
+    return get_state(h.current_location());
+  }
 
   // this one just finds states and can be used with a const ai_storage
-  const statet &find_state(const tracet &h) const override
+  virtual const statet &find_state(locationt l) const
   {
-    locationt l=h.current_instruction_location();
     typename state_mapt::const_iterator it=state_map.find(l);
     if(it==state_map.end())
       throw "failed to find state";
 
     return it->second;
   }
-  
- private:
-  #warning "should this be location number?"
-  typedef std::unordered_map<locationt, domaint> state_mapt;
+
+  virtual const statet &find_state(const tracet &h) const override
+  {
+    return find_state(h.current_location());
+  }
+
+  #warning "should be private"
+// private:
+ public:
   state_mapt state_map;  
 };
 
 
 template<typename historyT, typename domainT>
-class history_sensitive_ait:public ai_storage<historyT, domainT>
+class history_sensitive_ait:public ai_storaget<historyT, domainT>
 {
  public:
-  using ai_storage<historyT, domainT>::ai_storage;
+  INHERITANCE_IS_HARD;
+  using typename parent::history_mapt;
+  using parent::history_map;
+
+  typedef std::unordered_map<historyt, domaint> state_mapt;
+  
+  history_sensitive_ait() : ai_storaget<historyT, domainT>() {}
+  history_sensitive_ait(const history_optionst &ho,
+                        const domain_optionst &dot) :
+  ai_storaget<historyT, domainT>(ho, dot) {}
 
   void clear() override
   {
     state_map.clear();
-    ai_storage<historyT, domainT>::clear();
+    ai_storaget<historyT, domainT>::clear();
   }
 
   /// Access to all histories that reach the given location
-  const statet & abstract_state_before(locationt t) const override
+  std::unique_ptr<statet> abstract_state_before(locationt t) const override
   {
-    #error "TODO"
-    /*
-     * 1. Use the locationt -> historyt map
-     * 2. merge all domains of valid histories
-     */
+    typename history_mapt::const_iterator histories=history_map.find(t);
+#warning "enable options"
     
-    return it->second;
+    std::unique_ptr<statet> d=
+      util_make_unique<domainT>(/*domain_constructor_options*/);
+    CHECK_RETURN(d->is_bottom());
+
+    if (histories != history_map.end())
+    {
+      for (const auto &h : histories->second())
+      {
+        d->merge(find_state(h), h, h);
+      }
+    }
+
+    return d;
   }
 
  protected :
@@ -532,15 +665,17 @@ class history_sensitive_ait:public ai_storage<historyT, domainT>
 
     if(it==state_map.end())
     {
-      it=state_map.insert(h, domaint(domain_constructor_options) );
-      it->second.make_bottom();  // Should be ensured by the domain constructor
+      #warning "enable options"
+      it=state_map.insert(
+        std::make_pair(h, domaint(/*domain_constructor_options*/)));
+      CHECK_RETURN(it->is_bottom());
     }
     
     return it->second;
   }
 
   // this one just finds states and can be used with a const ai_storage
-  const statet &find_state(const tracet &h) const override
+  virtual const statet &find_state(const tracet &h) const override
   {
     typename state_mapt::const_iterator it=state_map.find(h);
     if(it==state_map.end())
@@ -550,7 +685,6 @@ class history_sensitive_ait:public ai_storage<historyT, domainT>
   }
   
  private:
-  typedef std::unordered_map<historyt, domaint> state_mapt;
   state_mapt state_map;
 };
 
@@ -561,6 +695,9 @@ template<typename aiT>
 class sequential_analysist:public aiT
 {
 public:
+  using typename aiT::statet;
+  using typename aiT::locationt;
+  
   // constructors
   using aiT::aiT;
   
@@ -569,7 +706,7 @@ protected:
     const goto_functionst &goto_functions,
     const namespacet &ns) override
   {
-    sequential_fixedpoint(goto_functions, ns);
+    this->sequential_fixedpoint(goto_functions, ns);
   }
 
 private:
@@ -594,6 +731,10 @@ template<typename aiT>
 class concurrent_analysist:public aiT
 {
 public:
+  using typename aiT::statet;
+  using typename aiT::locationt;
+  using typename aiT::domaint;
+  
   // constructors
   using aiT::aiT;
   
@@ -628,9 +769,9 @@ protected:
 /// ait : sequential, location sensitive, history in-sensitive analysis
 /// domainT is expected to be derived from ai_domain_baseT
 template<typename domainT>
-class ait:public sequential_analysis<location_sensitive_ait<ahistorical, domainT> >
+class ait:public sequential_analysist<location_sensitive_ait<ahistoricalt, domainT> >
 {
-  typedef sequential_analysis<location_sensitive_ait<ahistorical, domainT> > parent;
+  typedef sequential_analysist<location_sensitive_ait<ahistoricalt, domainT> > parent;
 public:
   /// Inherit constructors
   using parent::parent;
@@ -638,9 +779,9 @@ public:
 
 /// concurrency_aware_ait : concurrent, location sensitive, history in-sensitive analysis
 template<typename domainT>
-class concurrency_aware_ait:public concurrent_analysist<location_sensitive_ait<ahistorical, domainT> >
+class concurrency_aware_ait:public concurrent_analysist<location_sensitive_ait<ahistoricalt, domainT> >
 {
-  typedef concurrent_analysist<location_sensitive_ait<ahistorical, domainT> > parent;
+  typedef concurrent_analysist<location_sensitive_ait<ahistoricalt, domainT> > parent;
 public:
   /// Inherit constructors
   using parent::parent;
