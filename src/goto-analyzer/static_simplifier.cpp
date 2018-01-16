@@ -66,7 +66,7 @@ bool static_simplifier(
       if(i_it->is_assert())
       {
         bool unchanged=
-          ai.abstract_state_before(i_it).ai_simplify(i_it->guard, ns);
+          ai.abstract_state_before(i_it)->ai_simplify(i_it->guard, ns);
 
         if(unchanged)
           unmodified.asserts++;
@@ -76,7 +76,7 @@ bool static_simplifier(
       else if(i_it->is_assume())
       {
         bool unchanged=
-          ai.abstract_state_before(i_it).ai_simplify(i_it->guard, ns);
+          ai.abstract_state_before(i_it)->ai_simplify(i_it->guard, ns);
 
         if(unchanged)
           unmodified.assumes++;
@@ -86,7 +86,7 @@ bool static_simplifier(
       else if(i_it->is_goto())
       {
         bool unchanged=
-          ai.abstract_state_before(i_it).ai_simplify(i_it->guard, ns);
+          ai.abstract_state_before(i_it)->ai_simplify(i_it->guard, ns);
 
         if(unchanged)
           unmodified.gotos++;
@@ -103,10 +103,10 @@ bool static_simplifier(
         // should simplify to i=1, not to 0=1.
 
         bool unchanged_lhs=
-          ai.abstract_state_before(i_it).ai_simplify_lhs(assign.lhs(), ns);
+          ai.abstract_state_before(i_it)->ai_simplify_lhs(assign.lhs(), ns);
 
         bool unchanged_rhs=
-          ai.abstract_state_before(i_it).ai_simplify(assign.rhs(), ns);
+          ai.abstract_state_before(i_it)->ai_simplify(assign.rhs(), ns);
 
         if(unchanged_lhs && unchanged_rhs)
           unmodified.assigns++;
@@ -118,12 +118,12 @@ bool static_simplifier(
         code_function_callt &fcall=to_code_function_call(i_it->code);
 
         bool unchanged=
-          ai.abstract_state_before(i_it).ai_simplify(fcall.function(), ns);
+          ai.abstract_state_before(i_it)->ai_simplify(fcall.function(), ns);
 
         exprt::operandst &args=fcall.arguments();
 
         for(auto &o : args)
-          unchanged&=ai.abstract_state_before(i_it).ai_simplify(o, ns);
+          unchanged&=ai.abstract_state_before(i_it)->ai_simplify(o, ns);
 
         if(unchanged)
           unmodified.function_calls++;
