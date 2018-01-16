@@ -52,7 +52,8 @@ bool static_verifier(
           continue;
 
         exprt e(i_it->guard);
-        const ai_domain_baset &domain(ai.abstract_state_before(i_it));
+        auto dp=ai.abstract_state_before(i_it);
+        const ai_domain_baset &domain(*dp);
         domain.ai_simplify(e, ns);
 
         json_objectt &j=json_result.push_back().make_object();
@@ -101,7 +102,8 @@ bool static_verifier(
           continue;
 
         exprt e(i_it->guard);
-        const ai_domain_baset &domain(ai.abstract_state_before(i_it));
+        auto dp=ai.abstract_state_before(i_it);
+        const ai_domain_baset &domain(*dp);
         domain.ai_simplify(e, ns);
 
         xmlt &x=xml_result.new_element("result");
@@ -157,7 +159,8 @@ bool static_verifier(
           continue;
 
         exprt e(i_it->guard);
-        const ai_domain_baset &domain(ai.abstract_state_before(i_it));
+        auto dp=ai.abstract_state_before(i_it);
+        const ai_domain_baset &domain(*dp);
         domain.ai_simplify(e, ns);
 
         out << '[' << i_it->source_location.get_property_id()
