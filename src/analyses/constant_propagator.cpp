@@ -514,30 +514,31 @@ void constant_propagator_ait::replace(
 {
   Forall_goto_program_instructions(it, goto_function.body)
   {
-    state_mapt::iterator s_it=state_map.find(it);
+    // Works because this is a location (but not history) sensitive domain
+    const constant_propagator_domaint &d=(*this)[it];
 
-    if(s_it==state_map.end())
+    if(d.is_bottom())
       continue;
 
-    replace_types_rec(s_it->second.values.replace_const, it->code);
-    replace_types_rec(s_it->second.values.replace_const, it->guard);
+    replace_types_rec(d.values.replace_const, it->code);
+    replace_types_rec(d.values.replace_const, it->guard);
 
     if(it->is_goto() || it->is_assume() || it->is_assert())
     {
-      s_it->second.values.replace_const(it->guard);
+      d.values.replace_const(it->guard);
       simplify(it->guard, ns);
     }
     else if(it->is_assign())
     {
       exprt &rhs=to_code_assign(it->code).rhs();
-      s_it->second.values.replace_const(rhs);
+      d.values.replace_const(rhs);
       simplify(rhs, ns);
       if(rhs.id()==ID_constant)
         rhs.add_source_location()=it->code.op0().source_location();
     }
     else if(it->is_function_call())
     {
-      s_it->second.values.replace_const(
+      d.values.replace_const(
         to_code_function_call(it->code).function());
 
       simplify(to_code_function_call(it->code).function(), ns);
@@ -548,14 +549,14 @@ void constant_propagator_ait::replace(
       for(exprt::operandst::iterator o_it=args.begin();
           o_it!=args.end(); ++o_it)
       {
-        s_it->second.values.replace_const(*o_it);
+        d.values.replace_const(*o_it);
         simplify(*o_it, ns);
       }
     }
     else if(it->is_other())
     {
       if(it->code.get_statement()==ID_expression)
-        s_it->second.values.replace_const(it->code);
+        d.values.replace_const(it->code);
     }
   }
 }
