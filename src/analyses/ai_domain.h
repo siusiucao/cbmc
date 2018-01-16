@@ -60,12 +60,20 @@ public:
 
   typedef goto_programt::const_targett locationt;
 
+  /// "this" is the domain before the instruction "from"
+  /// "from" is the instruction to be interpretted
+  /// "to" is the next instruction (for GOTO, FUNCTION_CALL, END_FUNCTION)
+
   // how function calls are treated:
   // a) there is an edge from each call site to the function head
   // b) there is an edge from the last instruction (END_FUNCTION)
   //    of the function to the instruction _following_ the call site
   //    (this also needs to set the LHS, if applicable)
 
+  // PRECONDITION(from.is_dereferenceable(), "Must not be _::end()")
+  // PRECONDITION(to.is_dereferenceable(), "Must not be _::end()")
+  // PRECONDITION(are_comparable(from,to) ||
+  //              (from->is_function_call() || from->is_end_function())
   #warning "You said you would fix iterator comparison in the transform"
   virtual void transform(
     locationt from,
@@ -109,6 +117,12 @@ public:
   //
   // This computes the join between "this" and "b".
   // Return true if "this" has changed.
+  // In the usual case, "b" is the updated state after "from"
+  // and "this" is the state before "to".
+  //
+  // PRECONDITION(from.is_dereferenceable(), "Must not be _::end()")
+  // PRECONDITION(to.is_dereferenceable(), "Must not be _::end()")
+
 
   // This method allows an expression to be simplified / evaluated using the
   // current state.  It is used to evaluate assertions and in program
