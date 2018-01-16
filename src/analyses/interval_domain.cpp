@@ -78,6 +78,7 @@ void interval_domaint::transform(
 
   case GOTO:
     {
+      // GOTO implies from and to are comparable
       locationt next=from;
       next++;
       if(next==to)

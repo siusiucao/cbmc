@@ -173,12 +173,12 @@ void rd_range_domaint::transform_function_call(
 {
   const code_function_callt &code=to_code_function_call(from->code);
 
-  goto_programt::const_targett next=from;
-  ++next;
-
   // only if there is an actual call, i.e., we have a body
-  if(next!=to)
+  if(from->function!=to->function)
   {
+    goto_programt::const_targett next=from;
+    ++next;
+
     for(valuest::iterator it=values.begin();
         it!=values.end();
        ) // no ++it

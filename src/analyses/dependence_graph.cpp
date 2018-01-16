@@ -195,16 +195,15 @@ void dep_graph_domaint::transform(
   // propagate control dependencies across function calls
   if(from->is_function_call())
   {
-    goto_programt::const_targett next=from;
-    ++next;
-
-    if(next==to)
+    if(from->function==to->function)
     {
       control_dependencies(from, to, *dep_graph);
     }
     else
     {
       // edge to function entry point
+      goto_programt::const_targett next=from;
+      ++next;
 
       dep_graph_domaint *s=
         dynamic_cast<dep_graph_domaint*>(&(dep_graph->get_state(next)));

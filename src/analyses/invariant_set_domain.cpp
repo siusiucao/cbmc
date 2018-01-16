@@ -23,6 +23,7 @@ void invariant_set_domaint::transform(
   {
   case GOTO:
     {
+      // GOTO implies from and to are comparable
       exprt tmp(from_l->guard);
 
       goto_programt::const_targett next=from_l;

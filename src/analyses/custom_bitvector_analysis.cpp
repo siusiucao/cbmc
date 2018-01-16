@@ -395,11 +395,8 @@ void custom_bitvector_domaint::transform(
         }
         else
         {
-          goto_programt::const_targett next=from;
-          ++next;
-
           // only if there is an actual call, i.e., we have a body
-          if(next!=to)
+          if(from->function!=to->function)
           {
             const code_typet &code_type=
               to_code_type(ns.lookup(identifier).type);
@@ -522,7 +519,7 @@ void custom_bitvector_domaint::transform(
     {
       exprt guard=instruction.guard;
 
-      if(to!=from->get_target())
+      if(to!=from->get_target())  // Safe : GOTO implies to and from comparable
         guard.make_not();
 
       exprt result=eval(guard, cba);
