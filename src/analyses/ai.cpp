@@ -254,7 +254,16 @@ bool ai_baset::fixedpoint(
   {
     const tracet &h=get_next(working_set);
 
-    if(visit(h, working_set, goto_program, goto_functions, ns))
+    // goto_program is really only needed for iterator manipulation
+    locationt l=h.current_location();
+    auto it=goto_functions.function_map.find(l->function);
+
+    DATA_INVARIANT(it!=goto_functions.function_map.end(),
+                   "instruction.function must be a mapped function");
+    DATA_INVARIANT(it->second.body_available(),
+                   "instruction.function implies instruction is in function");
+
+    if(visit(h, working_set, it->second.body, goto_functions, ns))
       new_data=true;
   }
 
@@ -302,6 +311,7 @@ bool ai_baset::visit(
   else
   {
     // Successors can be empty, for example assume(0).
+    // Successors can contain duplicates, for example GOTO next;
     for(const auto &to_l : goto_program.get_successors(l))
     {
       if(to_l==goto_program.instructions.end())
@@ -509,7 +519,9 @@ bool ai_baset::do_function_return(
   irep_idt function_name=l_end->function;
 
   auto it=call_sites.find(function_name);
-  INVARIANT(it == call_sites.end(), "All functions analyzed should be listed");
+  INVARIANT(
+    it != call_sites.end(),
+    "All functions analyzed should in call_sites map");
   
   // Note that it->second.empty() => is the entry function for the analysis
   // but not vica versa because recursion!
