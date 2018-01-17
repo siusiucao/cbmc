@@ -672,6 +672,7 @@ class history_sensitive_ait:public ai_storaget<historyT, domainT>
     {
       for (const auto &h : histories->second())
       {
+#warning "iffy merge args"
         d->merge(find_state(h), h, h);
       }
     }
