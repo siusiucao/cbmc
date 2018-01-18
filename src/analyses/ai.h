@@ -38,7 +38,7 @@ public:
   typedef ai_history_baset tracet;
   typedef ai_domain_baset statet;
   typedef goto_programt::const_targett locationt;
-  
+
   ai_baset()
   {
   }
@@ -284,10 +284,16 @@ protected:
     const exprt::operandst &arguments,
     const namespacet &ns);
 
-  bool do_function_return(
+  bool do_function_return_rec(
    const tracet &h_end,
    working_sett &working_set,
    const namespacet &ns);
+
+  bool do_function_return(
+    const tracet &h_end,
+    working_sett &working_set,
+    const locationt &l_call,
+    const namespacet &ns);
 
   // abstract methods
   // These delegate anything that requires knowing the actual type of
@@ -306,6 +312,7 @@ protected:
   
   virtual const tracet &start_history(locationt bang) = 0;
   virtual const tracet *step(const tracet &t, locationt to_l) = 0;
+  virtual working_sett get_history(locationt &l) = 0;
 };
 
 
@@ -359,9 +366,17 @@ public:
     ai_baset::clear();
   }
 
-  const location_historyt & get_history(locationt &l)
+  virtual working_sett get_history(locationt &l) override
   {
-    return history_map[l];
+#warning "fix ugly type conversion"
+    // This is ugly because there is no coversion from
+    //  set<histortyT> -> set<const tracet *>
+    working_sett res;
+    for(const auto &h : history_map[l])
+    {
+      res.insert(&h);
+    }
+    return res;
   }
   
 protected:
@@ -639,6 +654,7 @@ class history_sensitive_ait:public ai_storaget<historyT, domainT>
   /// Access to all histories that reach the given location
   std::unique_ptr<statet> abstract_state_before(locationt t) const override
   {
+#warning "get_histories?"
     typename history_mapt::const_iterator histories=history_map.find(t);
 #warning "enable options"
     

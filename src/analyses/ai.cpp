@@ -305,7 +305,7 @@ bool ai_baset::visit(
     DATA_INVARIANT(goto_program.get_successors(l).empty(),
                    "The end function instruction should have no successors.");
 
-    if (do_function_return(h, working_set, ns))
+    if (do_function_return_rec(h, working_set, ns))
       new_data=true;
   }
   else
@@ -362,10 +362,10 @@ bool ai_baset::do_function_call(
   const goto_functionst::goto_functiont &goto_function=
     f_it->second;
 
+  locationt l_return = std::next(l_call);
+
   if(!goto_function.body_available())
   {
-    locationt l_return = std::next(l_call);
-    
     const tracet *next=step(h_call, l_return);
     if (next == nullptr)   // An unusual choice but possible
       return false;
@@ -399,6 +399,8 @@ bool ai_baset::do_function_call(
   // This is the edge from call site to function head.
 
   {
+    bool new_data=false;
+
     // get the state at the beginning of the function
     locationt l_begin=goto_function.body.instructions.begin();
 
@@ -408,7 +410,7 @@ bool ai_baset::do_function_call(
     const tracet &h_begin=*next;
 
     // Update the call map (so that the function can return here)
-    call_sites[f_it->first].insert(l_call);
+    bool new_call_site=call_sites[f_it->first].insert(l_call).second;
     
     // initialize state, if necessary
     get_state(h_begin);
@@ -425,12 +427,47 @@ bool ai_baset::do_function_call(
     // merge the new stuff
     if (merge(*tmp_state, h_call, h_begin))
     {
+      new_data=true;
       put_in_working_set(working_set, h_begin);
-      return true;
     }
-    else
-      return false;
+
+    /* As the list of call sites is built incrementally, we have to be careful
+     * to make sure that return values are correctly computed.
+     * Once a call site is on the list then the next time the callee's
+     * END_FUNCTION is reached it will update the call site.
+     * However as histories and domains may merge, we cannot guarantee
+     * when or even if the callee's END_FUNCTION will be reached next.
+     * So when a new call site is added to the list we also need to
+     * (pro-actively) merge the possible return states.
+     */
+    if(new_call_site)
+    {
+      locationt l_end=l_begin;
+      for ( ; (!l_end->is_end_function()); l_end=std::next(l_end))
+      {
+        DATA_INVARIANT(
+          l_end!=goto_function.body.instructions.end(),
+          "Must reach and END_FUNCTION instruction before end() iterator");
+        // Termination also guaranteed by a DATA_INVARIANT
+      }
+
+      for(const tracet *h : get_history(l_end))
+      {
+        const tracet &h_end=*h;
+        const statet &end_state = get_state(h_end);
+
+        // Can have histories with domains as bottom, for example
+        // an infeasible branch to the end of the program.
+        if(!end_state.is_bottom())
+        {
+          if(do_function_return(h_end, working_set, l_call, ns))
+            new_data=true;
+        }
+      }
+    }
+  return new_data;
   }
+  UNREACHABLE;
 }
 
 bool ai_baset::do_function_call_rec(
@@ -509,6 +546,51 @@ bool ai_baset::do_function_call_rec(
 bool ai_baset::do_function_return(
   const tracet &h_end,
   working_sett &working_set,
+  const locationt &l_call,
+  const namespacet &ns)
+{
+  bool new_data=false;
+
+  // This is the edge from function end to return site(s).
+
+  // We want the return location, rather than the call site itself
+  locationt l_return=std::next(l_call);
+  // DATA_INVARIANT(l_return.is_dereferenceable(),
+  //                "last instruction must be END_FUNCTION, not call")
+
+  // Find which are possible call sites for this history
+  const tracet *next=step(h_end, l_return);
+  if (next == nullptr)
+    return false;
+  const tracet &h_return=*next;
+
+  // do edge from end of function to instruction after call
+  const statet &end_state=get_state(h_end);
+
+  // initialize state, if necessary
+  get_state(h_return);
+
+  std::unique_ptr<statet> tmp_state(make_temporary_state(end_state));
+#warning "convert transform signature"
+  tmp_state->transform(
+    h_end.current_location(),
+    h_return.current_location(),
+    *this,
+    ns);
+
+  // Propagate those
+  if (merge(*tmp_state, h_end, h_return))
+  {
+    new_data=true;
+    put_in_working_set(working_set, h_return);
+  }
+
+  return new_data;
+}
+
+bool ai_baset::do_function_return_rec(
+  const tracet &h_end,
+  working_sett &working_set,
   const namespacet &ns)
 {
   bool new_data=false;
@@ -527,38 +609,9 @@ bool ai_baset::do_function_return(
   // but not vica versa because recursion!
   for(const auto &l_call : it->second)
   {
-    // This is the edge from function end to return site(s).
-    
-    // We want the return location, rather than the call site itself
-    locationt l_return=std::next(l_call);
-    
-    // Find which are possible call sites for this history
-    const tracet *next=step(h_end, l_return);
-    if (next == nullptr)
-      continue;
-    const tracet &h_return=*next;
-
-    // do edge from end of function to instruction after call
-    const statet &end_state=get_state(h_end);
-
-    INVARIANT(!end_state.is_bottom(), "Only called if end is reachable");
-
-    // initialize state, if necessary
-    get_state(h_return);
-    
-    std::unique_ptr<statet> tmp_state(make_temporary_state(end_state));
-    #warning "convert transform signature"
-    tmp_state->transform(
-      h_end.current_location(),
-      h_return.current_location(),
-      *this,
-      ns);
-
-    // Propagate those
-    if (merge(*tmp_state, h_end, h_return))
+    if(do_function_return(h_end, working_set, l_call, ns))
     {
       new_data=true;
-      put_in_working_set(working_set, h_return);
     }
   }
 
