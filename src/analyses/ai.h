@@ -256,6 +256,9 @@ protected:
     const goto_functionst &goto_functions,
     const namespacet &ns);
 
+  // Visit performs one step of abstract interpretation from history h
+  // Depending on the instruction type it may compute a number of "edges"
+  // or applications of the abstract transformer
   // true = found something new
   bool visit(
     const tracet &h,
@@ -263,6 +266,14 @@ protected:
     const goto_programt &goto_program,
     const goto_functionst &goto_functions,
     const namespacet &ns);
+
+  // The most basic step, computing one edge / transformer application.
+  bool compute_edge(
+    const tracet &h,
+    working_sett &working_set,
+    const locationt &to_l,
+    const namespacet &ns);
+
 
   // function calls
   typedef std::map<irep_idt, std::set<locationt> > call_sitest;
@@ -284,16 +295,11 @@ protected:
     const exprt::operandst &arguments,
     const namespacet &ns);
 
-  bool do_function_return_rec(
+  bool do_function_return(
    const tracet &h_end,
    working_sett &working_set,
    const namespacet &ns);
 
-  bool do_function_return(
-    const tracet &h_end,
-    working_sett &working_set,
-    const locationt &l_call,
-    const namespacet &ns);
 
   // abstract methods
   // These delegate anything that requires knowing the actual type of

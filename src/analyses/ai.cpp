@@ -279,7 +279,6 @@ bool ai_baset::visit(
 {
   bool new_data=false;
 
-  statet &current=get_state(h);
   locationt l=h.current_location();
 
   // Function call and return are special cases
@@ -305,7 +304,7 @@ bool ai_baset::visit(
     DATA_INVARIANT(goto_program.get_successors(l).empty(),
                    "The end function instruction should have no successors.");
 
-    if (do_function_return_rec(h, working_set, ns))
+    if (do_function_return(h, working_set, ns))
       new_data=true;
   }
   else
@@ -317,35 +316,51 @@ bool ai_baset::visit(
       if(to_l==goto_program.instructions.end())
         continue;
 
-      // Has history taught us not to step here...
-      const tracet *next=step(h, to_l);
-      if (next == nullptr)
-        continue;
-      const tracet &to_h=*next;
-    
-      std::unique_ptr<statet> tmp_state(make_temporary_state(current));
-      statet &new_values=*tmp_state;
-
-      // initialize state, if necessary
-      get_state(to_h);
-
-#warning "convert transform signature"
-      new_values.transform(
-        h.current_location(),
-        to_h.current_location(),
-        *this,
-        ns);
-
-      if(merge(new_values, h, to_h))
-      {
-        new_data=true;
-        put_in_working_set(working_set, to_h);
-      }
+      compute_edge(h, working_set, to_l, ns);
     }
   }
 
   return new_data;
 }
+
+bool ai_baset::compute_edge(
+  const tracet &h,
+  working_sett &working_set,
+  const locationt &to_l,
+  const namespacet &ns)
+{
+  // Has history taught us not to step here...
+  const tracet *next=step(h, to_l);
+  if (next == nullptr)
+    return false;
+  const tracet &to_h=*next;
+
+  // Abstract domains are mutable so we must copy before we transform
+  statet &current=get_state(h);
+
+  std::unique_ptr<statet> tmp_state(make_temporary_state(current));
+  statet &new_values=*tmp_state;
+
+  // Apply transformer
+#warning "convert transform signature"
+  new_values.transform(
+    h.current_location(),
+    to_h.current_location(),
+    *this,
+    ns);
+
+  // Initialize state(s), if necessary
+  get_state(to_h);
+
+  if(merge(new_values, h, to_h))
+  {
+    put_in_working_set(working_set, to_h);
+    return true;
+  }
+
+  return false;
+}
+
 
 /// Remember that h_call and h_return are both in the caller
 bool ai_baset::do_function_call(
@@ -363,73 +378,30 @@ bool ai_baset::do_function_call(
     f_it->second;
 
   locationt l_return = std::next(l_call);
+  // DATA_INVARIANT(l_return.is_dereferenceable(),
+  //                "CALL cannot be last instruction");
 
   if(!goto_function.body_available())
   {
-    const tracet *next=step(h_call, l_return);
-    if (next == nullptr)   // An unusual choice but possible
-      return false;
-    const tracet &h_return=*next;
-
-    // We don't update the call_site map
-    
-    // initialize state, if necessary
-    get_state(h_return);
-    
-    // if we don't have a body, we just do an edge call -> return
-    std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
-    #warning "convert transform signature"
-    tmp_state->transform(
-      h_call.current_location(),
-      h_return.current_location(),
-      *this,
-      ns);
-
-    if (merge(*tmp_state, h_call, h_return))
-    {
-      put_in_working_set(working_set, h_return);
-      return true;
-    }
-    else
-      return false;
+    // If we don't have a body, we just do an edge call -> return
+    // and we don't update the call_site map
+    return compute_edge(h_call, working_set, l_return, ns);
   }
-
-  INVARIANT(!goto_function.body.instructions.empty(), "Have checked body_available()");
-
-  // This is the edge from call site to function head.
-
+  else
   {
-    bool new_data=false;
-
-    // get the state at the beginning of the function
-    locationt l_begin=goto_function.body.instructions.begin();
-
-    const tracet *next=step(h_call, l_begin);
-    if (next == nullptr)   // An unusual choice but possible
-      return false;
-    const tracet &h_begin=*next;
+    // This is the edge from call site to function head.
 
     // Update the call map (so that the function can return here)
     bool new_call_site=call_sites[f_it->first].insert(l_call).second;
     
-    // initialize state, if necessary
-    get_state(h_begin);
+    // Get the location at the beginning of the function
+    locationt l_begin=goto_function.body.instructions.begin();
+    INVARIANT(l_begin != goto_function.body.instructions.end(),
+              "Have checked body_available()");
 
-    // do the edge from the call site to the beginning of the function
-    std::unique_ptr<statet> tmp_state(make_temporary_state(get_state(h_call)));
-    #warning "convert transform signature"
-    tmp_state->transform(
-      h_call.current_location(),
-      h_begin.current_location(),
-      *this,
-      ns);
+    // Do the edge from the call site to the beginning of the function
+    bool new_data=compute_edge(h_call, working_set, l_begin, ns);
 
-    // merge the new stuff
-    if (merge(*tmp_state, h_call, h_begin))
-    {
-      new_data=true;
-      put_in_working_set(working_set, h_begin);
-    }
 
     /* As the list of call sites is built incrementally, we have to be careful
      * to make sure that return values are correctly computed.
@@ -442,6 +414,7 @@ bool ai_baset::do_function_call(
      */
     if(new_call_site)
     {
+      // Find the end of the callee function
       locationt l_end=l_begin;
       for ( ; (!l_end->is_end_function()); l_end=std::next(l_end))
       {
@@ -450,6 +423,9 @@ bool ai_baset::do_function_call(
           "Must reach and END_FUNCTION instruction before end() iterator");
         // Termination also guaranteed by a DATA_INVARIANT
       }
+
+      // We want the return location, rather than the call site itself
+      locationt l_return=std::next(l_call);
 
       for(const tracet *h : get_history(l_end))
       {
@@ -460,12 +436,13 @@ bool ai_baset::do_function_call(
         // an infeasible branch to the end of the program.
         if(!end_state.is_bottom())
         {
-          if(do_function_return(h_end, working_set, l_call, ns))
+          if(compute_edge(h_end, working_set, l_return, ns))
             new_data=true;
         }
       }
     }
-  return new_data;
+
+    return new_data;
   }
   UNREACHABLE;
 }
@@ -546,51 +523,6 @@ bool ai_baset::do_function_call_rec(
 bool ai_baset::do_function_return(
   const tracet &h_end,
   working_sett &working_set,
-  const locationt &l_call,
-  const namespacet &ns)
-{
-  bool new_data=false;
-
-  // This is the edge from function end to return site(s).
-
-  // We want the return location, rather than the call site itself
-  locationt l_return=std::next(l_call);
-  // DATA_INVARIANT(l_return.is_dereferenceable(),
-  //                "last instruction must be END_FUNCTION, not call")
-
-  // Find which are possible call sites for this history
-  const tracet *next=step(h_end, l_return);
-  if (next == nullptr)
-    return false;
-  const tracet &h_return=*next;
-
-  // do edge from end of function to instruction after call
-  const statet &end_state=get_state(h_end);
-
-  // initialize state, if necessary
-  get_state(h_return);
-
-  std::unique_ptr<statet> tmp_state(make_temporary_state(end_state));
-#warning "convert transform signature"
-  tmp_state->transform(
-    h_end.current_location(),
-    h_return.current_location(),
-    *this,
-    ns);
-
-  // Propagate those
-  if (merge(*tmp_state, h_end, h_return))
-  {
-    new_data=true;
-    put_in_working_set(working_set, h_return);
-  }
-
-  return new_data;
-}
-
-bool ai_baset::do_function_return_rec(
-  const tracet &h_end,
-  working_sett &working_set,
   const namespacet &ns)
 {
   bool new_data=false;
@@ -609,7 +541,12 @@ bool ai_baset::do_function_return_rec(
   // but not vica versa because recursion!
   for(const auto &l_call : it->second)
   {
-    if(do_function_return(h_end, working_set, l_call, ns))
+    // We want the return location, rather than the call site itself
+    locationt l_return=std::next(l_call);
+    // DATA_INVARIANT(l_return.is_dereferenceable(),
+    //                "last instruction must be END_FUNCTION, not call")
+
+    if(compute_edge(h_end, working_set, l_return, ns))
     {
       new_data=true;
     }
