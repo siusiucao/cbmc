@@ -127,6 +127,7 @@ class optionst;
   "(non-null)" \
   "(constants)" \
   "(dependence-graph)" \
+  "(dependence-graph-vs)" \
   "(variable)(variable-sensitivity)"
 
 #define GOTO_ANALYSER_OPTIONS_VARIABLE_SENSITIVITY_DOMAIN_CONFIG \
