@@ -130,7 +130,7 @@ private:
 
   bool ignore_function_call_transform(const irep_idt &function_id) const;
 
-  std::vector<symbol_exprt> get_modified_symbols(
+  std::vector<irep_idt> get_modified_symbols(
     const variable_sensitivity_domaint &other) const;
 
   void apply_domain(

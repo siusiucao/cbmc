@@ -130,7 +130,7 @@ void variable_sensitivity_domaint::transform(
   {
     // erase parameters
 
-    const irep_idt id=from->function;
+    const irep_idt id = function_from;
     const symbolt &symbol=ns.lookup(id);
 
     const code_typet &type=to_code_type(symbol.type);
@@ -182,6 +182,7 @@ void variable_sensitivity_domaint::transform(
   case NO_INSTRUCTION_TYPE:
   case INCOMPLETE_GOTO:
     throw "partially constructed instruction";
+    break;
 
   default:
     throw "unrecognised instruction type";
@@ -370,7 +371,7 @@ bool variable_sensitivity_domaint::is_top() const
 /// Get symbols that have been modified since this domain and other
 /// \param other: The domain that things may have been modified in
 /// \return A list of symbols whose write location is different
-std::vector<symbol_exprt>
+std::vector<irep_idt>
   variable_sensitivity_domaint::get_modified_symbols(
     const variable_sensitivity_domaint &other) const
 {
@@ -458,7 +459,7 @@ void variable_sensitivity_domaint::transform_function_call(
         // Top any global values
         for(const auto &symbol : ns.get_symbol_table().symbols)
         {
-          if(!symbol.second.is_procedure_local())
+          if(symbol.second.is_static_lifetime)
           {
             abstract_state.assign(
               symbol_exprt(symbol.first, symbol.second.type),
@@ -571,8 +572,16 @@ void variable_sensitivity_domaint::merge_three_way_function_return(
     const variable_sensitivity_domaint &cast_function_end=
       static_cast<const variable_sensitivity_domaint &>(function_end);
 
-    const std::vector<symbol_exprt> &modified_symbols=
+    const std::vector<irep_idt> &modified_symbol_names =
       cast_function_start.get_modified_symbols(cast_function_end);
+
+    std::vector<symbol_exprt> modified_symbols;
+      modified_symbols.reserve(modified_symbol_names.size());
+      std::transform(
+        modified_symbol_names.begin(),
+        modified_symbol_names.end(),
+        std::back_inserter(modified_symbols),
+        [&ns](const irep_idt &id) { return ns.lookup(id).symbol_expr(); });
 
     abstract_state=cast_function_call.abstract_state;
     apply_domain(modified_symbols, cast_function_end, ns);
