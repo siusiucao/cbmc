@@ -73,6 +73,7 @@ public:
   /// PRECONDITION(are_comparable(from,to) ||
   ///              (from->is_function_call() || from->is_end_function())
 
+  #warning "You said you would fix iterator comparison in the transform"
   virtual void transform(
     locationt from,
     locationt to,
@@ -102,6 +103,7 @@ public:
 
   virtual bool is_top() const = 0;
 
+  #warning "ADDITION : If you don't change the signature of merge, the widen method is pointless"
   /// also add
   ///
   ///   bool merge(const T &b, locationt from, locationt to);
