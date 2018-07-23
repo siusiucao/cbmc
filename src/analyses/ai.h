@@ -23,15 +23,18 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <goto-programs/goto_model.h>
 
+#include "ai_history.h"
 #include "ai_domain.h"
 
 /// The basic interface of an abstract interpreter.  This should be enough
-/// to create, run and query an abstract interpreter.
+/// to create, run and query an abstract interpreter.  It delegates everything
+/// specific to the particular history or domain to subclasses.
 // don't use me -- I am just a base class
 // use ait instead
 class ai_baset
 {
 public:
+  typedef ai_history_baset tracet;
   typedef ai_domain_baset statet;
   typedef goto_programt::const_targett locationt;
 
@@ -106,6 +109,7 @@ public:
   /// Resets the domain
   virtual void clear()
   {
+    call_sites.clear();
   }
 
   virtual void output(
@@ -218,17 +222,18 @@ protected:
     const irep_idt &identifier) const;
 
 
-  // the work-queue is sorted by location number
-  typedef std::map<unsigned, locationt> working_sett;
+  // the work-queue is sorted using the history's less operator
+  // all pointers are to objects stored in the history_map
+  typedef std::set<const tracet *> working_sett;
 
-  locationt get_next(working_sett &working_set);
+  const tracet & get_next(working_sett &working_set);
 
   void put_in_working_set(
     working_sett &working_set,
-    locationt l)
+    const tracet &h)
   {
-    working_set.insert(
-      std::pair<unsigned, locationt>(l->location_number, l));
+    working_set.insert(&h);
+    return;
   }
 
   // true = found something new
@@ -253,7 +258,7 @@ protected:
   // or applications of the abstract transformer
   // true = found something new
   bool visit(
-    locationt l,
+    const tracet &h,
     working_sett &working_set,
     const goto_programt &goto_program,
     const goto_functionst &goto_functions,
@@ -261,87 +266,120 @@ protected:
 
   // The most basic step, computing one edge / transformer application.
   bool compute_edge(
-    locationt l,
+    const tracet &h,
     working_sett &working_set,
     const locationt &to_l,
     const namespacet &ns);
 
   // function calls
+  typedef std::map<irep_idt, std::set<locationt> > call_sitest;
+  call_sitest call_sites;
+
   bool do_function_call_rec(
-    locationt l_call, locationt l_return,
+    const tracet &h_call,
+    working_sett &working_set,
     const exprt &function,
     const exprt::operandst &arguments,
     const goto_functionst &goto_functions,
     const namespacet &ns);
 
   bool do_function_call(
-    locationt l_call, locationt l_return,
+    const tracet &h_call,
+    working_sett &working_set,
     const goto_functionst &goto_functions,
     const goto_functionst::function_mapt::const_iterator f_it,
     const exprt::operandst &arguments,
     const namespacet &ns);
 
-  // abstract methods
+  bool do_function_return(
+   const tracet &h_end,
+   working_sett &working_set,
+   const namespacet &ns);
 
-  virtual bool merge(const statet &src, locationt from, locationt to)=0;
+
+  // abstract methods
+  // These delegate anything that requires knowing the actual type of
+  // the tracet or statet (as opposed to their parent class / interface).
+
+  virtual bool merge(const statet &src, const tracet &from, const tracet &to)=0;
   // for concurrent fixedpoint
   virtual bool merge_shared(
     const statet &src,
     locationt from,
     locationt to,
     const namespacet &ns)=0;
-  virtual statet &get_state(locationt l)=0;
-  virtual const statet &find_state(locationt l) const=0;
+  virtual statet &get_state(const tracet &h)=0;
+  virtual const statet &find_state(const tracet &h) const=0;
   virtual std::unique_ptr<statet> make_temporary_state(const statet &s)=0;
+
+  virtual const tracet &start_history(locationt bang) = 0;
+  virtual const tracet *step(const tracet &t, locationt to_l) = 0;
+  virtual working_sett get_history(locationt &l) = 0;
 };
 
 
 /// Creation, storage and other operations dependent
 /// on the exact types of abstraction used
+/// historyT is expected to be derived from ai_history_baset (a.k.a. historyt)
 /// domainT is expected to be derived from ai_domain_baset (a.k.a. domaint)
-template<typename domainT>
+template<typename historyT, typename domainT>
 class ai_storaget:public ai_baset
 {
 public:
+  typedef historyT historyt;
   typedef domainT domaint;
 
+  typedef std::set<historyT> location_historyt;
   // constructor
   ai_storaget():ai_baset()
   {
   }
 
-  typedef goto_programt::const_targett locationt;
 
   /// Direct access to the state map
   /// Unlike abstract_state_* this requires/has knowledge of the template types
-  domainT &operator[](locationt l)
+  domainT &operator[](const historyT &h)
   {
-    return static_cast<domainT &>(get_state(l));
+    return static_cast<domainT &>(get_state(h));
   }
 
-  const domainT &operator[](locationt l) const
+  const domainT &operator[](const historyT &h) const
   {
-    return static_cast<const domainT &>(find_state(l));
+    return static_cast<const domainT &>(find_state(h));
   }
 
   void clear() override
   {
+    history_map.clear();
     ai_baset::clear();
   }
 
+  virtual working_sett get_history(locationt &l) override
+  {
+#warning "fix ugly type conversion"
+    // This is ugly because there is no coversion from
+    //  set<histortyT> -> set<const tracet *>
+    working_sett res;
+    for(const auto &h : history_map[l])
+    {
+      res.insert(&h);
+    }
+    return res;
+  }
 
 protected:
 
   /// Implement the type-specific methods that ai_baset delegates.
   /// Storage and access of domains is done by child classes.
 
-  bool merge(const statet &src, locationt from, locationt to) override
+  bool merge(const statet &src, const tracet &from, const tracet &to) override
   {
     statet &dest=get_state(to);
     return static_cast<domainT &>(dest).merge(
       static_cast<const domainT &>(src),
-      from,
-      to);
+      from.current_location(),
+      to.current_location());
+    #warning "convert merge signature"
   }
 
   std::unique_ptr<statet> make_temporary_state(const statet &s) override
@@ -349,26 +387,54 @@ protected:
     return util_make_unique<domainT>(static_cast<const domainT &>(s));
   }
 
+  /// Record which histories have reached any particular point so that
+  /// there is the option of merging with an existing one.
+  typedef std::map<locationt, location_historyt> history_mapt;
+  history_mapt history_map;
+
+  const tracet & start_history(locationt bang) override
+  {
+    auto it=history_map[bang].insert(historyT(history_constructor_options, bang));
+    return *it.first;
+  }
+
+  /// Returns a pointer as the history is allowed to prevent some steps.
+  /// If it does, nullptr is returned.
+  const tracet *step(const tracet &t, locationt to_l) override
+  {
+    return static_cast<const historyT &>(t).step(to_l, history_map[to_l]);
+  }
 
 private:
   // to enforce that domainT is derived from ai_domain_baset
   void dummy(const domainT &s) { const statet &x=s; (void)x; }
+
+  // to enforce that historyT is derived from ai_history_baset
+  void dummy(const historyT &h) { const tracet &x=h; (void)x; }
 };
 
 
 /// There are several different options of what kind of storage is used for
 /// the domains and how historys map to domains.
 
+// Ladies and gentlemen ... C++ ...
+#define INHERITANCE_IS_HARD   typedef ai_storaget<historyT, domainT> parent; \
+  using typename parent::tracet;                                        \
+  using typename parent::statet;                                        \
+  using typename parent::locationt;                                     \
+  using typename parent::historyt;                                      \
+  using typename parent::domaint;                                       \
+  using typename parent::history_optionst;                              \
+  using typename parent::domain_optionst;                               \
+  using parent::domain_constructor_options
+
 
 /// location_insensitive_ait stores one domain per function
-template<typename domainT>
-class location_insensitive_ait:public ai_storaget<domainT>
+template<typename historyT, typename domainT>
+class location_insensitive_ait:public ai_storaget<historyT, domainT>
 {
  public:
-  typedef ai_storaget<domainT> parent;
-  using typename parent::statet;
-  using typename parent::locationt;
-  using typename parent::domaint;
+  INHERITANCE_IS_HARD;
 
   typedef std::map<irep_idt, domaint> state_mapt;
 
@@ -395,6 +461,16 @@ class location_insensitive_ait:public ai_storaget<domainT>
 
   // Additional direct access operators
   using parent::operator[];
+  domainT &operator[](const locationt &l)
+  {
+    return static_cast<domainT &>(get_state(l->function));
+  }
+
+  const domainT &operator[](const locationt &l) const
+  {
+    return static_cast<const domainT &>(find_state(l->function));
+  }
+
   domainT &operator[](const irep_idt &f)
   {
     return static_cast<domainT &>(get_state(f));
@@ -420,10 +496,11 @@ class location_insensitive_ait:public ai_storaget<domainT>
     return it->second;
   }
 
-  virtual statet &get_state(locationt l) override
+  virtual statet &get_state(const tracet &h) override
   {
-    return get_state(l->function);
+    return get_state(h.current_location()->function);
   }
+
 
   // this one just finds states and can be used with a const ai_storage
   virtual const statet &find_state(const irep_idt f) const
@@ -435,9 +512,9 @@ class location_insensitive_ait:public ai_storaget<domainT>
     return it->second;
   }
 
-  virtual const statet &find_state(locationt l) const override
+  virtual const statet &find_state(const tracet &h) const override
   {
-    return find_state(l->function);
+    return find_state(h.current_location()->function);
   }
 
  private:
@@ -446,14 +523,11 @@ class location_insensitive_ait:public ai_storaget<domainT>
 
 
 /// location_sensitive_ait stores one domain per location
-template<typename domainT>
-class location_sensitive_ait:public ai_storaget<domainT>
+template<typename historyT, typename domainT>
+class location_sensitive_ait:public ai_storaget<historyT, domainT>
 {
  public:
-  typedef ai_storaget<domainT> parent;
-  using typename parent::statet;
-  using typename parent::locationt;
-  using typename parent::domaint;
+  INHERITANCE_IS_HARD;
 
   // It might be better to index on location number rather than locationt
   typedef std::map<locationt, domaint> state_mapt;
@@ -481,6 +555,16 @@ class location_sensitive_ait:public ai_storaget<domainT>
 
   // Additional direct access operators
   using parent::operator[];
+  domainT &operator[](const locationt &l)
+  {
+    return static_cast<domainT &>(get_state(l));
+  }
+
+  const domainT &operator[](const locationt &l) const
+  {
+    return static_cast<const domainT &>(find_state(l));
+  }
+
 
  protected :
   // this one creates states, if need be
@@ -497,6 +581,11 @@ class location_sensitive_ait:public ai_storaget<domainT>
     return it->second;
   }
 
+  virtual statet &get_state(const tracet &h) override
+  {
+    return get_state(h.current_location());
+  }
+
   // this one just finds states and can be used with a const ai_storage
   virtual const statet &find_state(locationt l) const
   {
@@ -505,6 +594,11 @@ class location_sensitive_ait:public ai_storaget<domainT>
       throw "failed to find state";
 
     return it->second;
+  }
+
+  virtual const statet &find_state(const tracet &h) const override
+  {
+    return find_state(h.current_location());
   }
 
   // FIXME : should be private
@@ -590,22 +684,22 @@ protected:
 /// Specific kinds of analyzer
 /// Also examples of how to combine analysis type, history and domain.
 
-/// ait : sequential, location sensitive
+/// ait : sequential, location sensitive, history in-sensitive analysis
 /// domainT is expected to be derived from ai_domain_baseT
 template<typename domainT>
-class ait:public sequential_analysist<location_sensitive_ait<domainT> >
+class ait:public sequential_analysist<location_sensitive_ait<ahistoricalt, domainT> >
 {
-  typedef sequential_analysist<location_sensitive_ait<domainT> > parent;
+  typedef sequential_analysist<location_sensitive_ait<ahistoricalt, domainT> > parent;
 public:
   /// Inherit constructors
   using parent::parent;
 };
 
-/// concurrency_aware_ait : concurrent, location sensitive
+/// concurrency_aware_ait : concurrent, location sensitive, history in-sensitive analysis
 template<typename domainT>
-class concurrency_aware_ait:public concurrent_analysist<location_sensitive_ait<domainT> >
+class concurrency_aware_ait:public concurrent_analysist<location_sensitive_ait<ahistoricalt, domainT> >
 {
-  typedef concurrent_analysist<location_sensitive_ait<domainT> > parent;
+  typedef concurrent_analysist<location_sensitive_ait<ahistoricalt, domainT> > parent;
 public:
   /// Inherit constructors
   using parent::parent;
