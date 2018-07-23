@@ -22,6 +22,16 @@ Author: Daniel Kroening, kroening@kroening.com
 // forward reference the abstract interpreter interface
 class ai_baset;
 
+/// This allows options to be passed to individual domains
+class ai_domain_base_optionst
+{
+ public :
+  ai_domain_base_optionst()
+  {
+
+  }
+};
+
 /// The interface offered by a domain, allows code to manipulate domains without
 /// knowing their exact type.  Derive from this to implement domains.
 class ai_domain_baset
@@ -31,8 +41,17 @@ protected:
   ai_domain_baset()
   {
   }
-
 public:
+  /// Overload for
+  typedef ai_domain_base_optionst domain_optionst;
+
+  #if 0
+  #warning disabled for now to not break the object API
+  ai_domain_baset(const domain_optionst &)
+  {
+  }
+  #endif
+
   virtual ~ai_domain_baset()
   {
   }
