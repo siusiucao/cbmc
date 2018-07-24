@@ -607,6 +607,74 @@ class location_sensitive_ait:public ai_storaget<historyT, domainT>
 };
 
 
+/// history_sensitive_ait stores one domain per history point
+template<typename historyT, typename domainT>
+class history_sensitive_ait:public ai_storaget<historyT, domainT>
+{
+ public:
+  INHERITANCE_IS_HARD;
+  using typename parent::history_mapt;
+  using parent::history_map;
+
+  typedef std::unordered_map<historyt, domaint> state_mapt;
+
+  void clear() override
+  {
+    state_map.clear();
+    parent::clear();
+  }
+
+  /// Access to all histories that reach the given location
+  std::unique_ptr<statet> abstract_state_before(locationt t) const override
+  {
+#warning "get_histories?"
+    typename history_mapt::const_iterator histories=history_map.find(t);
+
+    std::unique_ptr<statet> d=util_make_unique<domainT>();
+    CHECK_RETURN(d->is_bottom());
+
+    if (histories != history_map.end())
+    {
+      for (const auto &h : histories->second())
+      {
+#warning "iffy merge args"
+        d->merge(find_state(h), h, h);
+      }
+    }
+
+    return d;
+  }
+
+ protected :
+  // this one creates states, if need be
+  virtual statet &get_state(const tracet &h) override
+  {
+    typename state_mapt::iterator it=state_map.find(h);
+
+    if(it==state_map.end())
+    {
+      it=state_map.insert(std::make_pair(h, domaint()));
+      CHECK_RETURN(it->is_bottom());
+    }
+
+    return it->second;
+  }
+
+  // this one just finds states and can be used with a const ai_storage
+  virtual const statet &find_state(const tracet &h) const override
+  {
+    typename state_mapt::const_iterator it=state_map.find(h);
+    if(it==state_map.end())
+      throw "failed to find state";
+
+    return it->second;
+  }
+
+ private:
+  state_mapt state_map;
+};
+
+
 /// Connects up the methods for sequential analysis
 /// aiT is expected to be derived from ai_baset
 template<typename aiT>
