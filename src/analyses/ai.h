@@ -295,34 +295,175 @@ protected:
   virtual std::unique_ptr<statet> make_temporary_state(const statet &s)=0;
 };
 
-// domainT is expected to be derived from ai_domain_baseT
+
+/// Creation, storage and other operations dependent
+/// on the exact types of abstraction used
+/// domainT is expected to be derived from ai_domain_baset (a.k.a. domaint)
 template<typename domainT>
-class ait:public ai_baset
+class ai_storaget:public ai_baset
 {
 public:
+  typedef domainT domaint;
+
   // constructor
-  ait():ai_baset()
+  ai_storaget():ai_baset()
   {
   }
 
   typedef goto_programt::const_targett locationt;
 
+  /// Direct access to the state map
+  /// Unlike abstract_state_* this requires/has knowledge of the template types
   domainT &operator[](locationt l)
   {
-    typename state_mapt::iterator it=state_map.find(l);
+    return static_cast<domainT &>(get_state(l));
+  }
+
+  const domainT &operator[](locationt l) const
+  {
+    return static_cast<const domainT &>(find_state(l));
+  }
+
+  void clear() override
+  {
+    ai_baset::clear();
+  }
+
+
+protected:
+
+  /// Implement the type-specific methods that ai_baset delegates.
+  /// Storage and access of domains is done by child classes.
+
+  bool merge(const statet &src, locationt from, locationt to) override
+  {
+    statet &dest=get_state(to);
+    return static_cast<domainT &>(dest).merge(
+      static_cast<const domainT &>(src),
+      from,
+      to);
+  }
+
+  std::unique_ptr<statet> make_temporary_state(const statet &s) override
+  {
+    return util_make_unique<domainT>(static_cast<const domainT &>(s));
+  }
+
+
+private:
+  // to enforce that domainT is derived from ai_domain_baset
+  void dummy(const domainT &s) { const statet &x=s; (void)x; }
+};
+
+
+/// There are several different options of what kind of storage is used for
+/// the domains and how historys map to domains.
+
+
+/// location_insensitive_ait stores one domain per function
+template<typename domainT>
+class location_insensitive_ait:public ai_storaget<domainT>
+{
+ public:
+  typedef ai_storaget<domainT> parent;
+  using typename parent::statet;
+  using typename parent::locationt;
+  using typename parent::domaint;
+
+  typedef std::map<irep_idt, domaint> state_mapt;
+
+  location_insensitive_ait() : ai_storaget<domainT>() {}
+
+  void clear() override
+  {
+    state_map.clear();
+    parent::clear();
+  }
+
+  std::unique_ptr<statet> abstract_state_before(locationt t) const override
+  {
+    typename state_mapt::const_iterator it=state_map.find(t->function);
+    if(it==state_map.end())
+    {
+      std::unique_ptr<statet> d = util_make_unique<domainT>();
+      CHECK_RETURN(d->is_bottom());
+      return d;
+    }
+
+    return util_make_unique<domainT>(it->second);
+  }
+
+  // Additional direct access operators
+  using parent::operator[];
+  domainT &operator[](const irep_idt &f)
+  {
+    return static_cast<domainT &>(get_state(f));
+  }
+
+  const domainT &operator[](const irep_idt &f) const
+  {
+    return static_cast<const domainT &>(find_state(f));
+  }
+
+
+ protected :
+  // this one creates states, if need be
+  virtual statet &get_state(const irep_idt f)
+  {
+    typename state_mapt::iterator it=state_map.find(f);
+    if(it==state_map.end())
+    {
+      it=state_map.insert(std::make_pair(f, domaint()));
+      CHECK_RETURN(it->is_bottom());
+    }
+
+    return it->second;
+  }
+
+  virtual statet &get_state(locationt l) override
+  {
+    return get_state(l->function);
+  }
+
+  // this one just finds states and can be used with a const ai_storage
+  virtual const statet &find_state(const irep_idt f) const
+  {
+    typename state_mapt::const_iterator it=state_map.find(f);
     if(it==state_map.end())
       throw "failed to find state";
 
     return it->second;
   }
 
-  const domainT &operator[](locationt l) const
+  virtual const statet &find_state(locationt l) const override
   {
-    typename state_mapt::const_iterator it=state_map.find(l);
-    if(it==state_map.end())
-      throw "failed to find state";
+    return find_state(l->function);
+  }
 
-    return it->second;
+ private:
+  state_mapt state_map;
+};
+
+
+/// location_sensitive_ait stores one domain per location
+template<typename domainT>
+class location_sensitive_ait:public ai_storaget<domainT>
+{
+ public:
+  typedef ai_storaget<domainT> parent;
+  using typename parent::statet;
+  using typename parent::locationt;
+  using typename parent::domaint;
+
+  // It might be better to index on location number rather than locationt
+  typedef std::map<locationt, domaint> state_mapt;
+
+  location_sensitive_ait() : ai_storaget<domainT>() {}
+
+  void clear() override
+  {
+    state_map.clear();
+    parent::clear();
   }
 
   std::unique_ptr<statet> abstract_state_before(locationt t) const override
@@ -338,26 +479,26 @@ public:
     return util_make_unique<domainT>(it->second);
   }
 
-  void clear() override
-  {
-    state_map.clear();
-    ai_baset::clear();
-  }
+  // Additional direct access operators
+  using parent::operator[];
 
-protected:
-  typedef std::
-    unordered_map<locationt, domainT, const_target_hash, pointee_address_equalt>
-      state_mapt;
-  state_mapt state_map;
-
+ protected :
   // this one creates states, if need be
-  virtual statet &get_state(locationt l) override
+  virtual statet &get_state(locationt l)
   {
-    return state_map[l]; // calls default constructor
+    typename state_mapt::iterator it=state_map.find(l);
+
+    if(it==state_map.end())
+    {
+      it=state_map.insert(std::make_pair(l, domaint())).first;
+      CHECK_RETURN(it->second.is_bottom());
+    }
+
+    return it->second;
   }
 
-  // this one just finds states
-  const statet &find_state(locationt l) const override
+  // this one just finds states and can be used with a const ai_storage
+  virtual const statet &find_state(locationt l) const
   {
     typename state_mapt::const_iterator it=state_map.find(l);
     if(it==state_map.end())
@@ -366,60 +507,70 @@ protected:
     return it->second;
   }
 
-  bool merge(const statet &src, locationt from, locationt to) override
-  {
-    statet &dest=get_state(to);
-    return static_cast<domainT &>(dest).merge(
-      static_cast<const domainT &>(src), from, to);
-  }
+  // FIXME : should be private
+ protected:
+  state_mapt state_map;
+};
 
-  std::unique_ptr<statet> make_temporary_state(const statet &s) override
-  {
-    return util_make_unique<domainT>(static_cast<const domainT &>(s));
-  }
 
+/// Connects up the methods for sequential analysis
+/// aiT is expected to be derived from ai_baset
+template<typename aiT>
+class sequential_analysist:public aiT
+{
+public:
+  using typename aiT::statet;
+  using typename aiT::locationt;
+
+  // constructors
+  using aiT::aiT;
+
+protected:
   void fixedpoint(
     const goto_functionst &goto_functions,
     const namespacet &ns) override
   {
-    sequential_fixedpoint(goto_functions, ns);
+    this->sequential_fixedpoint(goto_functions, ns);
   }
 
 private:
-  // to enforce that domainT is derived from ai_domain_baset
-  void dummy(const domainT &s) { const statet &x=s; (void)x; }
-
   // not implemented in sequential analyses
   bool merge_shared(
     const statet &src,
-    goto_programt::const_targett from,
-    goto_programt::const_targett to,
+    locationt from,
+    locationt to,
     const namespacet &ns) override
   {
     throw "not implemented";
   }
+
+  // to enforce that aiT is derived from ai_baset
+  void dummy(const aiT &a) { const ai_baset &x=a; (void)x; }
 };
 
-template<typename domainT>
-class concurrency_aware_ait:public ait<domainT>
+
+/// Connects up the methods for concurrent analysis
+/// aiT is expected to be derived from ai_baset
+template<typename aiT>
+class concurrent_analysist:public aiT
 {
 public:
-  typedef typename ait<domainT>::statet statet;
+  using typename aiT::statet;
+  using typename aiT::locationt;
+  using typename aiT::domaint;
 
-  // constructor
-  concurrency_aware_ait():ait<domainT>()
-  {
-  }
+  // constructors
+  using aiT::aiT;
 
   bool merge_shared(
     const statet &src,
-    goto_programt::const_targett from,
-    goto_programt::const_targett to,
+    locationt from,
+    locationt to,
     const namespacet &ns) override
   {
     statet &dest=this->get_state(to);
-    return static_cast<domainT &>(dest).merge_shared(
-      static_cast<const domainT &>(src), from, to, ns);
+    return static_cast<domaint &>(dest).merge_shared(
+      static_cast<const domaint &>(src), from, to, ns);
   }
 
 protected:
@@ -429,6 +580,35 @@ protected:
   {
     this->concurrent_fixedpoint(goto_functions, ns);
   }
+
+ private:
+  // to enforce that aiT is derived from ai_baset
+  void dummy(const aiT &a) { const ai_baset &x=a; (void)x; }
+};
+
+
+/// Specific kinds of analyzer
+/// Also examples of how to combine analysis type, history and domain.
+
+/// ait : sequential, location sensitive
+/// domainT is expected to be derived from ai_domain_baseT
+template<typename domainT>
+class ait:public sequential_analysist<location_sensitive_ait<domainT> >
+{
+  typedef sequential_analysist<location_sensitive_ait<domainT> > parent;
+public:
+  /// Inherit constructors
+  using parent::parent;
+};
+
+/// concurrency_aware_ait : concurrent, location sensitive
+template<typename domainT>
+class concurrency_aware_ait:public concurrent_analysist<location_sensitive_ait<domainT> >
+{
+  typedef concurrent_analysist<location_sensitive_ait<domainT> > parent;
+public:
+  /// Inherit constructors
+  using parent::parent;
 };
 
 #endif // CPROVER_ANALYSES_AI_H
