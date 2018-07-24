@@ -17,11 +17,23 @@ Author: Martin Brain, martin.brain@cs.ox.ac.uk
 #define IMPLIES(X,Y) (!((X)) || ((Y)))
 
 
+/// This is for passsing configuration options to history objects
+/// The default one has no options.
+class ai_history_base_optionst
+{
+ public :
+  ai_history_base_optionst ()
+  {
+  }
+};
+
+
 /// This is the base of tracking location and / or context in the
 /// abstract interpretter.  It stores an abstraction / representation of
 /// the history of the control-flow of the program.
 class ai_history_baset {
 public:
+  typedef ai_history_base_optionst history_optionst;
   typedef goto_programt::const_targett locationt;
   typedef irep_idt function_namet;
 
@@ -29,7 +41,7 @@ public:
   
   /// Create a new history starting from a given location
   /// PRECONDITION(l.is_dereferenceable());
-  explicit ai_history_baset(locationt) {}
+  explicit ai_history_baset(const history_optionst &, locationt) {}
 
   /// Move from current location to "to"
   /// may merge with existing histories at that point
@@ -72,7 +84,7 @@ private:
   locationt current;
 
   ahistoricalt(locationt i) :
-   ai_history_baset(i),
+   ai_history_baset(history_optionst(), i),
    current(i)
   {}
 
