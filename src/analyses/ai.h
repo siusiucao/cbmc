@@ -329,12 +329,26 @@ public:
   typedef historyT historyt;
   typedef domainT domaint;
 
+  typedef typename historyT::history_optionst history_optionst;
+  typedef typename domainT::domain_optionst domain_optionst;
+
   typedef std::set<historyT> location_historyt;
+
+protected:
+  history_optionst history_constructor_options;
+  domain_optionst domain_constructor_options;
+
+public:
   // constructor
-  ai_storaget():ai_baset()
+  ai_storaget():
+  ai_baset(), history_constructor_options(), domain_constructor_options()
   {
   }
 
+  ai_storaget(const history_optionst &ho, const domain_optionst &dot):
+  ai_baset(), history_constructor_options(ho), domain_constructor_options(dot)
+  {
+  }
 
   /// Direct access to the state map
   /// Unlike abstract_state_* this requires/has knowledge of the template types
@@ -438,7 +452,10 @@ class location_insensitive_ait:public ai_storaget<historyT, domainT>
 
   typedef std::map<irep_idt, domaint> state_mapt;
 
-  location_insensitive_ait() : ai_storaget<domainT>() {}
+  location_insensitive_ait() : ai_storaget<historyT, domainT>() {}
+  location_insensitive_ait(const history_optionst &ho,
+                           const domain_optionst &dot) :
+  ai_storaget<historyT, domainT>(ho, dot) {}
 
   void clear() override
   {
@@ -451,7 +468,8 @@ class location_insensitive_ait:public ai_storaget<historyT, domainT>
     typename state_mapt::const_iterator it=state_map.find(t->function);
     if(it==state_map.end())
     {
-      std::unique_ptr<statet> d = util_make_unique<domainT>();
+      #warning "enable options"
+      std::unique_ptr<statet> d = util_make_unique<domainT>(/*domain_constructor_options*/);
       CHECK_RETURN(d->is_bottom());
       return d;
     }
@@ -489,7 +507,9 @@ class location_insensitive_ait:public ai_storaget<historyT, domainT>
     typename state_mapt::iterator it=state_map.find(f);
     if(it==state_map.end())
     {
-      it=state_map.insert(std::make_pair(f, domaint()));
+      #warning "enable options"
+      it=state_map.insert(
+        std::make_pair(f, domaint(/*domain_constructor_options*/)));
       CHECK_RETURN(it->is_bottom());
     }
 
@@ -508,7 +528,6 @@ class location_insensitive_ait:public ai_storaget<historyT, domainT>
     typename state_mapt::const_iterator it=state_map.find(f);
     if(it==state_map.end())
       throw "failed to find state";
-
     return it->second;
   }
 
@@ -532,7 +551,11 @@ class location_sensitive_ait:public ai_storaget<historyT, domainT>
   // It might be better to index on location number rather than locationt
   typedef std::map<locationt, domaint> state_mapt;
 
-  location_sensitive_ait() : ai_storaget<domainT>() {}
+  location_sensitive_ait() : ai_storaget<historyT, domainT>() {}
+  location_sensitive_ait(const history_optionst &ho,
+                           const domain_optionst &dot) :
+  ai_storaget<historyT, domainT>(ho, dot) {}
+
 
   void clear() override
   {
@@ -545,7 +568,8 @@ class location_sensitive_ait:public ai_storaget<historyT, domainT>
     typename state_mapt::const_iterator it=state_map.find(t);
     if(it==state_map.end())
     {
-      std::unique_ptr<statet> d = util_make_unique<domainT>();
+#warning "enable options"
+      std::unique_ptr<statet> d = util_make_unique<domainT>(/*domain_constructor_options*/);
       CHECK_RETURN(d->is_bottom());
       return d;
     }
@@ -574,7 +598,9 @@ class location_sensitive_ait:public ai_storaget<historyT, domainT>
 
     if(it==state_map.end())
     {
-      it=state_map.insert(std::make_pair(l, domaint())).first;
+#warning "enable options"
+      it=state_map.insert(
+        std::make_pair(l, domaint(/*domain_constructor_options*/))).first;
       CHECK_RETURN(it->second.is_bottom());
     }
 
@@ -589,7 +615,7 @@ class location_sensitive_ait:public ai_storaget<historyT, domainT>
   // this one just finds states and can be used with a const ai_storage
   virtual const statet &find_state(locationt l) const
   {
-    typename state_mapt::const_iterator it=state_map.find(l);
+    typename state_mapt::const_iterator it=state_map.find(f);
     if(it==state_map.end())
       throw "failed to find state";
 
@@ -618,6 +644,11 @@ class history_sensitive_ait:public ai_storaget<historyT, domainT>
 
   typedef std::unordered_map<historyt, domaint> state_mapt;
 
+  history_sensitive_ait() : ai_storaget<historyT, domainT>() {}
+  history_sensitive_ait(const history_optionst &ho,
+                        const domain_optionst &dot) :
+  ai_storaget<historyT, domainT>(ho, dot) {}
+
   void clear() override
   {
     state_map.clear();
@@ -630,7 +661,9 @@ class history_sensitive_ait:public ai_storaget<historyT, domainT>
 #warning "get_histories?"
     typename history_mapt::const_iterator histories=history_map.find(t);
 
-    std::unique_ptr<statet> d=util_make_unique<domainT>();
+#warning "enable options"
+    std::unique_ptr<statet> d=
+      util_make_unique<domainT>(/*domain_constructor_options*/);
     CHECK_RETURN(d->is_bottom());
 
     if (histories != history_map.end())
@@ -653,7 +686,9 @@ class history_sensitive_ait:public ai_storaget<historyT, domainT>
 
     if(it==state_map.end())
     {
-      it=state_map.insert(std::make_pair(h, domaint()));
+      #warning "enable options"
+      it=state_map.insert(
+        std::make_pair(h, domaint(/*domain_constructor_options*/)));
       CHECK_RETURN(it->is_bottom());
     }
 
