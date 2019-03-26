@@ -539,20 +539,20 @@ protected:
     // functions
     goto_programt tmp;
     tmp.add_instruction();
-    goto_programt::const_targett sh_target=tmp.instructions.begin();
-    statet &shared_state=ait<domainT>::get_state(sh_target);
+    goto_programt::const_targett sh_target = tmp.instructions.begin();
+    statet &shared_state = ait<domainT>::get_state(sh_target);
 
     struct wl_entryt
     {
-    wl_entryt(
-      const irep_idt &_function_id,
-      const goto_programt &_goto_program,
-      locationt _location)
-    : function_id(_function_id),
-        goto_program(&_goto_program),
-        location(_location)
-        {
-        }
+      wl_entryt(
+        const irep_idt &_function_id,
+        const goto_programt &_goto_program,
+        locationt _location)
+        : function_id(_function_id),
+          goto_program(&_goto_program),
+          location(_location)
+      {
+      }
 
       irep_idt function_id;
       const goto_programt *goto_program;
@@ -569,7 +569,7 @@ protected:
         {
           thread_wl.push_back(wl_entryt(it->first, it->second.body, t_it));
 
-          goto_programt::const_targett l_end=
+          goto_programt::const_targett l_end =
             it->second.body.instructions.end();
           --l_end;
 
@@ -579,10 +579,10 @@ protected:
 
     // now feed in the shared state into all concurrently executing
     // functions, and iterate until the shared state stabilizes
-    bool new_shared=true;
+    bool new_shared = true;
     while(new_shared)
     {
-      new_shared=false;
+      new_shared = false;
 
       for(const auto &wl_entry : thread_wl)
       {
@@ -594,7 +594,7 @@ protected:
 
         while(!working_set.empty())
         {
-          goto_programt::const_targett l=ai_baset::get_next(working_set);
+          goto_programt::const_targett l = ai_baset::get_next(working_set);
 
           ai_baset::visit(
             wl_entry.function_id,
@@ -608,12 +608,11 @@ protected:
           // carries all possible values; otherwise we would need to
           // merge over each and every state
           if(l->is_end_function())
-            new_shared|=merge_shared(shared_state, l, sh_target, ns);
+            new_shared |= merge_shared(shared_state, l, sh_target, ns);
         }
       }
     }
   }
-
 };
 
 #endif // CPROVER_ANALYSES_AI_H
