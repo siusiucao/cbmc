@@ -17,27 +17,21 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "ai.h"
 #include "invariant_set_domain.h"
 
+class invariant_set_domain_factoryt;
+
 class invariant_propagationt:public
   ait<invariant_set_domaint>
 {
 public:
-  invariant_propagationt(
-    const namespacet &_ns,
-    value_setst &_value_sets):
-    ait<invariant_set_domaint>(),
-    ns(_ns),
-    value_sets(_value_sets),
-    object_store(_ns)
-  {
-  }
+  invariant_propagationt(const namespacet &_ns, value_setst &_value_sets);
 
   const invariant_sett &lookup(locationt l) const
   {
     return (*this)[l].invariant_set;
   }
 
-  void
-  initialize(const irep_idt &function, const goto_programt &goto_program) override;
+  void initialize(const irep_idt &function, const goto_programt &goto_program)
+    override;
 
   void make_all_true();
   void make_all_false();
@@ -48,6 +42,8 @@ public:
   typedef ait<invariant_set_domaint> baset;
 
 protected:
+  friend invariant_set_domain_factoryt;
+
   const namespacet &ns;
   value_setst &value_sets;
 

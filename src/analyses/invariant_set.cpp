@@ -155,8 +155,7 @@ bool invariant_sett::get_object(
   const exprt &expr,
   unsigned &n) const
 {
-  PRECONDITION(object_store!=nullptr);
-  return object_store->get(expr, n);
+  return object_store.get(expr, n);
 }
 
 bool inv_object_storet::is_constant_address(const exprt &expr)
@@ -219,7 +218,7 @@ void invariant_sett::add_eq(const std::pair<unsigned, unsigned> &p)
   {
     if(eq_set.find(i)==r)
     {
-      if(object_store->is_constant(i))
+      if(object_store.is_constant(i))
       {
         if(constant_seen)
         {
@@ -320,9 +319,6 @@ void invariant_sett::output(std::ostream &out) const
     return;
   }
 
-  INVARIANT_STRUCTURED(
-    object_store!=nullptr, nullptr_exceptiont, "Object store is null");
-
   for(std::size_t i=0; i<eq_set.size(); i++)
     if(eq_set.is_root(i) &&
        eq_set.count(i)>=2)
@@ -391,8 +387,8 @@ void invariant_sett::strengthen_rec(const exprt &expr)
     throw "non-Boolean argument to strengthen()";
 
   #if 0
-  std::cout << "S: " << from_expr(*ns, "", expr) << '\n';
-  #endif
+  std::cout << "S: " << from_expr(ns, "", expr) << '\n';
+#endif
 
   if(is_false)
   {
@@ -480,7 +476,7 @@ void invariant_sett::strengthen_rec(const exprt &expr)
 
     if(op_type.id() == ID_struct || op_type.id() == ID_struct_tag)
     {
-      const struct_typet &struct_type = to_struct_type(ns->follow(op_type));
+      const struct_typet &struct_type = to_struct_type(ns.follow(op_type));
 
       for(const auto &comp : struct_type.components())
       {
@@ -594,8 +590,8 @@ tvt invariant_sett::implies_rec(const exprt &expr) const
     throw "implies: non-Boolean expression";
 
   #if 0
-  std::cout << "I: " << from_expr(*ns, "", expr) << '\n';
-  #endif
+  std::cout << "I: " << from_expr(ns, "", expr) << '\n';
+#endif
 
   if(is_false) // can't get any stronger
     return tvt(true);
@@ -678,7 +674,7 @@ void invariant_sett::get_bounds(unsigned a, boundst &bounds) const
   bounds=boundst();
 
   {
-    const exprt &e_a=object_store->get_expr(a);
+    const exprt &e_a = object_store.get_expr(a);
     const auto tmp = numeric_cast<mp_integer>(e_a);
     if(tmp.has_value())
     {
@@ -845,7 +841,7 @@ exprt invariant_sett::get_constant(const exprt &expr) const
     for(std::size_t i=0; i<eq_set.size(); i++)
       if(eq_set.find(i)==r)
       {
-        const exprt &e=object_store->get_expr(i);
+        const exprt &e = object_store.get_expr(i);
 
         if(e.is_constant())
         {
@@ -860,7 +856,7 @@ exprt invariant_sett::get_constant(const exprt &expr) const
           else
             return from_integer(value, expr.type());
         }
-        else if(object_store->is_constant_address(e))
+        else if(object_store.is_constant_address(e))
         {
           if(e.type()==expr.type())
             return e;
@@ -880,8 +876,7 @@ std::string inv_object_storet::to_string(unsigned a) const
 
 std::string invariant_sett::to_string(unsigned a) const
 {
-  PRECONDITION(object_store!=nullptr);
-  return object_store->to_string(a);
+  return object_store.to_string(a);
 }
 
 bool invariant_sett::make_union(const invariant_sett &other)
@@ -1043,7 +1038,7 @@ void invariant_sett::assignment(
 
   // first evaluate RHS
   simplify(equality.rhs());
-  ::simplify(equality.rhs(), *ns);
+  ::simplify(equality.rhs(), ns);
 
   // now kill LHS
   modifies(lhs);
