@@ -122,4 +122,31 @@ public:
   }
 };
 
+// No virtual interface is complete without a factory!
+class ai_domain_factory_baset
+{
+public:
+  typedef ai_domain_baset statet;
+
+  virtual std::unique_ptr<statet> make_domain() const = 0;
+  virtual std::unique_ptr<statet> copy_domain(const statet &s) const = 0;
+};
+
+// A default implementation of the factory that does the expected things
+template <typename domainT>
+class ai_domain_factoryt : public ai_domain_factory_baset
+{
+public:
+  std::unique_ptr<statet> make_domain() const override
+  {
+    auto p = util_make_unique<domainT>();
+    CHECK_RETURN(p->is_bottom());
+    return p;
+  }
+  std::unique_ptr<statet> copy_domain(const statet &s) const override
+  {
+    return util_make_unique<domainT>(static_cast<const domainT &>(s));
+  }
+};
+
 #endif

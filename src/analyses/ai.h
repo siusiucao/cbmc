@@ -390,7 +390,14 @@ class ait:public ai_baset
 {
 public:
   // constructor
-  ait():ai_baset()
+  ait()
+    : ai_baset(),
+      domain_factory(util_make_unique<ai_domain_factoryt<domainT>>())
+  {
+  }
+
+  ait(std::unique_ptr<ai_domain_factory_baset> &&df)
+    : ai_baset(), domain_factory(std::move(df))
   {
   }
 
@@ -412,11 +419,7 @@ public:
   {
     typename state_mapt::const_iterator it = state_map.find(t);
     if(it == state_map.end())
-    {
-      auto d = std::make_shared<domainT>();
-      CHECK_RETURN(d->is_bottom());
-      return d;
-    }
+      return domain_factory->make_domain();
 
     return it->second;
   }
@@ -437,6 +440,8 @@ protected:
       state_mapt;
   state_mapt state_map;
 
+  std::unique_ptr<ai_domain_factory_baset> domain_factory;
+
   /// Look up the analysis state for a given location, instantiating a new state
   /// if required. Used internally by the analysis.
   virtual statet &get_state(locationt l) override
@@ -444,7 +449,8 @@ protected:
     typename state_mapt::const_iterator it = state_map.find(l);
     if(it == state_map.end())
     {
-      auto p = state_map.insert(std::make_pair(l, std::make_shared<domainT>()));
+      std::shared_ptr<statet> d(domain_factory->make_domain());
+      auto p = state_map.insert(std::make_pair(l, d));
       CHECK_RETURN(p.second);
       it = p.first;
     }
@@ -464,7 +470,7 @@ protected:
   /// Make a copy of \p s.
   std::unique_ptr<statet> make_temporary_state(const statet &s) override
   {
-    return util_make_unique<domainT>(static_cast<const domainT &>(s));
+    return domain_factory->copy_domain(s);
   }
 
 private:
@@ -493,6 +499,10 @@ public:
 
   // constructor
   concurrency_aware_ait():ait<domainT>()
+  {
+  }
+  concurrency_aware_ait(std::unique_ptr<ai_domain_factory_baset> &&df)
+    : ait<domainT>(std::move(df))
   {
   }
 
