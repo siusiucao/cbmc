@@ -259,23 +259,18 @@ Function: variable_sensitivity_domaint::ai_simplify
 \*******************************************************************/
 
 bool variable_sensitivity_domaint::ai_simplify(
-  exprt &condition, const namespacet &ns, const bool lhs) const
+  exprt &condition, const namespacet &ns) const
 {
-  if (lhs)
+  sharing_ptrt<abstract_objectt> res = abstract_state.eval(condition, ns);
+  exprt c = res->to_constant();
+
+  if (c.id() == ID_nil)
     return false;
   else
   {
-    sharing_ptrt<abstract_objectt> res = abstract_state.eval(condition, ns);
-    exprt c = res->to_constant();
-
-    if (c.id() == ID_nil)
-      return false;
-    else
-    {
-      bool b = (condition!=c);
-      condition = c;
-      return b;
-    }
+    bool b = (condition!=c);
+    condition = c;
+    return b;
   }
 }
 

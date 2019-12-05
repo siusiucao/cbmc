@@ -101,8 +101,7 @@ public:
 
   bool ai_simplify(
     exprt &condition,
-    const namespacet &ns,
-    const bool lhs=false) const override;
+    const namespacet &ns) const override;
 
   bool is_bottom() const override;
   bool is_top() const override;
