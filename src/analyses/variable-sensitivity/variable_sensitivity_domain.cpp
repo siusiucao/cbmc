@@ -281,7 +281,7 @@ bool variable_sensitivity_domaint::ai_simplify(
   sharing_ptrt<abstract_objectt> res = abstract_state.eval(condition, ns);
   exprt c = res->to_constant();
 
-  if (c.id() == ID_nil)  // TODO : simplification within an expression
+  if(c.id() == ID_nil)  // TODO : simplification within an expression
     return true;
   else
   {
