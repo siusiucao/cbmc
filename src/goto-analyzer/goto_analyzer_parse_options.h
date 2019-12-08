@@ -135,6 +135,7 @@ class optionst;
   "(arrays)" \
   "(structs)" \
   "(data-dependencies)" \
+  "(interval-values)" \
 
 #define GOTO_ANALYSER_OPTIONS_STORAGE \
   "(one-domain-per-history)" \
