@@ -1,6 +1,5 @@
 #include <unordered_set>
 
-
 #include <util/std_expr.h>
 
 #include "write_stack_entry.h"
@@ -20,11 +19,10 @@ bool write_stack_entryt::try_squash_in(
 
 /// Build a simple entry based off a single expression
 /// \param expr: The expression being represented
-simple_entryt::simple_entryt(exprt expr):
-  simple_entry(expr)
+simple_entryt::simple_entryt(exprt expr) : simple_entry(expr)
 {
   // Invalid simple expression added to the stack
-  PRECONDITION(expr.id()==ID_member || expr.id()==ID_symbol);
+  PRECONDITION(expr.id() == ID_member || expr.id() == ID_symbol);
 }
 
 /// Get the expression part needed to read this stack entry. For simple
@@ -40,14 +38,14 @@ void simple_entryt::adjust_access_type(exprt &expr) const
 {
 }
 
-offset_entryt::offset_entryt(abstract_object_pointert offset_value):
-  offset(offset_value)
+offset_entryt::offset_entryt(abstract_object_pointert offset_value)
+  : offset(offset_value)
 {
   // The type of the abstract object should be an integral number
-  static const std::unordered_set<irep_idt, irep_id_hash> integral_types=
-    { ID_signedbv, ID_unsignedbv, ID_integer };
+  static const std::unordered_set<irep_idt, irep_id_hash> integral_types = {
+    ID_signedbv, ID_unsignedbv, ID_integer};
   PRECONDITION(
-    integral_types.find(offset_value->type().id())!=integral_types.cend());
+    integral_types.find(offset_value->type().id()) != integral_types.cend());
 }
 
 /// Get the expression part needed to read this stack entry. For offset entries
@@ -70,7 +68,7 @@ exprt offset_entryt::get_access_expr() const
 void offset_entryt::adjust_access_type(exprt &expr) const
 {
   PRECONDITION(expr.id() == ID_index);
-  expr.type()=expr.op0().type().subtype();
+  expr.type() = expr.op0().type().subtype();
 }
 
 /// Try to combine a new stack element with the current top of the stack. This
@@ -85,15 +83,14 @@ bool offset_entryt::try_squash_in(
   const abstract_environmentt &enviroment,
   const namespacet &ns)
 {
-  std::shared_ptr<const offset_entryt> cast_entry=
+  std::shared_ptr<const offset_entryt> cast_entry =
     std::dynamic_pointer_cast<const offset_entryt>(new_entry);
   if(cast_entry)
   {
     plus_exprt result_offset(
       cast_entry->offset->to_constant(), offset->to_constant());
-    offset=enviroment.eval(result_offset, ns);
+    offset = enviroment.eval(result_offset, ns);
     return true;
   }
   return false;
 }
-

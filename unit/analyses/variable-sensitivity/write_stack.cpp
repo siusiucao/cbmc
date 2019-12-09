@@ -11,26 +11,26 @@
 
 #include <testing-utils/use_catch.h>
 
-#include <stack>
 #include <iostream>
+#include <stack>
 
-#include <util/config.h>
-#include <util/symbol.h>
-#include <util/symbol_table.h>
-#include <util/namespace.h>
-#include <util/std_expr.h>
-#include <util/std_code.h>
-#include <util/ui_message.h>
-#include <ansi-c/ansi_c_language.h>
-#include <ansi-c/expr2c.h>
-#include <analyses/variable-sensitivity/write_stack_entry.h>
-#include <analyses/variable-sensitivity/write_stack.h>
 #include <analyses/variable-sensitivity/abstract_enviroment.h>
 #include <analyses/variable-sensitivity/variable_sensitivity_object_factory.h>
+#include <analyses/variable-sensitivity/write_stack.h>
+#include <analyses/variable-sensitivity/write_stack_entry.h>
+#include <ansi-c/ansi_c_language.h>
+#include <ansi-c/expr2c.h>
+#include <util/config.h>
+#include <util/namespace.h>
+#include <util/std_code.h>
+#include <util/std_expr.h>
+#include <util/symbol.h>
+#include <util/symbol_table.h>
+#include <util/ui_message.h>
 
 #if 0
-#include <src/expr/require_expr.h>
-#include <src/ansi-c/c_to_expr.h>
+#  include <src/ansi-c/c_to_expr.h>
+#  include <src/expr/require_expr.h>
 
 
 SCENARIO("Constructing write stacks",
@@ -555,4 +555,3 @@ SCENARIO("Constructing write stacks",
   }
 }
 #endif
-

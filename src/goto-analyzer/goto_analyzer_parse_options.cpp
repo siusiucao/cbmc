@@ -339,7 +339,8 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
       options.set_option("pointers", cmdline.isset("pointers"));
       options.set_option("arrays", cmdline.isset("arrays"));
       options.set_option("structs", cmdline.isset("structs"));
-      options.set_option("data-dependencies", cmdline.isset("data-dependencies"));
+      options.set_option(
+        "data-dependencies", cmdline.isset("data-dependencies"));
       options.set_option("interval", cmdline.isset("interval-values"));
     }
     else if(cmdline.isset("dependence-graph-vs"))
@@ -472,12 +473,13 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(
     }
     else if(options.get_bool_option("dependence-graph-vs"))
     {
-      domain=new variable_sensitivity_dependence_grapht(
+      domain = new variable_sensitivity_dependence_grapht(
         goto_model.goto_functions,
         ns,
         options.get_bool_option("vs-progress"),
-        options.is_set("vs-progress-interval") ?
-          std::stof(options.get_option("vs-progress-interval")) : 0);
+        options.is_set("vs-progress-interval")
+          ? std::stof(options.get_option("vs-progress-interval"))
+          : 0);
     }
   }
   else if(options.get_bool_option("legacy-ait"))

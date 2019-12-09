@@ -26,38 +26,39 @@ Function: variable_sensitivity_object_factoryt::get_abstract_object_type
 \*******************************************************************/
 
 variable_sensitivity_object_factoryt::ABSTRACT_OBJECT_TYPET
-  variable_sensitivity_object_factoryt::get_abstract_object_type(
-  const typet type)
+variable_sensitivity_object_factoryt::get_abstract_object_type(const typet type)
 {
-  ABSTRACT_OBJECT_TYPET abstract_object_type=TWO_VALUE;
+  ABSTRACT_OBJECT_TYPET abstract_object_type = TWO_VALUE;
 
-  if(type.id()==ID_signedbv || type.id()==ID_unsignedbv ||
-    type.id()==ID_fixedbv ||
-    type.id()==ID_c_bool || type.id()==ID_bool ||
-    type.id()==ID_integer || type.id()==ID_c_bit_field)
+  if(
+    type.id() == ID_signedbv || type.id() == ID_unsignedbv ||
+    type.id() == ID_fixedbv || type.id() == ID_c_bool || type.id() == ID_bool ||
+    type.id() == ID_integer || type.id() == ID_c_bit_field)
   {
-    abstract_object_type=has_interval?INTERVAL:CONSTANT;
+    abstract_object_type = has_interval ? INTERVAL : CONSTANT;
   }
-  else if(type.id()==ID_floatbv)
+  else if(type.id() == ID_floatbv)
   {
-    abstract_object_type=CONSTANT;
+    abstract_object_type = CONSTANT;
   }
-  else if(type.id()==ID_array)
+  else if(type.id() == ID_array)
   {
-    abstract_object_type=has_arrays_flag?ARRAY_SENSITIVE:ARRAY_INSENSITIVE;
+    abstract_object_type =
+      has_arrays_flag ? ARRAY_SENSITIVE : ARRAY_INSENSITIVE;
   }
-  else if(type.id()==ID_pointer)
+  else if(type.id() == ID_pointer)
   {
-    abstract_object_type=
-      has_pointers_flag?POINTER_SENSITIVE:POINTER_INSENSITIVE;
+    abstract_object_type =
+      has_pointers_flag ? POINTER_SENSITIVE : POINTER_INSENSITIVE;
   }
-  else if(type.id()==ID_struct)
+  else if(type.id() == ID_struct)
   {
-    abstract_object_type=has_structs_flag?STRUCT_SENSITIVE:STRUCT_INSENSITIVE;
+    abstract_object_type =
+      has_structs_flag ? STRUCT_SENSITIVE : STRUCT_INSENSITIVE;
   }
-  else if(type.id()==ID_union)
+  else if(type.id() == ID_union)
   {
-    abstract_object_type=UNION_INSENSITIVE;
+    abstract_object_type = UNION_INSENSITIVE;
   }
 
   return abstract_object_type;
@@ -82,14 +83,14 @@ Function: variable_sensitivity_object_factoryt::get_abstract_object
 
 \*******************************************************************/
 
-abstract_object_pointert variable_sensitivity_object_factoryt::
-  get_abstract_object(
-    const typet type,
-    bool top,
-    bool bottom,
-    const exprt &e,
-    const abstract_environmentt &environment,
-    const namespacet &ns)
+abstract_object_pointert
+variable_sensitivity_object_factoryt::get_abstract_object(
+  const typet type,
+  bool top,
+  bool bottom,
+  const exprt &e,
+  const abstract_environmentt &environment,
+  const namespacet &ns)
 {
   if(!initialized)
   {
@@ -98,8 +99,8 @@ abstract_object_pointert variable_sensitivity_object_factoryt::
       "variable_sensitivity_object_factoryt::set_options()\n";
   }
 
-  typet followed_type=ns.follow(type);
-  ABSTRACT_OBJECT_TYPET abstract_object_type=
+  typet followed_type = ns.follow(type);
+  ABSTRACT_OBJECT_TYPET abstract_object_type =
     get_abstract_object_type(followed_type);
 
   switch(abstract_object_type)
@@ -160,13 +161,13 @@ Function: variable_sensitivity_object_factoryt::set_options
 
 void variable_sensitivity_object_factoryt::set_options(const optionst &options)
 {
-  has_variables_flag=options.get_bool_option("variable");
-  has_structs_flag=options.get_bool_option("structs");
-  has_arrays_flag=options.get_bool_option("arrays");
-  has_pointers_flag=options.get_bool_option("pointers");
-  has_last_written_location_context_flag=true; // For efficency of 3way merge
-  has_data_dependencies_context_flag=
+  has_variables_flag = options.get_bool_option("variable");
+  has_structs_flag = options.get_bool_option("structs");
+  has_arrays_flag = options.get_bool_option("arrays");
+  has_pointers_flag = options.get_bool_option("pointers");
+  has_last_written_location_context_flag = true; // For efficency of 3way merge
+  has_data_dependencies_context_flag =
     options.get_bool_option("data-dependencies");
-  has_interval=options.get_bool_option("interval");
-  initialized=true;
+  has_interval = options.get_bool_option("interval");
+  initialized = true;
 }
