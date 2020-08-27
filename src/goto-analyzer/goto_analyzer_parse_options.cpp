@@ -45,6 +45,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <analyses/call_stack_history.h>
 #include <analyses/constant_propagator.h>
 #include <analyses/dependence_graph.h>
+#include <analyses/example_domain.h>
 #include <analyses/goto_check.h>
 #include <analyses/interval_domain.h>
 #include <analyses/is_threaded.h>
@@ -355,6 +356,11 @@ void goto_analyzer_parse_optionst::get_command_line_options(optionst &options)
       options.set_option("non-null", true);
       options.set_option("domain set", true);
     }
+    else if(cmdline.isset("example"))
+    {
+      options.set_option("example", true);
+      options.set_option("domain set", true);
+    }
 
     // Reachability questions, when given with a domain swap from specific
     // to general tasks so that they can use the domain & parameterisations.
@@ -448,6 +454,11 @@ ai_baset *goto_analyzer_parse_optionst::build_analyzer(
     {
       df = util_make_unique<
         ai_domain_factory_default_constructort<interval_domaint>>();
+    }
+    else if(options.get_bool_option("example"))
+    {
+      df = util_make_unique<
+        ai_domain_factory_default_constructort<example_domaint>>();
     }
     // non-null is not fully supported, despite the historical options
     // dependency-graph is quite heavily tied to the legacy-ait infrastructure
@@ -908,6 +919,7 @@ void goto_analyzer_parse_optionst::help()
     " --constants                  a constant for each variable if possible\n"
     " --intervals                  an interval for each variable\n"
     " --non-null                   tracks which pointers are non-null\n"
+    " --example                    whatever you implement in the example\n"
     " --dependence-graph           data and control dependencies between instructions\n" // NOLINT(*)
     "\n"
     "Storage options:\n"

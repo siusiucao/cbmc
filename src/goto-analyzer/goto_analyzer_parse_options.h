@@ -129,6 +129,7 @@ class optionst;
   "(intervals)" \
   "(non-null)" \
   "(constants)" \
+  "(example)" \
   "(dependence-graph)"
 
 #define GOTO_ANALYSER_OPTIONS_STORAGE \
